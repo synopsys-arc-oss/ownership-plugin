@@ -1,0 +1,55 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.jenkins-ci.plugins</groupId>
+		<artifactId>plugin</artifactId>
+		<version>1.483</version>
+	</parent>
+
+	<groupId>com.synopsys.jenkinsci</groupId>
+	<artifactId>ownership-plugin</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Job and Slave ownership plugin</name>
+	<description>Provides setting of owners for jobs and slaves</description>
+	<packaging>hpi</packaging>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<repositories>
+        <repository>
+          <id>repo.jenkins-ci.org</id>
+          <url>http://repo.jenkins-ci.org/public/</url>
+        </repository>
+	</repositories>
+
+	<pluginRepositories>
+        <pluginRepository>
+          <id>repo.jenkins-ci.org</id>
+          <url>http://repo.jenkins-ci.org/public/</url>
+        </pluginRepository>
+	</pluginRepositories>
+
+	<developers>
+		<developer>
+			<id>oleg_nenashev</id>
+			<name>Oleg Nenashev</name>
+			<email>nenashev@synopsys.com; o.v.nenashev@gmail.com</email>
+                        <organizationUrl>http://www.synopsys.com</organizationUrl>
+			<organization>Synopsys</organization>                      
+			<roles>
+				<role>maintainer</role>
+			</roles>
+			<timezone>+4</timezone>
+		</developer>
+	</developers>
+
+	<!--TODO: Add correct pathes-->
+	<scm>
+		<connection>scm:git:ssh://github.com/</connection>
+		<developerConnection>scm:git:ssh://git@github.com/</developerConnection>
+		<url>https://github.com/</url>
+	</scm>
+	
+</project>

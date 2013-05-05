@@ -1,0 +1,12 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+	<f:optionalBlock name="jobOwner" title="${%Set job owner}" checked="${instance!=null}">
+				
+	    <f:entry title="${%Job Owner}">
+	       <f:textbox name="jobowner.jobOwner" value="${instance.jobOwner}"/>		   
+	    </f:entry>
+		
+	</f:optionalBlock>
+
+</j:jelly>

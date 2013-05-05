@@ -1,0 +1,18 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+  <j:set var="job" value="${job}"/>
+  <td>  
+        <j:if test="${job.hasPermission(job.READ)}">
+            <j:choose>
+                <j:when test="${it.isOwnerExists(job)}">
+                    <a href="${rootURL}/user/${it.getJobOwner(job)}/">
+                        ${it.getJobOwner(job)}
+                    </a>
+                </j:when>
+                <j:otherwise>
+                    ${it.getJobOwner(job)}
+                </j:otherwise>
+            </j:choose>
+        </j:if>
+   </td>
+</j:jelly>
