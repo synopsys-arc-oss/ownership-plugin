@@ -1,5 +1,6 @@
 package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipAction;
 import hudson.model.*;
 import net.sf.json.JSONObject;
 
@@ -7,23 +8,31 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 import hudson.Extension;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class JobOwnerJobProperty extends JobProperty<Job<?, ?>> {
 
     public static final String DefaultBuilUserString="N/A";
     private String jobOwner = DefaultBuilUserString;
-
+    public boolean ownershipIsEnabled;
+    
     @DataBoundConstructor
-    public JobOwnerJobProperty( String buildOwner ) {
-            this.jobOwner = buildOwner;
+    public JobOwnerJobProperty( String jobOwner, boolean ownershipIsEnabled) {
+            this.jobOwner = jobOwner;
+            this.ownershipIsEnabled = ownershipIsEnabled;
     }
 
     public String getJobOwner() {
         return jobOwner;
     }
     
+    public User getJobOwnerClass() {
+        return User.get(jobOwner);
+    }
+    
     public boolean isOwnerExists() {
-        return !User.get(jobOwner).equals(User.getUnknown());
+        return JobOwnerHelper.isUserExists(jobOwner);
     }
 
     @Extension
@@ -37,8 +46,10 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>> {
 
                     if( debugObject != null ) {
                             JSONObject debugJSON = (JSONObject) debugObject;
-                            String buildOwner = debugJSON.getString( "jobOwner" );
-                            JobOwnerJobProperty instance = new JobOwnerJobProperty( buildOwner );
+                            String jobOwner = debugJSON.getString( "jobOwner" );
+                            boolean ownershipIsEnabled = true;
+                            //TODO: ownership enabled from global config                           
+                            JobOwnerJobProperty instance = new JobOwnerJobProperty( jobOwner, ownershipIsEnabled );
                             return instance;
                     }
 
@@ -60,5 +71,21 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>> {
 	public String toString() {
 		return "jobOwner=" + jobOwner;
 	}
+
+    @Override
+    public Collection<? extends Action> getJobActions(Job<?, ?> job) {
+        Collection<OwnershipAction> col = new ArrayList<OwnershipAction>();
+         
+        ownershipIsEnabled = true;
+        if (ownershipIsEnabled) 
+        {
+            col.add(new JobOwnerJobAction(job));
+        }
+        return col;
+    }
+
+   
+        
+        
 
 }
