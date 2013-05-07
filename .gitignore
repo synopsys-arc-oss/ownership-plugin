@@ -1,2 +1,9 @@
 /target
 /work
+
+/src/main/java/com/synopsys/jenkinsci/buildowner/BuildOwnerColumn.java
+/src/main/java/com/synopsys/jenkinsci/buildowner/BuildOwnerJobProperty.java
+/src/main/resources/com/synopsys/jenkinsci/buildowner/BuildOwnerColumn/column.jelly
+/src/main/resources/com/synopsys/jenkinsci/buildowner/BuildOwnerColumn/columnHeader.jelly
+/src/main/resources/com/synopsys/jenkinsci/buildowner/BuildOwnerColumn/config.jelly
+/src/main/resources/com/synopsys/jenkinsci/buildowner/BuildOwnerJobProperty/config.jelly
