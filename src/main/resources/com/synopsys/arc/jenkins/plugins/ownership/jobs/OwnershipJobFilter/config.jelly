@@ -6,12 +6,11 @@
         <select name="jobOwner" class="setting-input">
             <j:forEach var="user" items="${descriptor.getUsers()}">
                  <!-- <f:option value="${user.getId()}" selected="${instance.ownerId.equals(user.getId())}">${user.getId()}</f:option> -->
-                  <f:option value="${user.getId()}" selected="${ instance.isCurrentOwner(user) == true }">${user.getId()}</f:option>
+                  <f:option value="${user.getId()}" selected="${ instance.isSelected(user) == true }">${instance.getDisplayName(user)}</f:option>
             </j:forEach>
         </select>    
     </f:entry> 
     <f:entry>
         <f:checkbox name="acceptsCoowners" field="acceptsCoowners"/> ${%Accept co-owners. Unsupported in phase1 }
     </f:entry> 
-   <!-- <st:include page="config.jelly" class="com.synopsys.arc.jenkins.plugins.ownership.jobs.OwnershipJobFilter" optional="false"/> -->
 </j:jelly>

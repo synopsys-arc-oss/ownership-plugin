@@ -4,7 +4,8 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
-import static com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper.isUserExists;
+import com.synopsys.arc.jenkins.plugins.ownership.util.UserComparator;
+import com.synopsys.arc.jenkins.plugins.ownership.util.UserWrapper;
 import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
@@ -15,6 +16,8 @@ import hudson.model.View;
 import hudson.views.ViewJobFilter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -25,7 +28,11 @@ import org.kohsuke.stapler.StaplerRequest;
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
 public class OwnershipJobFilter extends ViewJobFilter {
-
+    /**
+     * Macro, which allows to select currently logged user for "My owned jobs" filter
+     */
+    private static final String MACRO_ME = "@Me";
+    
     String ownerId;
     boolean acceptsCoowners;
     
@@ -37,8 +44,12 @@ public class OwnershipJobFilter extends ViewJobFilter {
         return acceptsCoowners;
     }
     
-    public boolean isCurrentOwner(User usr) {
-        return User.get(ownerId, false, null) == usr;
+    public boolean isSelected(UserWrapper usr) {
+        return ownerId.equals(usr.getId());
+    }
+    
+    public String getDisplayName(UserWrapper usr) {
+        return usr.toString();
     }
        
     @DataBoundConstructor
@@ -52,14 +63,16 @@ public class OwnershipJobFilter extends ViewJobFilter {
               
         ArrayList<TopLevelItem> newList = new ArrayList<TopLevelItem>();
         
+        UserWrapper wuserWrapper = new UserWrapper(ownerId);
+            
         for(TopLevelItem item : added) {
             // Convert to project
             AbstractProject project = (AbstractProject)item;
             JobProperty prop = project.getProperty(JobOwnerJobProperty.class);
-
+              
             if (prop != null) {
-                String jobOwner = ((JobOwnerJobProperty)prop).getJobOwner();
-                if (ownerId.equals(jobOwner)) {
+                String jobOwnerId = ((JobOwnerJobProperty)prop).getJobOwner();
+                if (wuserWrapper.meetsMacro(jobOwnerId)) {
                     newList.add(item);
                 }
             }
@@ -88,10 +101,22 @@ public class OwnershipJobFilter extends ViewJobFilter {
          * Get users for selector
          * @return Collection of all registered users 
          */
-        public Collection<User> getUsers()
-        {
-            return User.getAll();
-        }
+        public Collection<UserWrapper> getUsers()
+        {                    
+            // Sort users
+            UserComparator comparator = new UserComparator();
+            LinkedList<User> userList = new LinkedList<User>(User.getAll());                     
+            Collections.sort(userList, comparator);
+            
+            // Prepare new list
+            Collection<UserWrapper> res = new ArrayList<UserWrapper>(userList.size()+1);
+            res.add(new UserWrapper(MACRO_ME));
+            for (User user : userList)
+            {
+                res.add(new UserWrapper(user));
+            }
+            return res;
+        }    
         
         public User getCurrentUser()
         {
