@@ -1,11 +1,10 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local"  xmlns:my="myTagLib" >
   <j:set var="job" value="${action.getJob()}"/>
   <j:set var="helperClass" value="com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper"/>
-  <div align="left" style="width:500px;">
-      <div class="test-trend-caption">
-      ${%Job Ownership}
-      </div>
-      
+  <div align="left" style="width:400px;" class="changeset-message">   
+    <div class="test-trend-caption">
+    ${%Job Ownership}
+    </div>     
     <!-- <j:if test="${job.hasPermission(job.READ)}"> -->
     Job owner: 
     <j:choose>
@@ -19,7 +18,9 @@
         </j:otherwise>
     </j:choose>
     <!--  </j:if> -->
-    </div>
+    <p/>
+    Co-owners: TODO:
+  </div>
     
-        Co-owners: TODO:	
+        	
 </j:jelly>
