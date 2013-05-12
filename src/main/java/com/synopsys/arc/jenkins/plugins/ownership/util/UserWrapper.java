@@ -5,6 +5,10 @@
 package com.synopsys.arc.jenkins.plugins.ownership.util;
 
 import hudson.model.User;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 
 /**
  * Implements wrapper, which allows to implement "non-existent" users
@@ -77,4 +81,6 @@ public class UserWrapper {
 
         return comparedId.equals(userId);
     }
+    
+    
 }

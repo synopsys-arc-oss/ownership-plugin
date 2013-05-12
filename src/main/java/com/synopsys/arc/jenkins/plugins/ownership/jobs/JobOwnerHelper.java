@@ -4,6 +4,7 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
+import com.synopsys.arc.jenkins.plugins.ownership.util.UserStringFormatter;
 import hudson.model.AbstractProject;
 import hudson.model.Job;
 import hudson.model.JobProperty;
@@ -46,7 +47,7 @@ public class JobOwnerHelper {
         if (prop != null)
         {
             User user = ((JobOwnerJobProperty)prop).getJobOwnerClass();
-            return isUserExists(user) ? user.getFullName() + " ("+ user.getId() + ")" : JobOwnerJobProperty.DefaultBuilUserString;
+            return isUserExists(user) ? UserStringFormatter.format(user) : JobOwnerJobProperty.DefaultBuilUserString;
         }
         else {
             return JobOwnerJobProperty.DefaultBuilUserString;

@@ -13,6 +13,6 @@ import hudson.model.User;
 public class UserStringFormatter {
     public static String format(User user)
     {
-        return user.getFullName()+" ("+user.getId()+")";
+        return user !=null ? user.getFullName()+" ("+user.getId()+")" : "<null>";
     }
 }
