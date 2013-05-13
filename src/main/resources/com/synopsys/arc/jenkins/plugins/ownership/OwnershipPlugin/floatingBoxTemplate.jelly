@@ -1,0 +1,27 @@
+<!--
+    Template for Ownership floatingBox.
+    Parameters:
+        item - Item, which is being described by floating box. Action helper should provide appropriate action helper
+        itemType - name of the item type for visualization (ex, Job or Slave)
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <div align="left" style="width:400px;" class="changeset-message">   
+        <div class="test-trend-caption"> ${itemType} $Ownership </div>     
+        ${itemType} owner: 
+        <j:choose>
+            <j:when test="${action.helper().isOwnerExists(item)}">
+                <a href="${rootURL}/user/${action.helper().getOwner(item)}/">
+                    ${action.helper().getOwnerLongString(item)}
+                </a>
+            </j:when>
+            <j:otherwise>
+                ${action.helper().getOwner(item)}
+            </j:otherwise>
+        </j:choose>
+        <p/>
+        <!--
+        TODO: Co-owners: 
+        -->
+    </div>
+</j:jelly>

@@ -14,11 +14,11 @@ public class JobOwnerColumn extends ListViewColumn {
     }
 
     public String getJobOwner(@SuppressWarnings("rawtypes") Job job) {
-        return JobOwnerHelper.getJobOwner(job);
+        return JobOwnerHelper.Instance.getOwner(job);
     }
     
     public boolean isOwnerExists(@SuppressWarnings("rawtypes") Job job) {
-        return JobOwnerHelper.isOwnerExists(job);
+        return JobOwnerHelper.Instance.isOwnerExists(job);
     }
 
     @Extension

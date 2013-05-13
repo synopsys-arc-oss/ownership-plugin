@@ -1,9 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
+import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserStringFormatter;
 import hudson.model.AbstractProject;
 import hudson.model.Job;
@@ -14,14 +11,18 @@ import hudson.model.User;
  *
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
-public class JobOwnerHelper {
-    public static String getJobOwner(@SuppressWarnings("rawtypes") Job job) {
+public class JobOwnerHelper implements IOwnershipHelper<Job<?,?>>{
+    public final static JobOwnerHelper Instance = new JobOwnerHelper();
+    
+    @Override
+    public String getOwner(Job<?,?> job) {
         AbstractProject project = (AbstractProject) job;
         JobProperty prop = project.getProperty(JobOwnerJobProperty.class);
 	return prop != null ? ((JobOwnerJobProperty)prop).getJobOwner() : JobOwnerJobProperty.DefaultBuilUserString;
     }
     
-    public static boolean isOwnerExists(@SuppressWarnings("rawtypes") Job job) {
+    @Override
+    public boolean isOwnerExists(Job job) {
         AbstractProject project = (AbstractProject) job;
         JobProperty prop = project.getProperty(JobOwnerJobProperty.class);
 	return prop != null ? ((JobOwnerJobProperty)prop).isOwnerExists() : false;
@@ -39,7 +40,8 @@ public class JobOwnerHelper {
         return User.get(userIdOrFullName, false, null) != null;
     }
         
-    public static String getJobOwnerLongString(@SuppressWarnings("rawtypes") Job job)
+    @Override
+    public String getOwnerLongString(Job job)
     {
         AbstractProject project = (AbstractProject) job;
         JobProperty prop = project.getProperty(JobOwnerJobProperty.class);

@@ -1,59 +1,36 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
-import com.synopsys.arc.jenkins.plugins.ownership.OwnershipAction;
+import com.synopsys.arc.jenkins.plugins.ownership.ItemOwnershipAction;
 import hudson.model.Job;
 
 /**
- *
+ * Ownership action for jobs
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
-public class JobOwnerJobAction implements OwnershipAction {
+public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     
-    Job<?, ?> linkedJob;
+    private final static JobOwnerHelper helper = new JobOwnerHelper();
     
     public JobOwnerJobAction(Job<?, ?> job) {
-      // ignore job - just4backward compatibility  
-      linkedJob = job;
-    }
-    public String getJobOwner(@SuppressWarnings("rawtypes") Job job) {
-        assert (job != null);
-        assert(linkedJob == job);
-        return JobOwnerHelper.getJobOwner(job);
-    }
-    
-    public boolean isOwnerExists(@SuppressWarnings("rawtypes") Job job) {
-        assert (job != null);
-        assert(linkedJob == job);
-        return JobOwnerHelper.isOwnerExists(job);
-    }
-    
-    public String getJobOwnerLongString(@SuppressWarnings("rawtypes") Job job) {
-        assert (job != null);
-        assert(linkedJob == job);
-        return JobOwnerHelper.getJobOwnerLongString(job);
-    }
-    
-    public Job<?, ?> getJob()
-    {
-        return linkedJob;
+      super(job);
     }
 
     @Override
-    public String getIconFileName() {
-         return "graph.gif"; 
+    public JobOwnerHelper helper() {
+        return helper;
+    }
+       
+    /** 
+     * Gets described job
+     * @deprecated Just for compatibility with 0.0.1
+     */
+    public Job<?, ?> getJob()
+    {
+        return getDescribedItem();
     }
 
     @Override
     public String getDisplayName() {
         return "Job ownership";
-    }
-
-    @Override
-    public String getUrlName() {
-        return "Ownership";
     }
 }
