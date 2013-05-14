@@ -4,7 +4,6 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership;
 
-import hudson.model.Action;
 import hudson.model.Actionable;
 
 /**
@@ -12,7 +11,8 @@ import hudson.model.Actionable;
  * @author Oleg Nenashev <nenashev@synopsys.com>
  * @since 0.0.2
  */
-public abstract class ItemOwnershipAction<TObjectType extends Actionable> extends OwnershipAction {
+public abstract class ItemOwnershipAction<TObjectType extends Actionable> 
+    extends OwnershipAction implements IOwnershipItem<TObjectType> {
     
     private TObjectType describedItem;
     
@@ -24,17 +24,8 @@ public abstract class ItemOwnershipAction<TObjectType extends Actionable> extend
     {
         this.describedItem = discribedItem;
     }
-    
-    /**
-     * Gets helper for typical operations
-     * @return Helper
-     */
-    public abstract IOwnershipHelper<TObjectType> helper();
-    
-    /**
-     * Gets item, which is being described by action
-     * @return Described item
-     */
+     
+    @Override
     public final TObjectType getDescribedItem()
     {
         return describedItem;

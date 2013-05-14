@@ -1,5 +1,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local"  xmlns:my="myTagLib" >
   <j:set var="item" value="${action.getJob()}"/>
+  <j:set var="helper" value="${action.helper()}"/>
   <j:set var="itemType" value="Job"/>
+  <j:set var="styleClass" value="changeset-message"/>
   <st:include page="floatingBoxTemplate.jelly" class="com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin" optional="false"/>      	
 </j:jelly>

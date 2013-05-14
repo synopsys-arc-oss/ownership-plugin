@@ -2,15 +2,10 @@
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
 	<f:optionalBlock name="jobOwner" title="${%Set job owner}" checked="${instance!=null}">
-		<!--		
-	    <f:entry title="${%Job Owner}">
-	       <f:textbox name="jobowner.jobOwner" value="${instance.jobOwner}"/>		   
-	    </f:entry> -->
             <f:entry title="${%Job Owner}">
                 <select name="jobowner.jobOwner" class="setting-input">
                     <j:forEach var="user" items="${instance.getUsers()}">
-                         <!-- <f:option value="${user.getId()}" selected="${instance.ownerId.equals(user.getId())}">${user.getId()}</f:option> -->
-                          <f:option value="${user.getId()}" selected="${ instance.isSelected(user) == true }">${instance.getDisplayName(user)}</f:option>
+                         <f:option value="${user.getId()}" selected="${ instance.isSelected(user) == true }">${instance.getDisplayName(user)}</f:option>
                     </j:forEach>
                 </select>    
             </f:entry> 	

@@ -1,22 +1,27 @@
 <!--
-    Template for Ownership floatingBox.
-    Parameters:
-        item - Item, which is being described by floating box. Action helper should provide appropriate action helper
-        itemType - name of the item type for visualization (ex, Job or Slave)
+-    Template for Ownership floatingBox.
+-    Parameters:
+-        helper - Helper, which provides info about item
+-        item - Item, which is being described by floating box. Action helper should provide appropriate action helper
+-        itemType - name of the item type for visualization (ex, Job or Slave)
+-        styleClass - class of the div box   
+-
+-    @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+-    @since 0.0.3   
 -->
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <div align="left" style="width:400px;" class="changeset-message">   
+    <div align="left" style="width:400px;" class="${styleClass}">   
         <div class="test-trend-caption"> ${itemType} $Ownership </div>     
-        ${itemType} owner: 
+        Primary owner: 
         <j:choose>
-            <j:when test="${action.helper().isOwnerExists(item)}">
-                <a href="${rootURL}/user/${action.helper().getOwner(item)}/">
-                    ${action.helper().getOwnerLongString(item)}
+            <j:when test="${helper.isOwnerExists(item)}">
+                <a href="${rootURL}/user/${helper.getOwner(item)}/">
+                    ${helper.getOwnerLongString(item)}
                 </a>
             </j:when>
             <j:otherwise>
-                ${action.helper().getOwner(item)}
+                ${helper.getOwner(item)}
             </j:otherwise>
         </j:choose>
         <p/>

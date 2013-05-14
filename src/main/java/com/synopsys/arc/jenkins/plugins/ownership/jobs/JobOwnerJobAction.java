@@ -9,15 +9,13 @@ import hudson.model.Job;
  */
 public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     
-    private final static JobOwnerHelper helper = new JobOwnerHelper();
-    
     public JobOwnerJobAction(Job<?, ?> job) {
       super(job);
     }
 
     @Override
     public JobOwnerHelper helper() {
-        return helper;
+        return JobOwnerHelper.Instance;
     }
        
     /** 

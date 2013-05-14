@@ -1,0 +1,6 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <j:set var="blockName" value="slaveOwnership"/>
+    <st:include page="propertyConfig.jelly" class="com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin" 
+                optional="false" it="${instance}"/>      	
+</j:jelly>

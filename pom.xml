@@ -8,7 +8,7 @@
 
 	<groupId>com.synopsys.jenkinsci</groupId>
 	<artifactId>ownership-plugin</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<name>Job and Slave ownership plugin</name>
 	<description>Provides setting of owners for jobs and slaves</description>
 	<packaging>hpi</packaging>

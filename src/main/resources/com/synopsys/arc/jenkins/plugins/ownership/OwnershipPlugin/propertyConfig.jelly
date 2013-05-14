@@ -1,0 +1,32 @@
+<!--
+- Template for ownership property Setup
+- 
+- Features:
+-   - Optional ownership enable
+-   - Setting of primary owner
+-
+- Parameters:
+-    {it}       - Property instance
+-    item       - Described Item
+-    blockName  - name of the block
+-
+- @remarks Use <function> to parse parameters
+- @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+- @since 0.0.3   
+-   
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <j:set var="_item" value="${it.getDescribedItem()}"/>
+    <f:optionalBlock name="${blockName}" title="${%Enable ownership}" checked="${instance!=null}">
+            <f:entry title="${%Primary Owner}">
+                <select name="${blockName}.primaryOwner" class="setting-input">
+                    <j:forEach var="user" items="${it.helper().getPossibleOwners(it.getDescribedItem())}">
+                         <f:option value="${user.getId()}" selected="${ it.helper().getOwnershipDescription(_item).isPrimaryOwner(user) == true }">
+                             ${it.helper().getDisplayName(user)}
+                         </f:option>
+                    </j:forEach>
+                </select>    
+            </f:entry> 	
+    </f:optionalBlock>
+</j:jelly>
