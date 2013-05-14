@@ -12,16 +12,19 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <div align="left" style="width:400px;" class="${styleClass}">   
-        <div class="test-trend-caption"> ${itemType} $Ownership </div>     
-        Primary owner: 
+        <div class="test-trend-caption"> ${itemType} $Ownership </div>            
         <j:choose>
             <j:when test="${helper.isOwnerExists(item)}">
-                <a href="${rootURL}/user/${helper.getOwner(item)}/">
+                Primary owner: <a href="${rootURL}/user/${helper.getOwner(item)}/">
                     ${helper.getOwnerLongString(item)}
+                </a>
+                <p/>
+                Contact e-mail: <a href="mailto://${helper.getOwnerEmail(item)}">
+                    ${helper.getOwnerEmail(item)}
                 </a>
             </j:when>
             <j:otherwise>
-                ${helper.getOwner(item)}
+                Primary owner:  ${helper.getOwner(item)}
             </j:otherwise>
         </j:choose>
         <p/>

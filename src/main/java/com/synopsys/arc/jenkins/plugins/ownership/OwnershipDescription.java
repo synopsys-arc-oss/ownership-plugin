@@ -68,7 +68,7 @@ public class OwnershipDescription {
      * @return userId of primary owner 
      */
     public String getPrimaryOwnerId() {
-        return primaryOwnerId;
+        return ownershipEnabled ? primaryOwnerId :  User.getUnknown().getId();
     }
     
     public User getPrimaryOwner() {

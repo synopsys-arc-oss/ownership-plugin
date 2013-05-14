@@ -1,16 +1,9 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:sl="/hudson/plugins/sidebar_link">
-  <f:section title="${%Ownership}">
-    <f:entry title="${%Ownership}"
-             description="${%Configuration of the ownership plugin}">
-     <!-- <sl:links links="${it.links}"/> -->
+  <f:section title="${%Ownership}" description="${%Configuration of the ownership plugin}">
+    <f:entry title="E-mail suffix" 
+             description="E-mail suffix for mailto: hyperlinks (ex, @synopsys.com)">
+        <f:textbox field="emailSuffix" id="emailSuffix" value="${it.getEmailSuffix()}"/>
     </f:entry>
-    <!--
-    <f:entry>
-      <j:set var="url" value="${rootURL}/plugin/sidebar-link/startUpload"/>
-      <iframe src="${url}" frameborder="0" style="width:100%;height:4em;margin-top:2em">
-        <a href="${url}" target="_blank">${%Upload image file...}</a>
-      </iframe>
-    </f:entry> -->
   </f:section>
 </j:jelly>

@@ -18,10 +18,12 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <j:set var="_item" value="${it.getDescribedItem()}"/>
-    <f:optionalBlock name="${blockName}" title="${%Enable ownership}" checked="${instance!=null}">
-            <f:entry title="${%Primary Owner}">
+    <j:set var="_userList" value="${it.helper().getPossibleOwners(it.getDescribedItem())}"/>
+    <f:optionalBlock name="${blockName}" title="${%Enable ownership}" checked="${instance!=null}"
+            description="${%Enables ownership for current item}">
+            <f:entry title="${%Primary Owner}" description="${%Primary responsible person}">
                 <select name="${blockName}.primaryOwner" class="setting-input">
-                    <j:forEach var="user" items="${it.helper().getPossibleOwners(it.getDescribedItem())}">
+                    <j:forEach var="user" items="${_userList}">
                          <f:option value="${user.getId()}" selected="${ it.helper().getOwnershipDescription(_item).isPrimaryOwner(user) == true }">
                              ${it.helper().getDisplayName(user)}
                          </f:option>

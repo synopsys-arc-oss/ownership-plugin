@@ -17,12 +17,18 @@ import hudson.Extension;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * Ownership job property
+ * @todo Implement generic approaches from 0.0.3
+ * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @since 0.0.1
+ */
 public class JobOwnerJobProperty extends JobProperty<Job<?, ?>> 
     implements IOwnershipItem<Job<?, ?>>
 {
     
     private String jobOwner = UserStringFormatter.UNKNOWN_USER_STRING;
-    public boolean ownershipIsEnabled;
+    public boolean ownershipIsEnabled = false;
     
     @DataBoundConstructor
     public JobOwnerJobProperty( String jobOwner, boolean ownershipIsEnabled) {
@@ -39,7 +45,7 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
     }
     
     public String getDisplayName(User usr) {
-        return usr.toString();
+        return  JobOwnerHelper.Instance.getDisplayName(usr);
     }
     
     public User getJobOwnerClass() {
@@ -105,15 +111,19 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
 		return "jobOwner=" + jobOwner;
 	}
 
+    /**
+     * Disabled since 0.0.4 due to functionality duplication with "Summary" 
     @Override
     public Collection<? extends Action> getJobActions(Job<?, ?> job) {
         Collection<OwnershipAction> col = new ArrayList<OwnershipAction>();
          
         ownershipIsEnabled = true;
+       
         if (ownershipIsEnabled) 
         {
             col.add(new JobOwnerJobAction(job));
         }
         return col;
     }
+    */
 }

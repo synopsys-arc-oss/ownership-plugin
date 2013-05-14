@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core">
   <th>
-    ${%Build Owner}
+    ${%Job Owner}
   </th>
 </j:jelly>

@@ -22,6 +22,14 @@ public interface IOwnershipHelper<TObjectType>  {
     public String getOwner(TObjectType item);
     
     /**
+     * Get e-mail of the owner
+     * @param item Item to be describes
+     * @return Owner's e-mail
+     * @since 0.0.4
+     */
+    public String getOwnerEmail(TObjectType item);
+    
+    /**
      * Check if item has owners
      * @param item Item to be checked
      * @return true if item has owners
