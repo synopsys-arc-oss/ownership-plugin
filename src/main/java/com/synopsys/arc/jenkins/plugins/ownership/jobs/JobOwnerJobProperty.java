@@ -26,7 +26,6 @@ import java.util.Collection;
 public class JobOwnerJobProperty extends JobProperty<Job<?, ?>> 
     implements IOwnershipItem<Job<?, ?>>
 {
-    
     private String jobOwner = UserStringFormatter.UNKNOWN_USER_STRING;
     public boolean ownershipIsEnabled = false;
     
@@ -111,8 +110,6 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
 		return "jobOwner=" + jobOwner;
 	}
 
-    /**
-     * Disabled since 0.0.4 due to functionality duplication with "Summary" 
     @Override
     public Collection<? extends Action> getJobActions(Job<?, ?> job) {
         Collection<OwnershipAction> col = new ArrayList<OwnershipAction>();
@@ -125,5 +122,4 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
         }
         return col;
     }
-    */
 }
