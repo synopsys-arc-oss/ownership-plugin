@@ -28,5 +28,6 @@
              description="E-mail suffix for mailto: hyperlinks (ex, @synopsys.com)">
         <f:textbox field="emailSuffix" id="emailSuffix" value="${it.getEmailSuffix()}"/>
     </f:entry>
+    
   </f:section>
 </j:jelly>

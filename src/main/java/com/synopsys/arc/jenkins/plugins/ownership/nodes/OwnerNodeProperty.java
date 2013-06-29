@@ -53,7 +53,8 @@ public class OwnerNodeProperty extends NodeProperty<Node>
     @DataBoundConstructor
     public OwnerNodeProperty(Node node, OwnershipDescription ownership) {
          setNode(node);
-         this.nodeName = node.getNodeName();
+         //FIXME: remove hack with owner
+         this.nodeName = (node != null) ? node.getNodeName() : null;
          this.ownership = ownership;
     }
     

@@ -26,6 +26,7 @@ package com.synopsys.arc.jenkins.plugins.ownership;
 import hudson.Plugin;
 import hudson.model.Descriptor;
 import hudson.model.Hudson;
+import hudson.model.User;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,5 +96,10 @@ public class OwnershipPlugin extends Plugin {
     public void ReinitActionsList()
     {
         pluginActions.clear();
+    }
+    
+    public static String getDefaultOwner() {
+        User current = User.current();       
+        return current !=null ? current.getId() : "";
     }
 }

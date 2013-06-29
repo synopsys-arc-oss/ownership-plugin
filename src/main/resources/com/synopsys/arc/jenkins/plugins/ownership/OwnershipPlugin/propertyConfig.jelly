@@ -40,18 +40,36 @@
 -->
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <j:set var="_item" value="${it.getDescribedItem()}"/>
-    <j:set var="_userList" value="${it.helper().getPossibleOwners(it.getDescribedItem())}"/>
+    
+    <j:if test="${it != null}">
+        <p>Hello!</p>
+        <j:set var="_item" value="${it.getDescribedItem()}"/>   
+        <j:set var="_userList" value="${it.helper().getPossibleOwners(it.getDescribedItem())}"/>   
+    </j:if>
+    
     <f:optionalBlock name="${blockName}" title="${%Enable ownership}" checked="${instance!=null}"
             description="${%Enables ownership for current item}">
             <f:entry title="${%Primary Owner}" description="${%Primary responsible person}">
-                <select name="${blockName}.primaryOwner" class="setting-input">
-                    <j:forEach var="user" items="${_userList}">
-                         <f:option value="${user.getId()}" selected="${ it.helper().getOwnershipDescription(_item).isPrimaryOwner(user) == true }">
-                             ${it.helper().getDisplayName(user)}
-                         </f:option>
-                    </j:forEach>
-                </select>    
+                <!--Already instantinated ownership-->
+                <j:if test="${it != null}">
+                    <j:set var="_item" value="${it.getDescribedItem()}"/>   
+                    <j:set var="_userList" value="${it.helper().getPossibleOwners(it.getDescribedItem())}"/>   
+                    <select name="${blockName}.primaryOwner" class="setting-input">
+                        <j:forEach var="user" items="${_userList}">
+                             <f:option value="${user.getId()}" selected="${ it.helper().getOwnershipDescription(_item).isPrimaryOwner(user) == true }">
+                                 ${it.helper().getDisplayName(user)}
+                             </f:option>
+                        </j:forEach>
+                    </select>    
+                </j:if>
+                <!--Non-instatinated-->
+                <j:if test="${it == null}">
+                    <j:invokeStatic var="_owner" 
+                                    className="com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin"
+                                    method="getDefaultOwner"
+                    />
+                    <f:textbox field="${blockName}.primaryOwner" id="primaryOwner" value="${_owner}"/>
+                </j:if>
             </f:entry> 	
     </f:optionalBlock>
 </j:jelly>
