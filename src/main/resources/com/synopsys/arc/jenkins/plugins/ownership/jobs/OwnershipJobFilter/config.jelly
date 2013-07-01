@@ -25,11 +25,11 @@
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
 	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
     
-    <f:entry title="${%Job ownership}">
-        <select name="jobOwner" class="setting-input">
-            <j:forEach var="user" items="${descriptor.getUsers()}">
-                 <!-- <f:option value="${user.getId()}" selected="${instance.ownerId.equals(user.getId())}">${user.getId()}</f:option> -->
-                  <f:option value="${user.getId()}" selected="${ instance.isSelected(user) == true }">${instance.getDisplayName(user)}</f:option>
+    <j:invokeStatic var="_usersList" className="com.synopsys.arc.jenkins.plugins.ownership.jobs.OwnershipJobFilter" method="getAvailableUsers"/>
+    <f:entry title="${%Job ownership}">  
+        <select name="jobOwner" class="setting-input">    
+            <j:forEach var="user" items="${_usersList}">
+                 <f:option value="${user.getId()}" selected="${ instance.isSelected(user) == true }">${user.toString()}</f:option>
             </j:forEach>
         </select>    
     </f:entry> 

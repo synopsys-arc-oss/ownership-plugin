@@ -66,11 +66,7 @@ public class OwnershipJobFilter extends ViewJobFilter {
     public boolean isSelected(UserWrapper usr) {
         return ownerId.equals(usr.getId());
     }
-    
-    public String getDisplayName(UserWrapper usr) {
-        return usr.toString();
-    }
-       
+           
     @DataBoundConstructor
     public OwnershipJobFilter(String ownerName, boolean acceptCoowners) {
         this.ownerId = ownerName;
@@ -115,33 +111,27 @@ public class OwnershipJobFilter extends ViewJobFilter {
                 OwnershipJobFilter instance = new OwnershipJobFilter( jobOwner, acceptCoowners );
                 return instance;
         } 
-        
-        /**
-         * Get users for selector
-         * @return Collection of all registered users 
-         */
-        public Collection<UserWrapper> getUsers()
-        {                    
-            // Sort users
-            UserComparator comparator = new UserComparator();
-            LinkedList<User> userList = new LinkedList<User>(User.getAll());                     
-            Collections.sort(userList, comparator);
-            
-            // Prepare new list
-            Collection<UserWrapper> res = new ArrayList<UserWrapper>(userList.size()+1);
-            res.add(new UserWrapper(MACRO_ME));
-            for (User user : userList)
-            {
-                res.add(new UserWrapper(user));
-            }
-            return res;
-        }    
-        
-        public User getCurrentUser()
-        {
-            return User.current();
-        }
     }
     
+    /**
+    * Get list of users for the selector.
+    * @return Collection of all registered users 
+    */
+    public static Collection<UserWrapper> getAvailableUsers()
+    {                    
+        // Sort users
+        UserComparator comparator = new UserComparator();
+        LinkedList<User> userList = new LinkedList<User>(User.getAll());                     
+        Collections.sort(userList, comparator);
+
+        // Prepare new list
+        Collection<UserWrapper> res = new ArrayList<UserWrapper>(userList.size()+1);
+        res.add(new UserWrapper(MACRO_ME));
+        for (User user : userList)
+        {
+            res.add(new UserWrapper(user));
+        }
+        return res;
+    } 
 }
 
