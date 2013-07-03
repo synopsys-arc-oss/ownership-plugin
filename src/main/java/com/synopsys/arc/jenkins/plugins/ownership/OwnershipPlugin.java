@@ -36,7 +36,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
- * Contains global actions and configurations
+ * Contains global actions and configurations.
  * @since 0.0.1
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */

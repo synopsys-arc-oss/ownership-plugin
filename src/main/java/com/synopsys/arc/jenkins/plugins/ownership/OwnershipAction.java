@@ -26,7 +26,8 @@ package com.synopsys.arc.jenkins.plugins.ownership;
 import hudson.model.Action;
 
 /**
- *
+ * Provides Floating box with ownership description.
+ * @deprecated Behavior has been replaced by "Summary" box
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
 public abstract class OwnershipAction implements Action {

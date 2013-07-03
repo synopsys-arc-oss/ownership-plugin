@@ -28,7 +28,7 @@ import java.util.Collection;
 import net.sf.json.JSONObject;
 
 /**
- * Contains description of item's ownership 
+ * Contains description of item's ownership. 
  * @author Oleg Nenashev <nenashev@synopsys.com>
  * @since 0.0.3
  */
@@ -49,12 +49,14 @@ public class OwnershipDescription {
     String primaryOwnerId;
     
     /**
+     * Sids of the co-Owners.
+     * Sids can include users and groups.  
      * @deprecated Not implemented in current version
      */
     Collection<String> coownersIds;
 
     /**
-     * Constructor
+     * Constructor.
      * @param primaryOwnerId userId of primary owner 
      */
     public OwnershipDescription(boolean ownershipEnabled, String primaryOwnerId) {
@@ -64,7 +66,7 @@ public class OwnershipDescription {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param primaryOwnerId userId of primary owner 
      * @param coownersIds userIds of secondary owners
      */
@@ -75,7 +77,7 @@ public class OwnershipDescription {
     }
 
     /**
-     * Check if ownership is enabled
+     * Check if ownership is enabled.
      * @return true if ownership is enabled
      */
     public boolean isOwnershipEnabled() {
@@ -83,13 +85,17 @@ public class OwnershipDescription {
     }
 
     /**
-     * Gets id of primary owner
+     * Gets id of primary owner.
      * @return userId of primary owner 
      */
     public String getPrimaryOwnerId() {
         return ownershipEnabled ? primaryOwnerId :  User.getUnknown().getId();
     }
     
+    /**
+     * Get primary owner.
+     * @return Primary owner's user.
+     */
     public User getPrimaryOwner() {
         return User.get(primaryOwnerId, false, null);
     }
@@ -97,7 +103,7 @@ public class OwnershipDescription {
     /**
      * Gets list of coowners
      * @deprecated Not implemented in current version
-     * @return Collection of coowners
+     * @return Collection of co-owners
      */
     public Collection<String> getCoownersIds() {
         return coownersIds;
@@ -123,8 +129,8 @@ public class OwnershipDescription {
     }
     
     /**
-     * Check if User is owner
-     * @param user User
+     * Check if User is owner.
+     * @param user User to be checked
      * @param acceptCoowners Check if user belongs to coowners
      * @return true if User belongs to primary owners (and/or coowners)
      */

@@ -29,6 +29,10 @@ import hudson.model.Job;
 import hudson.views.ListViewColumnDescriptor;
 import hudson.views.ListViewColumn;
 
+/**
+ * Provides Ownership column for the list view.
+ * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ */
 public class JobOwnerColumn extends ListViewColumn {
 
     @DataBoundConstructor

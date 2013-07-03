@@ -26,7 +26,7 @@ package com.synopsys.arc.jenkins.plugins.ownership;
 import hudson.model.Actionable;
 
 /**
- * Abstract class for ownership actions, which describe item
+ * Abstract class for ownership actions, which describes item at the floating box.
  * @author Oleg Nenashev <nenashev@synopsys.com>
  * @since 0.0.2
  */
@@ -36,7 +36,7 @@ public abstract class ItemOwnershipAction<TObjectType extends Actionable>
     private TObjectType describedItem;
     
     /**
-     * Constructor
+     * Constructor.
      * @param discribedItem Item, which is related to action
      */
     public ItemOwnershipAction(TObjectType discribedItem)

@@ -35,7 +35,7 @@ import hudson.model.User;
 import java.util.Collection;
 
 /**
- * Helper for Jobs Ownership
+ * Helper for Jobs Ownership.
  * @since 0.0.3
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */

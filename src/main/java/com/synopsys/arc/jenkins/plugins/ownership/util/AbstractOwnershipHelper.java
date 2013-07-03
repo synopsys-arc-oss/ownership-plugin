@@ -29,7 +29,7 @@ import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import hudson.model.User;
 
 /**
- * Provides basic operations for typical helpers
+ * Provides basic operations for typical helpers.
  * @since 0.0.4
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */

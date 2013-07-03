@@ -42,7 +42,7 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     }
        
     /** 
-     * Gets described job
+     * Gets described job.
      * @deprecated Just for compatibility with 0.0.1
      */
     public Job<?, ?> getJob()

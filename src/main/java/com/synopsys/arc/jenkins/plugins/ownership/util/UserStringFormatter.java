@@ -26,7 +26,7 @@ package com.synopsys.arc.jenkins.plugins.ownership.util;
 import hudson.model.User;
 
 /**
- *
+ * Helper for User string formatting.
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
 public class UserStringFormatter {
@@ -34,7 +34,7 @@ public class UserStringFormatter {
     public static final String UNKNOWN_USER_STRING="N/A";
     
     /**
-     * Formats string to be displayed
+     * Formats string to be displayed.
      * @param user User
      * @return Formatted string
      */

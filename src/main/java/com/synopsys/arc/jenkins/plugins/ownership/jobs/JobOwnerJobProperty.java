@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Ownership job property
+ * Ownership job property.
  * @todo Implement generic approaches from 0.0.3
  * @author Oleg Nenashev <nenashev@synopsys.com>
  * @since 0.0.1

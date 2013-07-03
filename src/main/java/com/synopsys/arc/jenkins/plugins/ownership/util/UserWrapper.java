@@ -24,13 +24,10 @@
 package com.synopsys.arc.jenkins.plugins.ownership.util;
 
 import hudson.model.User;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
 
 /**
- * Implements wrapper, which allows to implement "non-existent" users
+ * Implements wrapper, which allows to implement "non-existent" users.
+ * 
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
 public class UserWrapper {
@@ -46,7 +43,8 @@ public class UserWrapper {
     }
     
     /**
-     * Creates Wrapper from user id or wrapper
+     * Creates Wrapper from user id or wrapper.
+     * @todo Just a hack for "@ME" macro. Need to extend functionality in the future. 
      * @param userMacro 
      */
     public UserWrapper(String userMacro)
@@ -71,7 +69,7 @@ public class UserWrapper {
     }
     
     /**
-     * Gets id of the user (calls User.getId() or returns macro)
+     * Gets id of the user (calls User.getId() or returns macro).
      * @return 
      */
     public String getId()

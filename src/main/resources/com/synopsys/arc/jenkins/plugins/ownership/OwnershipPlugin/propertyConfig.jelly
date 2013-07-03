@@ -70,6 +70,13 @@
                     />
                     <f:textbox field="${blockName}.primaryOwner" id="primaryOwner" value="${_owner}"/>
                 </j:if>
-            </f:entry> 	
+            </f:entry>
+            <f:block>
+                <!--TODO: fix-->
+                <f:hetero-list name="coOwners" hasHeader="true"
+                  descriptors="${allJobFilters}"
+                  items="${it.helper.getCoOwners()}"
+                  addCaption="${%Add Co-owner}" />
+            </f:block> 	
     </f:optionalBlock>
 </j:jelly>
