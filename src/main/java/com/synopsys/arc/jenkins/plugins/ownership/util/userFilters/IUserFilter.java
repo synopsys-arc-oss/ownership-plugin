@@ -26,7 +26,7 @@ package com.synopsys.arc.jenkins.plugins.ownership.util.userFilters;
 import hudson.model.User;
 
 /**
- *
+ * Provides filtering of users.
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
 public interface IUserFilter {

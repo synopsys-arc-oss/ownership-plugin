@@ -23,7 +23,7 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
-import com.synopsys.arc.jenkins.plugins.ownership.util.UserComparator;
+import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.UserComparator;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserWrapper;
 import hudson.Extension;
 import hudson.model.AbstractProject;

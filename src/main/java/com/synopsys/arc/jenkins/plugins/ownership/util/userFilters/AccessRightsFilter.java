@@ -43,6 +43,7 @@ public class AccessRightsFilter implements IUserFilter {
         this.permission = permission;
     }
    
+    @Override
     public boolean filter(User user) {
         if (user == null) return false;
         

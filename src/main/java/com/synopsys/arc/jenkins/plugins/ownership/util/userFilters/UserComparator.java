@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.synopsys.arc.jenkins.plugins.ownership.util;
+package com.synopsys.arc.jenkins.plugins.ownership.util.userFilters;
 
 import hudson.model.User;
 

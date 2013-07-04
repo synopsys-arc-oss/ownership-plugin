@@ -27,10 +27,12 @@ import hudson.model.User;
 import java.util.Collection;
 
 /**
- * Adapter for typical ownership operations with different item types
+ * Adapter for typical ownership operations with different item types.
+ * Every IOwnership item should provide ownership helper.
  * @param <TObjectType> Type of object, for which ownership should be resolved
  * @author Oleg Nenashev <nenashev@synopsys.com>
  * @since 0.0.2
+ * @see IOwnershipItem
  */
 public interface IOwnershipHelper<TObjectType>  {
     /**

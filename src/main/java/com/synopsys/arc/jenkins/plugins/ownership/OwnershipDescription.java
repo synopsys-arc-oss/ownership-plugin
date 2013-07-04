@@ -25,6 +25,8 @@ package com.synopsys.arc.jenkins.plugins.ownership;
 
 import hudson.model.User;
 import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 import net.sf.json.JSONObject;
 
 /**
@@ -51,18 +53,18 @@ public class OwnershipDescription {
     /**
      * Sids of the co-Owners.
      * Sids can include users and groups.  
-     * @deprecated Not implemented in current version
      */
-    Collection<String> coownersIds;
+    Set<String> coownersIds;
 
     /**
      * Constructor.
-     * @param primaryOwnerId userId of primary owner 
+     * @param primaryOwnerId userId of primary owner
+     * @deprecated Use constructor with co-owners specification
      */
     public OwnershipDescription(boolean ownershipEnabled, String primaryOwnerId) {
         this.ownershipEnabled = ownershipEnabled;
         this.primaryOwnerId = primaryOwnerId;
-        this.coownersIds = null;
+        this.coownersIds = new TreeSet<String>();
     }
 
     /**
@@ -73,7 +75,7 @@ public class OwnershipDescription {
     public OwnershipDescription(boolean ownershipEnabled, String primaryOwnerId, Collection<String> coownersIds) {
         this.ownershipEnabled = ownershipEnabled;
         this.primaryOwnerId = primaryOwnerId;
-        this.coownersIds = coownersIds;
+        this.coownersIds = new TreeSet<String>(coownersIds);
     }
 
     /**
@@ -101,11 +103,10 @@ public class OwnershipDescription {
     }
 
     /**
-     * Gets list of coowners
-     * @deprecated Not implemented in current version
+     * Gets list of coowners.
      * @return Collection of co-owners
      */
-    public Collection<String> getCoownersIds() {
+    public Set<String> getCoownersIds() {
         return coownersIds;
     }
     
@@ -136,9 +137,11 @@ public class OwnershipDescription {
      */
     public boolean isOwner(User user, boolean acceptCoowners)
     {
-        return user != null && user == getPrimaryOwner();
-                
-        //TODO: implement co-owners
+        if (isPrimaryOwner(user)) {
+            return true;
+        }
+        
+        return acceptCoowners ? coownersIds.contains(user.getId()) : false;
     }
     
     public boolean hasPrimaryOwner()
