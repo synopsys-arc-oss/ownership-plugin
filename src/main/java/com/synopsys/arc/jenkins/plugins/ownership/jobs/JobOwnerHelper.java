@@ -68,11 +68,8 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>>{
         
     @Override
     public OwnershipDescription getOwnershipDescription(Job<?, ?> job) {
-        JobOwnerJobProperty prop = getOwnerProperty(job);
-        
-        return prop != null
-                ? new OwnershipDescription(prop.ownershipIsEnabled, prop.getJobOwner())
-                : new OwnershipDescription(false, null);
+        JobOwnerJobProperty prop = getOwnerProperty(job);     
+        return (prop != null) ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
     }
 
     @Override

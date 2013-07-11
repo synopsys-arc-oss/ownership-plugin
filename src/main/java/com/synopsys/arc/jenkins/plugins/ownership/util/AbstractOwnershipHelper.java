@@ -69,7 +69,9 @@ public abstract class AbstractOwnershipHelper<TObjectType>
     @Override
     public final String getOwner(TObjectType item) {
         OwnershipDescription descr = getOwnershipDescription(item);
-        return (descr != null && descr.isOwnershipEnabled()) ? descr.getPrimaryOwnerId() : UserStringFormatter.UNKNOWN_USER_STRING;
+        return (descr != null && descr.isOwnershipEnabled()) 
+                ? UserStringFormatter.formatShort(descr.getPrimaryOwnerId())
+                : UserStringFormatter.UNKNOWN_USER_STRING;
     }    
     
     @Override

@@ -78,6 +78,26 @@ public class OwnershipDescription {
         this.coownersIds = new TreeSet<String>(coownersIds);
     }
 
+    @Override
+    public String toString() {
+        if (!ownershipEnabled) {
+            return "ownership:disabled";
+        }
+           
+        StringBuilder builder = new StringBuilder();
+        builder.append("owner=");
+        builder.append(primaryOwnerId);
+        if (!coownersIds.isEmpty()) {
+            builder.append(" co-owners:[");
+            for (String coownerId : coownersIds) {
+                builder.append(coownerId);
+                builder.append(' ');
+            }
+            builder.append(']');
+        }
+        return builder.toString();
+    }
+    
     /**
      * Check if ownership is enabled.
      * @return true if ownership is enabled
@@ -152,5 +172,14 @@ public class OwnershipDescription {
     public boolean isPrimaryOwner(User user)
     {
         return user != null && user == getPrimaryOwner();
+    }
+    
+    /**
+     * Check if ownership is enabled.
+     * @param descr Ownership description (can be null)
+     * @since 0.1
+     */
+    public static boolean isEnabled(OwnershipDescription descr) {
+        return descr != null && descr.ownershipEnabled;
     }
 }

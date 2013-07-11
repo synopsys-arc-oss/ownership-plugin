@@ -60,7 +60,7 @@ public class OwnerNodeProperty extends NodeProperty<Node>
     
     public OwnershipDescription getOwnership()
     {             
-        return ownership;
+        return (ownership!=null) ? ownership : OwnershipDescription.DISABLED_DESCR;
     }
 
     public Node getNode() {
@@ -141,9 +141,4 @@ public class OwnerNodeProperty extends NodeProperty<Node>
                 return true;
         }           
     }
-
-    @Override
-    protected final void setNode(Node node) {
-        super.setNode(node); //To change body of generated methods, choose Tools | Templates.
-    } 
 }

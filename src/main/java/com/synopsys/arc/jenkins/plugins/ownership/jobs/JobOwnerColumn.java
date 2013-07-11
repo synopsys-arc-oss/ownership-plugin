@@ -60,6 +60,5 @@ public class JobOwnerColumn extends ListViewColumn {
         public String getDisplayName() {
             return "Job Owner";
         }
-
     }
 }

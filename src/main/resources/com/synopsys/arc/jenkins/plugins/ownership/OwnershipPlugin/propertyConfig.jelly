@@ -41,17 +41,27 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     
-    <j:if test="${it != null}">
-        <p>Hello!</p>
+    <j:set var="_ownershipIsEnabled" value="${it != null and it.helper().getOwnershipDescription(it.getDescribedItem()).isOwnershipEnabled()}"/>
+    <p>Hello! it=${it}</p>
+    <p>Hello! Ownership enabled=${_ownershipIsEnabled}</p>
+    
+    <!--Prepare data-->
+    <j:if test="${_ownershipIsEnabled}">      
         <j:set var="_item" value="${it.getDescribedItem()}"/>   
         <j:set var="_userList" value="${it.helper().getPossibleOwners(it.getDescribedItem())}"/>   
+    </j:if>  
+    <j:if test="${!_ownershipIsEnabled}">
+        <j:invokeStatic var="_owner" method="getDefaultOwner"
+                        className="com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin"                    
+        />
     </j:if>
     
+    <!--Display selection list, set user as owner if it was disabled-->
     <f:optionalBlock name="${blockName}" title="${%Enable ownership}" checked="${instance!=null}"
             description="${%Enables ownership for current item}">
             <f:entry title="${%Primary Owner}" description="${%Primary responsible person}">
                 <!--Already instantinated ownership-->
-                <j:if test="${it != null}">
+                <j:if test="${_ownershipIsEnabled}">
                     <j:set var="_item" value="${it.getDescribedItem()}"/>   
                     <j:set var="_userList" value="${it.helper().getPossibleOwners(it.getDescribedItem())}"/>   
                     <select name="${blockName}.primaryOwner" class="setting-input">
@@ -63,20 +73,17 @@
                     </select>    
                 </j:if>
                 <!--Non-instatinated-->
-                <j:if test="${it == null}">
-                    <j:invokeStatic var="_owner" 
-                                    className="com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin"
-                                    method="getDefaultOwner"
-                    />
+                <j:if test="${!_ownershipIsEnabled}">                 
                     <f:textbox field="${blockName}.primaryOwner" id="primaryOwner" value="${_owner}"/>
                 </j:if>
             </f:entry>
-            <f:block>
-                <!--TODO: fix-->
+            <!--TODO: enable in 0.2-->
+            <!--
+            <f:block>              
                 <f:hetero-list name="coOwners" hasHeader="true"
                   descriptors="${allJobFilters}"
                   items="${it.helper.getCoOwners()}"
                   addCaption="${%Add Co-owner}" />
-            </f:block> 	
+            </f:block> 	-->
     </f:optionalBlock>
 </j:jelly>

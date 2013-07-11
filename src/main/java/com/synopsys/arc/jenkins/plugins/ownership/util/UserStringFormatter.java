@@ -42,4 +42,8 @@ public class UserStringFormatter {
     {
         return user !=null ? user.getFullName()+" ("+user.getId()+")" : UNKNOWN_USER_STRING;
     }
+    
+    public static String formatShort(String userId) {
+        return (userId != null && !userId.isEmpty()) ? userId : UNKNOWN_USER_STRING;
+    } 
 }

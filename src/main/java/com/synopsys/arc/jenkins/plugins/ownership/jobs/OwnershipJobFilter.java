@@ -23,6 +23,7 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.UserComparator;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserWrapper;
 import hudson.Extension;
@@ -86,8 +87,8 @@ public class OwnershipJobFilter extends ViewJobFilter {
             JobProperty prop = project.getProperty(JobOwnerJobProperty.class);
               
             if (prop != null) {
-                String jobOwnerId = ((JobOwnerJobProperty)prop).getJobOwner();
-                if (wuserWrapper.meetsMacro(jobOwnerId)) {
+                OwnershipDescription ownership = ((JobOwnerJobProperty)prop).getOwnership();
+                if (ownership.isOwnershipEnabled() && wuserWrapper.meetsMacro(ownership.getPrimaryOwnerId())) {
                     newList.add(item);
                 }
             }
