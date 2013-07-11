@@ -41,11 +41,8 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     
-    <j:set var="_ownershipIsEnabled" value="${it != null and it.helper().getOwnershipDescription(it.getDescribedItem()).isOwnershipEnabled()}"/>
-    <p>Hello! it=${it}</p>
-    <p>Hello! Ownership enabled=${_ownershipIsEnabled}</p>
-    
     <!--Prepare data-->
+    <j:set var="_ownershipIsEnabled" value="${it != null and it.helper().getOwnershipDescription(it.getDescribedItem()).isOwnershipEnabled()}"/>
     <j:if test="${_ownershipIsEnabled}">      
         <j:set var="_item" value="${it.getDescribedItem()}"/>   
         <j:set var="_userList" value="${it.helper().getPossibleOwners(it.getDescribedItem())}"/>   
