@@ -108,7 +108,8 @@ public class OwnershipJobFilter extends ViewJobFilter {
         @Override
         public ViewJobFilter newInstance(StaplerRequest req, JSONObject formData) throws FormException {
                 String jobOwner = formData.getString( "jobOwner" );
-                boolean acceptCoowners = formData.getBoolean("acceptsCoowners" );
+                //FIXME: Enable support of co-owners
+                boolean acceptCoowners = false; //formData.getBoolean("acceptsCoowners" );
                 OwnershipJobFilter instance = new OwnershipJobFilter( jobOwner, acceptCoowners );
                 return instance;
         } 

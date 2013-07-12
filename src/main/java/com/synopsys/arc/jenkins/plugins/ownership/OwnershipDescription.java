@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 import net.sf.json.JSONObject;
-import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Contains description of item's ownership. 
