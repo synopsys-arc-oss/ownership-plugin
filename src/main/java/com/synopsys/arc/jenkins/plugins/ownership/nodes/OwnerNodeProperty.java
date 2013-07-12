@@ -47,20 +47,25 @@ import org.kohsuke.stapler.StaplerRequest;
 public class OwnerNodeProperty extends NodeProperty<Node> 
     implements IOwnershipItem<NodeProperty> {
 
-    OwnershipDescription ownership;
-    String nodeName; 
+    private OwnershipDescription ownership;
+    private String nodeName; 
     
     @DataBoundConstructor
+    public OwnerNodeProperty(NodeOwnerWrapper slaveOwnership) {
+        this(null, (slaveOwnership != null) ? slaveOwnership.getDescription() : null);
+    }
+    
     public OwnerNodeProperty(Node node, OwnershipDescription ownership) {
          setNode(node);
          //FIXME: remove hack with owner
          this.nodeName = (node != null) ? node.getNodeName() : null;
-         this.ownership = ownership;
+         this.ownership = (ownership != null) ? ownership : OwnershipDescription.DISABLED_DESCR;
     }
+    
     
     public OwnershipDescription getOwnership()
     {             
-        return (ownership!=null) ? ownership : OwnershipDescription.DISABLED_DESCR;
+        return ownership;
     }
 
     public Node getNode() {
@@ -72,7 +77,7 @@ public class OwnerNodeProperty extends NodeProperty<Node>
 
     @Override
     public NodePropertyDescriptor getDescriptor() {
-        return super.getDescriptor(); //To change body of generated methods, choose Tools | Templates.
+        return super.getDescriptor(); 
     }
             
     @Override
@@ -83,7 +88,7 @@ public class OwnerNodeProperty extends NodeProperty<Node>
 
     @Override
     public NodeProperty<?> reconfigure(StaplerRequest req, JSONObject form) throws Descriptor.FormException {
-        return super.reconfigure(req, form); //To change body of generated methods, choose Tools | Templates.
+        return super.reconfigure(req, form); 
     }
      
     @Override

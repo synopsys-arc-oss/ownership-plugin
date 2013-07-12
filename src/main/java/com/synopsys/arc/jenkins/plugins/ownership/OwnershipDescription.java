@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 import net.sf.json.JSONObject;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Contains description of item's ownership. 
@@ -69,6 +70,7 @@ public class OwnershipDescription {
 
     /**
      * Constructor.
+     * Class is being used as DataBound in "OwnerNodeProperty".
      * @param primaryOwnerId userId of primary owner 
      * @param coownersIds userIds of secondary owners
      */
