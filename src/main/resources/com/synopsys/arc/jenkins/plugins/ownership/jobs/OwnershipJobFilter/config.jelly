@@ -33,9 +33,7 @@
             </j:forEach>
         </select>    
     </f:entry> 
-    <!-- TODO: Enable in 0.2
     <f:entry>
-        <f:checkbox name="acceptsCoowners" field="acceptsCoowners"/> ${%Accept co-owners. Unsupported in phase1 }
+        <f:checkbox name="acceptsCoowners" field="acceptsCoowners"/> ${%Accept co-owners}
     </f:entry> 
-    -->
 </j:jelly>
