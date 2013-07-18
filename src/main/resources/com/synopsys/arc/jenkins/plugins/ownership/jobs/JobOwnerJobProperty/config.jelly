@@ -25,19 +25,12 @@
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
         <j:set var="blockName" value="jobOwnership"/>
-        <st:include page="propertyConfig.jelly" class="com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin" 
+        <f:optionalBlock name="${blockName}" 
+                         title="${%Enable ownership}" 
+                         checked="${instance!=null}"
+                         description="${%Enables ownership for current item}"> 
+            <st:include page="propertyConfig.jelly" 
+                    class="com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin" 
                     optional="false" it="${instance}"/>   
-    
-        <!--
-	<f:optionalBlock name="jobOwner" title="${%Set job owner}" checked="${instance!=null}">
-            
-            <f:entry title="${%Job Owner}">
-                <select name="jobowner.jobOwner" class="setting-input">
-                    <j:forEach var="user" items="${instance.getUsers()}">
-                         <f:option value="${user.getId()}" selected="${ instance.isSelected(user) == true }">${instance.getDisplayName(user)}</f:option>
-                    </j:forEach>
-                </select>    
-            </f:entry> 	
-	</f:optionalBlock> -->
-
+        </f:optionalBlock>
 </j:jelly>

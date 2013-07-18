@@ -26,6 +26,7 @@ package com.synopsys.arc.jenkins.plugins.ownership;
 import hudson.Util;
 import hudson.model.Descriptor;
 import hudson.model.User;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
@@ -37,7 +38,7 @@ import net.sf.json.JSONObject;
  * @author Oleg Nenashev <nenashev@synopsys.com>
  * @since 0.0.3
  */
-public class OwnershipDescription {
+public class OwnershipDescription implements Serializable {
     /**
      * Disabled description, which means that ownership is disabled
      */
@@ -134,43 +135,37 @@ public class OwnershipDescription {
         return coownersIds;
     }
     
-    public static OwnershipDescription Parse(JSONObject formData, String blockName)
+    /**
+     * Parse OwershipDescription
+     * @param formData Object with data
+     * @return OwnershipDescription 
+     * @throws hudson.model.Descriptor.FormException Parsing error
+     */
+    public static OwnershipDescription Parse(JSONObject debugJSON)
             throws Descriptor.FormException
     {
-        Object blockObject = formData.get( blockName );
-        boolean ownershipIsEnabled = false;
-        String primaryOwner = null;
-        Set<String> coOwnersSet = null;
-        
-        if( blockObject != null ) {
-            ownershipIsEnabled = true;          
-            JSONObject debugJSON = (JSONObject)blockObject;
+        // Read primary owner
+        String primaryOwner = debugJSON.getString( "primaryOwner" );
 
-            // Read primary owner
-            primaryOwner = debugJSON.getString( "primaryOwner" );
-            
-            // Read coowners
-            coOwnersSet = new TreeSet<String>();
-            if (debugJSON.has("coOwners")) {
-                JSONObject coOwners = debugJSON.optJSONObject("coOwners");
-                if (coOwners == null) {         
-                    for (Object obj : debugJSON.getJSONArray("coOwners")) {
-                       addUser(coOwnersSet, (JSONObject)obj);
-                    }
-                } else {
-                    addUser(coOwnersSet, coOwners);
+        // Read coowners
+        Set<String> coOwnersSet = new TreeSet<String>();
+        if (debugJSON.has("coOwners")) {
+            JSONObject coOwners = debugJSON.optJSONObject("coOwners");
+            if (coOwners == null) {         
+                for (Object obj : debugJSON.getJSONArray("coOwners")) {
+                   addUser(coOwnersSet, (JSONObject)obj);
                 }
+            } else {
+                addUser(coOwnersSet, coOwners);
             }
-        }
-        
-        return new OwnershipDescription(ownershipIsEnabled, primaryOwner, coOwnersSet);
+        }   
+        return new OwnershipDescription(true, primaryOwner, coOwnersSet);
     }
     
     private static void addUser(Set<String> target, JSONObject userObj) throws Descriptor.FormException {
         String userId = Util.fixEmptyAndTrim(((JSONObject)userObj).getString("coOwner"));
         
         //TODO: validate user string
-        
         if (userId != null) {
             target.add(userId);
         }
@@ -183,8 +178,7 @@ public class OwnershipDescription {
      * @param acceptCoowners Check if user belongs to coowners
      * @return true if User belongs to primary owners (and/or coowners)
      */
-    public boolean isOwner(User user, boolean acceptCoowners)
-    {
+    public boolean isOwner(User user, boolean acceptCoowners) {
         if (isPrimaryOwner(user)) {
             return true;
         }
@@ -192,13 +186,11 @@ public class OwnershipDescription {
         return acceptCoowners ? coownersIds.contains(user.getId()) : false;
     }
     
-    public boolean hasPrimaryOwner()
-    {
+    public boolean hasPrimaryOwner() {
         return ownershipEnabled && getPrimaryOwner() != null;
     }
     
-    public boolean isPrimaryOwner(User user)
-    {
+    public boolean isPrimaryOwner(User user) {
         return user != null && user == getPrimaryOwner();
     }
     
@@ -209,12 +201,5 @@ public class OwnershipDescription {
      */
     public static boolean isEnabled(OwnershipDescription descr) {
         return descr != null && descr.ownershipEnabled;
-    }
-    
-    /**
-     * 
-     */
-    static void check() {
-        
-    }
+    } 
 }

@@ -102,7 +102,7 @@ public class OwnerNodeProperty extends NodeProperty<Node>
         @Override
         public NodeProperty<?> newInstance( StaplerRequest req, JSONObject formData ) throws Descriptor.FormException {               
             Node owner = getNodePropertyOwner(req);
-            OwnershipDescription descr = OwnershipDescription.Parse(formData, "slaveOwnership");
+            OwnershipDescription descr = OwnershipDescription.Parse(formData);
             return descr.isOwnershipEnabled() ? new OwnerNodeProperty(owner, descr) : null;       
         }
          
@@ -117,20 +117,16 @@ public class OwnerNodeProperty extends NodeProperty<Node>
          */
         private static Node getNodePropertyOwner(StaplerRequest req)
         {                
-             List<Ancestor> ancestors = req.getAncestors();
-            if (ancestors.isEmpty())
-            {
+            List<Ancestor> ancestors = req.getAncestors();
+            if (ancestors.isEmpty()) {
                 assert false : "StaplerRequest is empty";
                 return null;
             }
             
             Object node = ancestors.get(ancestors.size()-1).getObject();
-            if (SlaveComputer.class.isAssignableFrom(node.getClass()))
-            {
+            if (SlaveComputer.class.isAssignableFrom(node.getClass())) {
                 return ((SlaveComputer)node).getNode();
-            }
-            else
-            {
+            } else {
                 assert false : "StaplerRequest should have Node ancestor";
                 return null;
             }
@@ -138,7 +134,7 @@ public class OwnerNodeProperty extends NodeProperty<Node>
         
         @Override
         public String getDisplayName() {
-                return "Slave Owner";
+                return "Slave Ownership";
         }
 
         @Override
