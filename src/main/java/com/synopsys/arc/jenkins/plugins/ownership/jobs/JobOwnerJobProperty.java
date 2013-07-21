@@ -64,7 +64,7 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
       
     public Collection<User> getUsers()
     {     
-        // Sort users
+        //TODO: Sort users
         IUserFilter filter = new AccessRightsFilter(owner, Job.CONFIGURE);
         Collection<User> res = UserCollectionFilter.filterUsers(User.getAll(), true, filter);
         return res;
@@ -79,14 +79,18 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
     public Job<?, ?> getDescribedItem() {
         return owner;   
     }
-
+ 
     @Extension
     public static class DescriptorImpl extends JobPropertyDescriptor {
 
         @Override
         public JobProperty<?> newInstance( StaplerRequest req, JSONObject formData ) throws FormException {
-            OwnershipDescription descr = OwnershipDescription.Parse(formData, "jobOwnership");
-            return descr.isOwnershipEnabled() ? new JobOwnerJobProperty(descr) : null;  
+            if (formData.containsKey("jobOwnership")) {
+                JSONObject ownership = (JSONObject)formData.getJSONObject("jobOwnership");
+                OwnershipDescription descr = OwnershipDescription.Parse(ownership);
+                return new JobOwnerJobProperty(descr);
+            }
+            return null;  
         }
 
         @Override
@@ -105,6 +109,7 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
             return ownership.toString();
     }
 
+   //TODO: Restore, when action is ready
    // Ownership action is disabled
    /* @Override
     public Collection<? extends Action> getJobActions(Job<?, ?> job) {
