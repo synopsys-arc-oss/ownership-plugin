@@ -24,9 +24,16 @@
 package com.synopsys.arc.jenkins.plugins.ownership;
 
 import hudson.Plugin;
+import hudson.model.Computer;
 import hudson.model.Descriptor;
 import hudson.model.Hudson;
+import hudson.model.Item;
+import hudson.model.Job;
 import hudson.model.User;
+import hudson.security.Permission;
+import hudson.security.PermissionGroup;
+import hudson.security.PermissionScope;
+import hudson.tasks.MailAddressResolver;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,16 +49,12 @@ import org.kohsuke.stapler.StaplerRequest;
  */
 public class OwnershipPlugin extends Plugin {
     private static String DEFAULT_EMAIL_SUFFIX="@unknown.unknown";
-    
-    /**
-     * @deprecated Isn't used in current version
-     */
-    private boolean enableSlaveOwnership = false;
-    /**
-     * @deprecated Isn't used in current version
-     */
-    private boolean enableJobOwnership = true;
-    
+    //TODO: Restore
+    /**private static final PermissionGroup PERMISSIONS = new PermissionGroup(OwnershipPlugin.class, Messages._OwnershipPlugin_ManagePermissions_Title());    
+    public static final Permission MANAGE_ITEMS_OWNERSHIP = new Permission(Job.PERMISSIONS, "Jobs", Messages._OwnershipPlugin_ManagePermissions_JobDescription(), Permission.CONFIGURE, PermissionScope.ITEM);
+    public static final Permission MANAGE_SLAVES_OWNERSHIP = new Permission(Computer.PERMISSIONS, "Slaves", Messages._OwnershipPlugin_ManagePermissions_SlaveDescription(), Permission.CONFIGURE, PermissionScope.COMPUTER);
+       */ 
+    MailAddressResolver res;
     /**
      * E-mail suffix for mailto:// fields
      * @since 0.0.4
@@ -65,8 +68,7 @@ public class OwnershipPlugin extends Plugin {
     
     private List<OwnershipAction> pluginActions = new ArrayList<OwnershipAction>();
     
-    public static OwnershipPlugin Instance()
-    {
+    public static OwnershipPlugin Instance() {
         Plugin plugin = Jenkins.getInstance().getPlugin(OwnershipPlugin.class);
         return plugin != null ? (OwnershipPlugin)plugin : null;
     }
@@ -76,6 +78,13 @@ public class OwnershipPlugin extends Plugin {
 	super.load();
         ReinitActionsList();
 	Hudson.getInstance().getActions().addAll(pluginActions);
+        //TODO: Restore
+        /*if (!MANAGE_ITEMS_OWNERSHIP.getEnabled()) {
+            MANAGE_ITEMS_OWNERSHIP.setEnabled(true);
+        }
+        if (!MANAGE_SLAVES_OWNERSHIP.getEnabled()) {
+            MANAGE_SLAVES_OWNERSHIP.setEnabled(true);
+        }*/
     }
     
     @Override 
@@ -83,8 +92,6 @@ public class OwnershipPlugin extends Plugin {
 	    throws IOException, ServletException, Descriptor.FormException {
 	Hudson.getInstance().getActions().removeAll(pluginActions);
         
-        enableSlaveOwnership = false;
-        enableJobOwnership = true;             
         ReinitActionsList();
         emailSuffix = formData.getString("emailSuffix");
         	
