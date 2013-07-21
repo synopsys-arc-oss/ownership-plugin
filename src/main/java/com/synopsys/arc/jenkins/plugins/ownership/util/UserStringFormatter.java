@@ -23,8 +23,8 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.util;
 
-import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import hudson.model.User;
+import hudson.tasks.MailAddressResolver;
 
 /**
  * Helper for User string formatting.
@@ -63,12 +63,6 @@ public class UserStringFormatter {
     }
     
     public static String formatEmail(User user) {
-        OwnershipPlugin plugin = OwnershipPlugin.Instance();
-        if (user == null || plugin == null)
-        {
-            return null;
-        }          
-        //FIXME: replace by E-mail resolver (https://issues.jenkins-ci.org/browse/JENKINS-18745)
-        return user.getId() + plugin.getEmailSuffix();
+        return user != null ? MailAddressResolver.resolve(user) : null;
     }
 }

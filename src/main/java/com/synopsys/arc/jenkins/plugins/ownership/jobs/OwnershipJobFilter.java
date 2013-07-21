@@ -23,6 +23,7 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
+import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.UserComparator;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserWrapper;
@@ -75,10 +76,8 @@ public class OwnershipJobFilter extends ViewJobFilter {
     }
     
     @Override
-    public List<TopLevelItem> filter(List<TopLevelItem> added, List<TopLevelItem> all, View filteringView) {
-              
-        ArrayList<TopLevelItem> newList = new ArrayList<TopLevelItem>();
-        
+    public List<TopLevelItem> filter(List<TopLevelItem> added, List<TopLevelItem> all, View filteringView) {        
+        ArrayList<TopLevelItem> newList = new ArrayList<TopLevelItem>();     
         UserWrapper wuserWrapper = new UserWrapper(ownerId);
             
         for(TopLevelItem item : added) {
@@ -119,7 +118,7 @@ public class OwnershipJobFilter extends ViewJobFilter {
 
         @Override
         public String getDisplayName() {
-            return "Ownership filter";
+            return Messages.JobOwnership_Filter_DisplayName();
         }
    
         @Override
@@ -135,8 +134,7 @@ public class OwnershipJobFilter extends ViewJobFilter {
     * Get list of users for the selector.
     * @return Collection of all registered users 
     */
-    public static Collection<UserWrapper> getAvailableUsers()
-    {                    
+    public static Collection<UserWrapper> getAvailableUsers() {                    
         // Sort users
         UserComparator comparator = new UserComparator();
         LinkedList<User> userList = new LinkedList<User>(User.getAll());                     
@@ -145,8 +143,7 @@ public class OwnershipJobFilter extends ViewJobFilter {
         // Prepare new list
         Collection<UserWrapper> res = new ArrayList<UserWrapper>(userList.size()+1);
         res.add(new UserWrapper(MACRO_ME));
-        for (User user : userList)
-        {
+        for (User user : userList) {
             res.add(new UserWrapper(user));
         }
         return res;

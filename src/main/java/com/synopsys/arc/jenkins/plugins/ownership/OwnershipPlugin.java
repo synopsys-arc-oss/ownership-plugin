@@ -27,14 +27,8 @@ import hudson.Plugin;
 import hudson.Util;
 import hudson.model.Descriptor;
 import hudson.model.Hudson;
-import hudson.model.Item;
-import hudson.model.Job;
 import hudson.model.User;
-import hudson.security.Permission;
 import hudson.util.FormValidation;
-import hudson.security.PermissionGroup;
-import hudson.security.PermissionScope;
-import hudson.tasks.MailAddressResolver;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,24 +44,12 @@ import org.kohsuke.stapler.StaplerRequest;
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
 public class OwnershipPlugin extends Plugin {
-    private static String DEFAULT_EMAIL_SUFFIX="@unknown.unknown";
     //TODO: Restore
     /**private static final PermissionGroup PERMISSIONS = new PermissionGroup(OwnershipPlugin.class, Messages._OwnershipPlugin_ManagePermissions_Title());    
     public static final Permission MANAGE_ITEMS_OWNERSHIP = new Permission(Job.PERMISSIONS, "Jobs", Messages._OwnershipPlugin_ManagePermissions_JobDescription(), Permission.CONFIGURE, PermissionScope.ITEM);
     public static final Permission MANAGE_SLAVES_OWNERSHIP = new Permission(Computer.PERMISSIONS, "Slaves", Messages._OwnershipPlugin_ManagePermissions_SlaveDescription(), Permission.CONFIGURE, PermissionScope.COMPUTER);
        */ 
-    MailAddressResolver res;
-    /**
-     * E-mail suffix for mailto:// fields
-     * @since 0.0.4
-     */
-    private String emailSuffix = DEFAULT_EMAIL_SUFFIX;
-    
-    public String getEmailSuffix()
-    {
-        return emailSuffix;
-    }
-    
+     
     private List<OwnershipAction> pluginActions = new ArrayList<OwnershipAction>();
     
     public static OwnershipPlugin Instance() {
@@ -95,15 +77,11 @@ public class OwnershipPlugin extends Plugin {
 	Hudson.getInstance().getActions().removeAll(pluginActions);
         
         ReinitActionsList();
-        emailSuffix = formData.getString("emailSuffix");
-        	
 	save();
         Hudson.getInstance().getActions().addAll(pluginActions);
     }
    
-    
-    public void ReinitActionsList()
-    {
+    public void ReinitActionsList() {
         pluginActions.clear();
     }
     
@@ -122,7 +100,7 @@ public class OwnershipPlugin extends Plugin {
         if (usr == null) {
             return FormValidation.warning("User " + userId + " is not registered in Jenkins");
         }
-        
+       
         return FormValidation.ok();
     }
 }

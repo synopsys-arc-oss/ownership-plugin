@@ -54,8 +54,7 @@
     </j:if>
     
     <j:set var="_item" value="${it.getDescribedItem()}"/>          
-    <f:entry title="${%Primary Owner}" description="${%Primary responsible user}"
-                     help="/plugin/ownership/help/primaryOwner.html">
+    <f:entry title="${%Primary Owner}" help="/plugin/ownership/help/primaryOwner.html">
         <!--Already instantinated ownership-->
         <j:if test="${_ownershipIsEnabled}">
             <j:set var="_userList" value="${it.helper().getPossibleOwners(it.getDescribedItem())}"/>   
@@ -65,12 +64,13 @@
                         ${it.helper().getDisplayName(user)}
                     </f:option>
                 </j:forEach>
-            </select>    
+            </select> 
+            <!--<f:description>${%Primary responsible user}</f:description> --> 
         </j:if>
         <!--Non-instatinated-->
         <j:if test="${!_ownershipIsEnabled}">                 
-            <f:textbox field="${blockName}.primaryOwner" id="primaryOwner" value="${_owner}"/>
-            <f:description>Owner will be set to current user. You will be able to change owner after "Save"</f:description>                 
+            <f:readOnlyTextbox field="${blockName}.primaryOwner" id="primaryOwner" value="${_owner}"/>
+           <!-- <f:description>${%Ownership will be assigned to the current user. You will be able to change owner after "Save"}</f:description>   -->              
         </j:if>
     </f:entry>
     <f:entry title="Co-owners" help="/plugin/ownership/help/coOwner.html"/>

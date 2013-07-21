@@ -47,21 +47,18 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>>{
      * @param job Job
      * @return JobOwnerJobProperty or null
      */
-    private static JobOwnerJobProperty getOwnerProperty(Job<?,?> job)
-    {
+    private static JobOwnerJobProperty getOwnerProperty(Job<?,?> job) {
         AbstractProject project = (AbstractProject) job;
         JobProperty prop = project.getProperty(JobOwnerJobProperty.class);
         return prop != null ? (JobOwnerJobProperty)prop : null;
     }
        
-    public static boolean isUserExists(User user)
-    {
+    public static boolean isUserExists(User user) {
         assert (user != null);
         return isUserExists(user.getId());
     }
     
-    public static boolean isUserExists(String userIdOrFullName)
-    {
+    public static boolean isUserExists(String userIdOrFullName) {
         assert (userIdOrFullName != null);
         return User.get(userIdOrFullName, false, null) != null;
     }

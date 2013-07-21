@@ -25,17 +25,21 @@ package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipItem;
+import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.AccessRightsFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.IUserFilter;
-import hudson.model.*;
 import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 import hudson.Extension;
+import hudson.model.Job;
+import hudson.model.JobProperty;
+import hudson.model.JobPropertyDescriptor;
+import hudson.model.User;
 import java.util.Collection;
 
 /**
@@ -95,13 +99,13 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
 
         @Override
         public String getDisplayName() {
-                return "Job Owner";
+            return Messages.JobOwnership_Config_SectionTitle();
         }
 
         @Override
-        public boolean isApplicable( Class<? extends Job> jobType ) {
-                return true;
-        }           
+        public boolean isApplicable(Class<? extends Job> jobType) {
+            return true;
+        }        
     }
 
     @Override

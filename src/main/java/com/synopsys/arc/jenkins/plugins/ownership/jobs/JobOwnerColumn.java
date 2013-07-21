@@ -23,6 +23,7 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
+import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import org.kohsuke.stapler.DataBoundConstructor;
 import hudson.Extension;
 import hudson.model.Job;
@@ -58,7 +59,7 @@ public class JobOwnerColumn extends ListViewColumn {
 
         @Override
         public String getDisplayName() {
-            return "Job Owner";
+            return Messages.JobOwnership_Column_Title();
         }
     }
 }

@@ -25,6 +25,7 @@ package com.synopsys.arc.jenkins.plugins.ownership.nodes;
 
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipItem;
+import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import hudson.Extension;
 import hudson.model.Descriptor;
@@ -134,7 +135,7 @@ public class OwnerNodeProperty extends NodeProperty<Node>
         
         @Override
         public String getDisplayName() {
-                return "Slave Ownership";
+                return Messages.SlaveOwnership_Config_SectionTitle();
         }
 
         @Override
