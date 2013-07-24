@@ -24,6 +24,7 @@
 package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
 import com.synopsys.arc.jenkins.plugins.ownership.ItemOwnershipAction;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import hudson.model.Job;
 
 /**
@@ -53,4 +54,11 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     public String getDisplayName() {
         return "Job ownership";
     }
+
+    @Override
+    public OwnershipDescription getOwnership() {
+        return helper().getOwnershipDescription(getDescribedItem());
+    }
+    
+    
 }

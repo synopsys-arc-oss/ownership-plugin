@@ -24,6 +24,7 @@
 package com.synopsys.arc.jenkins.plugins.ownership.security.rolestrategy;
 
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
+import static com.synopsys.arc.jenkins.plugins.ownership.security.rolestrategy.AbstractOwnershipRoleMacro.hasPermission;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.Macro;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.RoleType;
 import hudson.Extension;
@@ -32,28 +33,25 @@ import hudson.security.AccessControlled;
 import hudson.security.Permission;
 
 /**
- * Provides owner RoleMacro for the role-based strategy.
+ * Provides owner RoleMacro for the role-based strategy (w/o Sid check).
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  * @since 0.2
  */
 @Extension
-public class OwnerRoleMacro extends AbstractOwnershipRoleMacro {
-
+public class OwnerRoleMacroNoSid extends AbstractOwnershipRoleMacro {
     @Override
     public String getName() {
-        return Messages.Security_RoleStrategy_OwnerRoleMacro_Name(); 
+        return Messages.Security_RoleStrategy_OwnerRoleMacro_Name()+NO_SID_SUFFIX; 
     }
-
-
+    
     @Override
     public String getDescription() {
-        return Messages.Security_RoleStrategy_OwnerRoleMacro_Description();
+        return Messages.Security_RoleStrategy_OwnerRoleMacro_Description()+Messages.Security_RoleStrategy_IgnoreSidDescriptionSuffix();
     }
 
     @Override
     public boolean hasPermission(String sid, Permission p, RoleType type, AccessControlled item, Macro macro) {    
-        User user = User.get(sid, false, null);              
+        User user = User.current();              
         return hasPermission(user, type, item, macro, false);
     }
-    
 }
