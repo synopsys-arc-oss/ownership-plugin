@@ -37,7 +37,6 @@ import hudson.model.JobProperty;
 import hudson.model.Node;
 import hudson.model.User;
 import hudson.security.AccessControlled;
-import hudson.slaves.NodePropertyDescriptor;
 
 /**
  *
@@ -47,7 +46,7 @@ abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
     public static final String NO_SID_SUFFIX="NoSid";
     
     @Override
-    public final boolean IsApplicable(RoleType roleType) {
+    public boolean IsApplicable(RoleType roleType) {
         switch (roleType) {
             case Project:
                 return true;
