@@ -24,6 +24,7 @@
 package com.synopsys.arc.jenkins.plugins.ownership.security.rolestrategy;
 
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipItem;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty;
 import com.synopsys.arc.jenkins.plugins.ownership.nodes.OwnerNodeProperty;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.Macro;
@@ -57,23 +58,16 @@ abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
         }
     }
     
-    public static boolean hasPermission(User user, RoleType type, AccessControlled item, Macro macro, boolean acceptCoowners) {
-        //TODO: implement
-        if (user == null) {
-            return false;
-        }
-        
-        //FIXME: 
+    public static OwnershipDescription getOwnership(RoleType type, AccessControlled item) {
         IOwnershipItem ownership = null;
         switch(type) {
             case Project:
                 if (Job.class.isAssignableFrom(item.getClass())) { 
                     Job prj = (Job)item;
                     JobProperty prop = prj.getProperty(JobOwnerJobProperty.class);
-                    if (prop == null) {
-                        return false;
-                    }    
-                    ownership = ((JobOwnerJobProperty)prop);
+                    if (prop != null) {
+                        ownership = ((JobOwnerJobProperty)prop);
+                    }                 
                 }
                 break;
             case Slave:
@@ -86,9 +80,16 @@ abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
                 }
                 break;
             default:
-                return false;
+                //do nothing
         }
-        
-        return ownership != null ? ownership.getOwnership().isOwner(user, acceptCoowners) : false;
+        return ownership!=null ? ownership.getOwnership() : OwnershipDescription.DISABLED_DESCR;
+    }
+    
+    public static boolean hasPermission(User user, RoleType type, AccessControlled item, Macro macro, boolean acceptCoowners) {
+        //TODO: implement
+        if (user == null) {
+            return false;
+        }       
+        return getOwnership(type, item).isOwner(user, acceptCoowners);
     }
 }
