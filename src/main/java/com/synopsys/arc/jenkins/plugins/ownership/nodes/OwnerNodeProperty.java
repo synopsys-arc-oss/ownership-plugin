@@ -141,6 +141,6 @@ public class OwnerNodeProperty extends NodeProperty<Node>
         @Override
         public boolean isApplicable( Class<? extends Node> Type ) {
                 return true;
-        }           
+        }         
     }
 }
