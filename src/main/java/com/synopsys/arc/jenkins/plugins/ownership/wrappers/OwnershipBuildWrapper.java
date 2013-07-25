@@ -70,7 +70,7 @@ public class OwnershipBuildWrapper extends BuildWrapper {
         if (injectNodeOwnership) {
             OwnerNodeProperty prop = build.getBuiltOn().getNodeProperties().get(OwnerNodeProperty.class);
             OwnershipDescription descr = prop!=null ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
-            getVariables(descr, vars, "SLAVE");
+            getVariables(descr, vars, "NODE");
         }
         
         // Log items
@@ -118,9 +118,7 @@ public class OwnershipBuildWrapper extends BuildWrapper {
     public boolean isInjectNodeOwnership() {
         return injectNodeOwnership;
     }
-    
-    
-     
+        
     @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 

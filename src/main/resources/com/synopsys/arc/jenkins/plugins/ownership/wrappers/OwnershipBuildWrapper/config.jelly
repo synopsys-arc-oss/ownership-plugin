@@ -28,7 +28,7 @@
             <f:entry title="Job Ownership" field="injectJobOwnership">
                 <f:checkbox/>
             </f:entry>
-            <f:entry title="Slave Ownership" field="injectNodeOwnership">
+            <f:entry title="Node Ownership" field="injectNodeOwnership">
                 <f:checkbox/>
             </f:entry>
         </table>   
