@@ -123,22 +123,14 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
     public String toString() {
             return ownership.toString();
     }
-
-   //TODO: Restore, when action is ready
-   // Ownership action is disabled
-    /*@Override
-    public Collection<? extends Action> getJobActions(Job<?, ?> job) {
-     /*   Collection<OwnershipAction> col = new LinkedList<OwnershipAction>();    
-        if (getOwnership().isOwnershipEnabled()) {
-            col.add(new JobOwnerJobAction(job));
-        }
-        return col; 
-    }*/
     
     public void doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
         JSONObject formData = req.getSubmittedForm();
         JSONObject jsonOwnership = (JSONObject) formData.getJSONObject("owners");
-        OwnershipDescription descr = OwnershipDescription.Parse(jsonOwnership);
+        setOwnershipDescription(OwnershipDescription.Parse(jsonOwnership));
+    }
+    
+    public void setOwnershipDescription(OwnershipDescription descr) throws IOException {
         ownership = descr;
         owner.save();
     }

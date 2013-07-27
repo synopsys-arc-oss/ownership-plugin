@@ -28,5 +28,8 @@
         <f:checkbox checked="${it.requiresConfigureRights}"/>
         <f:description>If checked, only users with Configure rights will be able to become owners.</f:description>
     </f:entry>
+    <f:entry title="${%Setup after creation}" field="assignOnCreate">
+        <f:checkbox/>
+    </f:entry>
   </f:section>
 </j:jelly>

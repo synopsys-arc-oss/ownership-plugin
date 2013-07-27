@@ -33,6 +33,7 @@ import hudson.security.Permission;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.ServletException;
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -79,12 +80,11 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
       
     public void doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
         Hudson.getInstance().checkPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
-        JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(getDescribedItem());
-        if (prop == null) {
-            prop = new JobOwnerJobProperty(OwnershipDescription.DISABLED_DESCR);
-            getDescribedItem().addProperty(prop);
-        }
-        prop.doOwnersSubmit(req, rsp);
+        
+        JSONObject jsonOwnership = (JSONObject) req.getSubmittedForm().getJSONObject("owners");
+        OwnershipDescription descr = OwnershipDescription.Parse(jsonOwnership);
+        JobOwnerHelper.setOwnership(getDescribedItem(), descr);
+        
         rsp.sendRedirect(".");
     }
 }

@@ -56,6 +56,7 @@ public class OwnershipPlugin extends Plugin {
     public static final Permission MANAGE_SLAVES_OWNERSHIP = new Permission(Computer.PERMISSIONS, "Nodes", Messages._OwnershipPlugin_ManagePermissions_SlaveDescription(), Permission.CONFIGURE, PermissionScope.COMPUTER);
      
     private boolean requiresConfigureRights;
+    private boolean assignOnCreate;
     private List<OwnershipAction> pluginActions = new ArrayList<OwnershipAction>();
     
     public static OwnershipPlugin Instance() {
@@ -73,12 +74,17 @@ public class OwnershipPlugin extends Plugin {
     public boolean isRequiresConfigureRights() {
         return requiresConfigureRights;
     }
-      
+
+    public boolean isAssignOnCreate() {
+        return assignOnCreate;
+    }
+     
     @Override 
     public void configure(StaplerRequest req, JSONObject formData)
 	    throws IOException, ServletException, Descriptor.FormException {
 	Hudson.getInstance().getActions().removeAll(pluginActions);
         requiresConfigureRights = formData.getBoolean("requiresConfigureRights");
+        assignOnCreate=formData.getBoolean("assignOnCreate");
         ReinitActionsList();
 	save();
         Hudson.getInstance().getActions().addAll(pluginActions);
