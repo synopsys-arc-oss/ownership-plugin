@@ -39,14 +39,12 @@ public abstract class ItemOwnershipAction<TObjectType extends Actionable>
      * Constructor.
      * @param discribedItem Item, which is related to action
      */
-    public ItemOwnershipAction(TObjectType discribedItem)
-    {
+    public ItemOwnershipAction(TObjectType discribedItem)  {
         this.describedItem = discribedItem;
     }
      
     @Override
-    public final TObjectType getDescribedItem()
-    {
+    public final TObjectType getDescribedItem() {
         return describedItem;
-    }
+    } 
 }

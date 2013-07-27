@@ -1,4 +1,4 @@
-/*
+<!--
  * The MIT License
  *
  * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
@@ -20,40 +20,12 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- */
-package com.synopsys.arc.jenkins.plugins.ownership;
-
-import hudson.model.Action;
-
-/**
- * Provides Floating box with ownership description.
- * @author Oleg Nenashev <nenashev@synopsys.com>
- */
-public abstract class OwnershipAction implements Action {
-    public static final String ICON_FILENAME = "graph.gif";
-    public static final String URL_NAME = "ownership";
-    
-    @Override
-    public String getIconFileName() {
-         return actionIsAvailable() ? ICON_FILENAME : null; 
-    }
-     
-    @Override
-    public String getUrlName() {
-        return actionIsAvailable() ? URL_NAME : null;
-    }
-
-    public String getDisplayName() {
-        return actionIsAvailable() ? Messages.OwnershipAction_ManageOwnership_DisplayName() : null;
-    }
-       
-    public String getManageOwnershipTitle() {
-        return Messages.OwnershipAction_ManageOwners_DisplayName();
-    }
-    
-    public String getConfigureSpecificAccessTitle() {
-        return Messages.OwnershipAction_ConfigureSpecificAccess_DisplayName();
-    }
-    
-    public abstract boolean actionIsAvailable();
-}
+ -->
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <l:layout permission="${it.ownerPermission}" xmlns:local="local" norefresh="true">
+        <st:include it="${app}" page="sidepanel.jelly"/>
+        <l:main-panel>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>

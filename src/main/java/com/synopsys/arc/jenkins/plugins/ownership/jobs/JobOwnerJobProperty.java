@@ -26,6 +26,7 @@ package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipItem;
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipAction;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.AccessRightsFilter;
@@ -36,11 +37,18 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 import hudson.Extension;
+import hudson.model.Action;
+import hudson.model.Descriptor;
 import hudson.model.Job;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import hudson.model.User;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
+import java.util.LinkedList;
+import javax.servlet.ServletException;
+import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Ownership job property.
@@ -88,6 +96,8 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
     @Extension
     public static class DescriptorImpl extends JobPropertyDescriptor {
 
+        
+        
         @Override
         public JobProperty<?> newInstance( StaplerRequest req, JSONObject formData ) throws FormException {
             if (formData.containsKey("jobOwnership")) {
@@ -106,7 +116,7 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
         @Override
         public boolean isApplicable(Class<? extends Job> jobType) {
             return true;
-        }        
+        }          
     }
 
     @Override
@@ -116,16 +126,20 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
 
    //TODO: Restore, when action is ready
    // Ownership action is disabled
-   /* @Override
+    /*@Override
     public Collection<? extends Action> getJobActions(Job<?, ?> job) {
-        Collection<OwnershipAction> col = new ArrayList<OwnershipAction>();
-         
-        ownershipIsEnabled = true;
-       
-        if (ownershipIsEnabled) 
-        {
+     /*   Collection<OwnershipAction> col = new LinkedList<OwnershipAction>();    
+        if (getOwnership().isOwnershipEnabled()) {
             col.add(new JobOwnerJobAction(job));
         }
-        return col;
-    } */
+        return col; 
+    }*/
+    
+    public void doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
+        JSONObject formData = req.getSubmittedForm();
+        JSONObject jsonOwnership = (JSONObject) formData.getJSONObject("owners");
+        OwnershipDescription descr = OwnershipDescription.Parse(jsonOwnership);
+        ownership = descr;
+        owner.save();
+    }
 }

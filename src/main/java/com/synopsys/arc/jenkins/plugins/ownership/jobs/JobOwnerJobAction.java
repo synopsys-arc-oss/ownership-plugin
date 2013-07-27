@@ -25,7 +25,16 @@ package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
 import com.synopsys.arc.jenkins.plugins.ownership.ItemOwnershipAction;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
+import hudson.model.Descriptor;
+import hudson.model.Hudson;
 import hudson.model.Job;
+import hudson.security.Permission;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import javax.servlet.ServletException;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Ownership action for jobs.
@@ -49,16 +58,33 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     public Job<?, ?> getJob() {
         return getDescribedItem();
     }
-
-    @Override
-    public String getDisplayName() {
-        return "Job ownership";
+    
+    public Permission getOwnerPermission() {
+        return OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP;
+    }
+    
+    public Permission getProjectSpecificPermission() {
+        return OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP;
     }
 
     @Override
     public OwnershipDescription getOwnership() {
         return helper().getOwnershipDescription(getDescribedItem());
+    } 
+
+    @Override
+    public boolean actionIsAvailable() {
+        return getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
     }
-    
-    
+      
+    public void doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
+        Hudson.getInstance().checkPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
+        JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(getDescribedItem());
+        if (prop == null) {
+            prop = new JobOwnerJobProperty(OwnershipDescription.DISABLED_DESCR);
+            getDescribedItem().addProperty(prop);
+        }
+        prop.doOwnersSubmit(req, rsp);
+        rsp.sendRedirect(".");
+    }
 }

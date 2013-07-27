@@ -21,39 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.synopsys.arc.jenkins.plugins.ownership;
+package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
+import hudson.Extension;
+import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.TransientProjectActionFactory;
+import java.util.Collection;
+import static java.util.Collections.singleton;
 
 /**
- * Provides Floating box with ownership description.
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ *
+ * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  */
-public abstract class OwnershipAction implements Action {
-    public static final String ICON_FILENAME = "graph.gif";
-    public static final String URL_NAME = "ownership";
-    
-    @Override
-    public String getIconFileName() {
-         return actionIsAvailable() ? ICON_FILENAME : null; 
-    }
-     
-    @Override
-    public String getUrlName() {
-        return actionIsAvailable() ? URL_NAME : null;
-    }
+@Extension
+public class OwnershipActionFactory extends TransientProjectActionFactory {
 
-    public String getDisplayName() {
-        return actionIsAvailable() ? Messages.OwnershipAction_ManageOwnership_DisplayName() : null;
-    }
-       
-    public String getManageOwnershipTitle() {
-        return Messages.OwnershipAction_ManageOwners_DisplayName();
+    @Override
+    public Collection<? extends Action> createFor(AbstractProject target) {
+        return singleton(new JobOwnerJobAction(target));
     }
     
-    public String getConfigureSpecificAccessTitle() {
-        return Messages.OwnershipAction_ConfigureSpecificAccess_DisplayName();
-    }
-    
-    public abstract boolean actionIsAvailable();
 }
