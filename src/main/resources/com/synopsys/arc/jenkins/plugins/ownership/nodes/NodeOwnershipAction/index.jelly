@@ -47,10 +47,10 @@
 
             <table style="padding-left: 2em;" id="management-links">
               <local:feature icon="user.gif" href="manage-owners" title="${it.manageOwnershipTitle}">
-                ${%Manage Owners}
+                ${%Manage Owners, add co-owners, etc.}
               </local:feature>
               <local:feature icon="fingerprint.gif" href="configure-project-specifics" title="${it.configureSpecificAccessTitle}">
-                ${%Configure Specfic Access rights}
+                ${%Configure node-specific access rights}. <a style="color:red"><b>(not supported in the ownership-0.2)</b></a>
               </local:feature>              
             </table>
         </l:main-panel>
