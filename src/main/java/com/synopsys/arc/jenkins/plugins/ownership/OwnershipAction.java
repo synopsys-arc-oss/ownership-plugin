@@ -30,7 +30,7 @@ import hudson.model.Action;
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
 public abstract class OwnershipAction implements Action {
-    public static final String ICON_FILENAME = "graph.gif";
+    public static final String ICON_FILENAME = "user.gif";
     public static final String URL_NAME = "ownership";
     
     @Override
@@ -43,6 +43,7 @@ public abstract class OwnershipAction implements Action {
         return actionIsAvailable() ? URL_NAME : null;
     }
 
+    @Override
     public String getDisplayName() {
         return actionIsAvailable() ? Messages.OwnershipAction_ManageOwnership_DisplayName() : null;
     }
