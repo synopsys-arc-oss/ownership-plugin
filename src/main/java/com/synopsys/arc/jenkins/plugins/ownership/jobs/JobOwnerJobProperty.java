@@ -92,22 +92,14 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
     public Job<?, ?> getDescribedItem() {
         return owner;   
     }
- 
+
+    @Override
+    public JobProperty<?> reconfigure(StaplerRequest req, JSONObject form) throws Descriptor.FormException {
+        return new JobOwnerJobProperty(getOwnership());
+    }
+    
     @Extension
     public static class DescriptorImpl extends JobPropertyDescriptor {
-
-        
-        
-        @Override
-        public JobProperty<?> newInstance( StaplerRequest req, JSONObject formData ) throws FormException {
-            if (formData.containsKey("jobOwnership")) {
-                JSONObject ownership = (JSONObject)formData.getJSONObject("jobOwnership");
-                OwnershipDescription descr = OwnershipDescription.Parse(ownership);
-                return new JobOwnerJobProperty(descr);
-            }
-            return null;  
-        }
-
         @Override
         public String getDisplayName() {
             return Messages.JobOwnership_Config_SectionTitle();
