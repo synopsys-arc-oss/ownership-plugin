@@ -67,7 +67,8 @@
                                checkUrl="'${rootURL}/plugin/ownership/checkUser?userId='+this.value"
                     />
                     <f:description>
-                        User, who have specific access rights to the item.
+                        ID of the user, who have specific access rights to the item. 
+                        Unregistered users are accepted as well.
                     </f:description>  
                 </f:entry>
                 <f:entry title="">
