@@ -76,7 +76,7 @@ public class NodeOwnershipAction extends ItemOwnershipAction<Computer> {
     }
     
     public void doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
-        Hudson.getInstance().checkPermission(OwnershipPlugin.MANAGE_SLAVES_OWNERSHIP);
+        getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_SLAVES_OWNERSHIP);
         
         JSONObject jsonOwnership = (JSONObject) req.getSubmittedForm().getJSONObject("owners");
         OwnershipDescription descr = OwnershipDescription.Parse(jsonOwnership);

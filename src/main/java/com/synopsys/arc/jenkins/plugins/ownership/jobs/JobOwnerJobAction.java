@@ -79,7 +79,7 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     }
       
     public void doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
-        Hudson.getInstance().checkPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
+        getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
         
         JSONObject jsonOwnership = (JSONObject) req.getSubmittedForm().getJSONObject("owners");
         OwnershipDescription descr = OwnershipDescription.Parse(jsonOwnership);
