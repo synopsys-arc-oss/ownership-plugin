@@ -1,4 +1,4 @@
-<!--
+/*
  * The MIT License
  *
  * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
@@ -20,21 +20,33 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- -->
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <l:layout permission="${it.ownerPermission}" xmlns:local="local" norefresh="true">
-        <st:include it="${app}" page="sidepanel.jelly"/>
-        <l:main-panel>
-            <h1>
-                <img src="${imagesURL}/48x48/fingerprint.gif"/>
-                ${%Manage item-specific access rights}
-            </h1>
-            <f:form method="post" name="config" action="projectSpecificSubmit">
-                <f:optionalBlock name="useProjectSecurity" title="${%Enable project-based security}" checked="${instance!=null}">
-                    <st:include page="/hudson/security/GlobalMatrixAuthorizationStrategy/config.jelly" />
-                </f:optionalBlock>
-            </f:form>
-        </l:main-panel>
-    </l:layout>
-</j:jelly>
+ */
+package com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific;
+
+import hudson.model.JobPropertyDescriptor;
+import hudson.security.AuthorizationMatrixProperty;
+import hudson.security.Permission;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * Implements item-specific property map.
+ * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @since 0.3
+ */
+public class ItemSpecificSecurity extends AuthorizationMatrixProperty {
+
+    public ItemSpecificSecurity(Map<Permission, Set<String>> grantedPermissions) {
+        super(grantedPermissions);
+    }
+
+    @Override
+    public JobPropertyDescriptor getDescriptor() {
+        return DESCRIPTOR; 
+    }
+    
+    private static final ItemSpecificDescriptor DESCRIPTOR = new ItemSpecificDescriptor();
+    public static class ItemSpecificDescriptor extends DescriptorImpl {
+        
+    }
+}
