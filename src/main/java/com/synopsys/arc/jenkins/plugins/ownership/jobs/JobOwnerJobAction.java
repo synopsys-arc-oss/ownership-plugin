@@ -29,6 +29,7 @@ import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import hudson.model.Descriptor;
 import hudson.model.Hudson;
 import hudson.model.Job;
+import hudson.security.AuthorizationMatrixProperty;
 import hudson.security.Permission;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -77,7 +78,14 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     public boolean actionIsAvailable() {
         return getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
     }
-      
+
+    
+    private transient AuthorizationMatrixProperty specificSecurity;
+    
+    public AuthorizationMatrixProperty getSpecificSecurity() {
+        return specificSecurity;
+    }
+    
     public void doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
         getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
         
