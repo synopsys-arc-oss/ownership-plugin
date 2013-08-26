@@ -26,7 +26,6 @@ package com.synopsys.arc.jenkins.plugins.ownership;
 import hudson.ExtensionList;
 import hudson.Plugin;
 import hudson.Util;
-import hudson.model.Computer;
 import hudson.model.Descriptor;
 import hudson.model.Hudson;
 import hudson.model.User;

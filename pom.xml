@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.480.3</version>
+        <version>1.509.2</version>
     </parent>
 
     <groupId>com.synopsys.jenkinsci</groupId>
@@ -66,6 +66,18 @@
             <artifactId>role-strategy</artifactId>
             <version>2.1.0</version>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.synopsys.arc.jenkinsci.plugins</groupId>
+            <artifactId>job-restrictions</artifactId>
+            <version>0.1</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>mailer</artifactId>
+            <version>1.5</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
 
