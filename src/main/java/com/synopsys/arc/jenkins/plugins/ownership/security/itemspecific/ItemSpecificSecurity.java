@@ -23,11 +23,15 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific;
 
+import hudson.Extension;
+import hudson.model.Descriptor;
 import hudson.model.JobPropertyDescriptor;
 import hudson.security.AuthorizationMatrixProperty;
 import hudson.security.Permission;
 import java.util.Map;
 import java.util.Set;
+import net.sf.json.JSONObject;
+import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * Implements item-specific property map.
@@ -45,7 +49,15 @@ public class ItemSpecificSecurity extends AuthorizationMatrixProperty {
         return DESCRIPTOR; 
     }
     
-    private static final ItemSpecificDescriptor DESCRIPTOR = new ItemSpecificDescriptor();
+    public static ItemSpecificSecurity Parse(StaplerRequest req, JSONObject form)
+            throws Descriptor.FormException
+    {
+        //TODO: implements
+        return null;
+    }
+    
+    @Extension
+    public static final ItemSpecificDescriptor DESCRIPTOR = new ItemSpecificDescriptor();
     public static class ItemSpecificDescriptor extends DescriptorImpl {
         
     }

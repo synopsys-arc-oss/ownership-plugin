@@ -26,8 +26,8 @@ package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 import com.synopsys.arc.jenkins.plugins.ownership.ItemOwnershipAction;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
+import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurity;
 import hudson.model.Descriptor;
-import hudson.model.Hudson;
 import hudson.model.Job;
 import hudson.security.AuthorizationMatrixProperty;
 import hudson.security.Permission;
@@ -44,8 +44,15 @@ import org.kohsuke.stapler.StaplerResponse;
  */
 public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     
+    ItemSpecificSecurity itemSpecificSecurity;
+    
     public JobOwnerJobAction(Job<?, ?> job) {
       super(job);
+      // get security 
+      JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(job);
+      if (prop != null) {
+        this.itemSpecificSecurity = prop.getItemSpecificSecurity();
+      }
     }
 
     @Override
@@ -73,6 +80,10 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     public OwnershipDescription getOwnership() {
         return helper().getOwnershipDescription(getDescribedItem());
     } 
+    
+    public ItemSpecificSecurity getItemSpecificSecurity() {
+        return itemSpecificSecurity;
+    }
 
     @Override
     public boolean actionIsAvailable() {
@@ -93,6 +104,15 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
         OwnershipDescription descr = OwnershipDescription.Parse(jsonOwnership);
         JobOwnerHelper.setOwnership(getDescribedItem(), descr);
         
+        rsp.sendRedirect(getDescribedItem().getAbsoluteUrl());
+    }
+    
+    public void doProjectSpecificSecuritySubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, Descriptor.FormException {
+        getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
+        //TODO: fix form extraction
+        JSONObject jsonSpecificSecurity = (JSONObject) req.getSubmittedForm().getJSONObject("owners");
+        ItemSpecificSecurity specific = ItemSpecificSecurity.Parse(req, jsonSpecificSecurity);
+        JobOwnerHelper.setProjectSpecificSecurity(getDescribedItem(), specific);
         rsp.sendRedirect(getDescribedItem().getAbsoluteUrl());
     }
 }

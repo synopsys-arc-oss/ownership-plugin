@@ -30,7 +30,7 @@
                 <img src="${imagesURL}/48x48/fingerprint.gif"/>
                 ${%Manage item-specific access rights}
             </h1>
-            <f:form method="post" name="config" action="projectSpecificSubmit">
+            <f:form method="post" name="config" action="projectSpecificSecuritySubmit">
                <!-- <f:optionalBlock name="useProjectSecurity" title="${%Enable project-based security}" checked="${instance!=null}">
                     <st:include page="/hudson/security/GlobalMatrixAuthorizationStrategy/config.jelly" />
                 </f:optionalBlock> -->
@@ -38,7 +38,7 @@
                     name="project-specific-params" 
                     title="${%Use project-specific params}" checked="${it != null}"
                     help="/plugin/custom-tools-plugin/CustomTool/help-versioning.html"
-                    field="specificSecurity">
+                    field="itemSpecificSecurity">
                 </f:optionalProperty> 
             </f:form>
         </l:main-panel>
