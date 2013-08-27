@@ -26,10 +26,14 @@ package com.synopsys.arc.jenkins.plugins.ownership.security.jobrestrictions;
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
+import com.synopsys.arc.jenkins.plugins.ownership.util.ui.UserSelector;
 import com.synopsys.arc.jenkinsci.plugins.jobrestrictions.restrictions.JobRestriction;
 import com.synopsys.arc.jenkinsci.plugins.jobrestrictions.restrictions.JobRestrictionDescriptor;
+import hudson.model.Job;
 import hudson.model.Queue;
 import hudson.model.Run;
+import java.util.Set;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  *
@@ -37,18 +41,35 @@ import hudson.model.Run;
  */
 public class OwnershipJobRestriction extends JobRestriction {
     private static final JobOwnerHelper helper = new JobOwnerHelper();
+    private Set<UserSelector> usersList;
+
+    @DataBoundConstructor
+    public OwnershipJobRestriction(Set<UserSelector> usersList) {
+        this.usersList = usersList;
+    }
     
     @Override
     public boolean canTake(Queue.BuildableItem item) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (item.task instanceof Job) {
+            Job job = (Job)item.task;
+            OwnershipDescription descr = helper.getOwnershipDescription(job);
+            return canTake(descr);
+        }
+        
+        // Plugin covers only jobs
+        return true;
     }
 
     @Override
     public boolean canTake(Run run) {
         OwnershipDescription descr = helper.getOwnershipDescription(run.getParent());
-        return false;
+        return canTake(descr);
     }
     
+    private boolean canTake(OwnershipDescription descr) {
+        return descr.isOwnershipEnabled() && usersList.contains(
+                new UserSelector(descr.getPrimaryOwnerId()));
+    }
     
     public static class DescriptorImpl extends JobRestrictionDescriptor {
 
