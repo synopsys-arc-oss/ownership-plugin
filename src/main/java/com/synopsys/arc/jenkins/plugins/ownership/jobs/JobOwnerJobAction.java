@@ -52,6 +52,9 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
       JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(job);
       if (prop != null) {
         this.itemSpecificSecurity = prop.getItemSpecificSecurity();
+       /* if (this.itemSpecificSecurity == null) {
+            this.itemSpecificSecurity = ItemSpecificSecurity.EMPTY;
+        } */
       }
     }
 

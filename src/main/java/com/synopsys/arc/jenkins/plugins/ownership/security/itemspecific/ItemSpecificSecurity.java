@@ -24,13 +24,11 @@
 package com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific;
 
 import hudson.Extension;
+import hudson.model.Describable;
 import hudson.model.Descriptor;
-import hudson.model.JobPropertyDescriptor;
 import hudson.security.AuthorizationMatrixProperty;
-import hudson.security.Permission;
-import java.util.Map;
-import java.util.Set;
 import net.sf.json.JSONObject;
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
@@ -38,15 +36,25 @@ import org.kohsuke.stapler.StaplerRequest;
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  * @since 0.3
  */
-public class ItemSpecificSecurity extends AuthorizationMatrixProperty {
+public class ItemSpecificSecurity implements Describable<ItemSpecificSecurity> {
 
-    public ItemSpecificSecurity(Map<Permission, Set<String>> grantedPermissions) {
-        super(grantedPermissions);
+   // public static final ItemSpecificSecurity EMPTY
+    //        = new ItemSpecificSecurity(new TreeMap<Permission, Set<String>>());
+
+    private AuthorizationMatrixProperty permissionsMatrix;
+    
+    @DataBoundConstructor
+    public ItemSpecificSecurity(AuthorizationMatrixProperty permissionsMatrix) {
+        this.permissionsMatrix = permissionsMatrix;
     }
 
     @Override
-    public JobPropertyDescriptor getDescriptor() {
+    public ItemSpecificDescriptor getDescriptor() {
         return DESCRIPTOR; 
+    }
+
+    public AuthorizationMatrixProperty getPermissionsMatrix() {
+        return permissionsMatrix;
     }
     
     public static ItemSpecificSecurity Parse(StaplerRequest req, JSONObject form)
@@ -55,10 +63,15 @@ public class ItemSpecificSecurity extends AuthorizationMatrixProperty {
         //TODO: implements
         return null;
     }
+      
+    public static final ItemSpecificDescriptor DESCRIPTOR = new ItemSpecificDescriptor();
     
     @Extension
-    public static final ItemSpecificDescriptor DESCRIPTOR = new ItemSpecificDescriptor();
-    public static class ItemSpecificDescriptor extends DescriptorImpl {
+    public static class ItemSpecificDescriptor extends Descriptor<ItemSpecificSecurity> {
+        @Override
+        public String getDisplayName() {
+            return "Item-specific security";
+        }
         
     }
 }
