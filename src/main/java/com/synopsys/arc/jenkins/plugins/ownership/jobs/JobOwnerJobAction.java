@@ -52,9 +52,6 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
       JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(job);
       if (prop != null) {
         this.itemSpecificSecurity = prop.getItemSpecificSecurity();
-       /* if (this.itemSpecificSecurity == null) {
-            this.itemSpecificSecurity = ItemSpecificSecurity.EMPTY;
-        } */
       }
     }
 
@@ -114,7 +111,7 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
         getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
         //TODO: fix form extraction
         JSONObject jsonSpecificSecurity = (JSONObject) req.getSubmittedForm().getJSONObject("owners");
-        ItemSpecificSecurity specific = ItemSpecificSecurity.Parse(req, jsonSpecificSecurity);
+        ItemSpecificSecurity specific = ItemSpecificSecurity.DESCRIPTOR.newInstance(req, jsonSpecificSecurity);
         JobOwnerHelper.setProjectSpecificSecurity(getDescribedItem(), specific);
         rsp.sendRedirect(getDescribedItem().getAbsoluteUrl());
     }

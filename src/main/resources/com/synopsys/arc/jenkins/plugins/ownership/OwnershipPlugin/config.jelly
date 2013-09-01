@@ -48,7 +48,7 @@
     </f:optionalBlock>
     <!--Manual implementation of the optionalProperty-->
     <f:optionalBlock name="defaultJobsSecurity" 
-                     title="${%Setup default jobs security}"
+                     title="${%Setup default permissions for job's item-specific security}"
                      checked="${it.defaultJobsSecurity != null}">
         <j:set var="descriptor" value="${it.itemSpecificDescriptor}"/>
         <j:set var="instance" value="${it.defaultJobsSecurity}"/>
