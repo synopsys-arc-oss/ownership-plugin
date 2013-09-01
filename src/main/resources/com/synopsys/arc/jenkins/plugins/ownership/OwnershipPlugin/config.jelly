@@ -35,7 +35,7 @@
     <f:optionalBlock name="enableResolverRestrictions" 
                      title="${%Restrict usage of MailAddressResolvers}" 
                      checked="${it.hasMailResolverRestriction()}">
-        <f:entry title="${%Use following resolver:}">
+        <f:entry title="${%Use the following resolver:}">
             <select  name="mailResolverClassName">
                 <j:forEach var="resolver" items="${it.possibleMailResolvers}">
                     <f:option value="${resolver}" selected="${ resolver.equals(it.mailResolverClassName) }">

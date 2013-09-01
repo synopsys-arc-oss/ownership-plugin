@@ -24,7 +24,6 @@
 package com.synopsys.arc.jenkins.plugins.ownership;
 
 import hudson.model.Action;
-import hudson.security.AuthorizationMatrixProperty;
 
 /**
  * Provides Floating box with ownership description.
@@ -56,7 +55,6 @@ public abstract class OwnershipAction implements Action {
     public String getConfigureSpecificAccessTitle() {
         return Messages.OwnershipAction_ConfigureSpecificAccess_DisplayName();
     }
-
-    
+   
     public abstract boolean actionIsAvailable();
 }

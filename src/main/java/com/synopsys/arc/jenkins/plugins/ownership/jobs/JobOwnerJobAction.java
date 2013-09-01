@@ -43,16 +43,9 @@ import org.kohsuke.stapler.StaplerResponse;
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
 public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
-    
-    ItemSpecificSecurity itemSpecificSecurity;
-    
+     
     public JobOwnerJobAction(Job<?, ?> job) {
       super(job);
-      // get security 
-      JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(job);
-      if (prop != null) {
-        this.itemSpecificSecurity = prop.getItemSpecificSecurity();
-      }
     }
 
     @Override
@@ -82,19 +75,17 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     } 
     
     public ItemSpecificSecurity getItemSpecificSecurity() {
-        return itemSpecificSecurity;
+        JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(getDescribedItem());
+        return prop != null ? prop.getItemSpecificSecurity() : null;
+    }
+    
+    public ItemSpecificSecurity.ItemSpecificDescriptor getItemSpecificDescriptor() {
+        return ItemSpecificSecurity.DESCRIPTOR;
     }
 
     @Override
     public boolean actionIsAvailable() {
         return getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
-    }
-
-    
-    private transient AuthorizationMatrixProperty specificSecurity;
-    
-    public AuthorizationMatrixProperty getSpecificSecurity() {
-        return specificSecurity;
     }
     
     public void doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
@@ -109,10 +100,15 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     
     public void doProjectSpecificSecuritySubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, Descriptor.FormException {
         getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
-        //TODO: fix form extraction
-        JSONObject jsonSpecificSecurity = (JSONObject) req.getSubmittedForm().getJSONObject("owners");
-        ItemSpecificSecurity specific = ItemSpecificSecurity.DESCRIPTOR.newInstance(req, jsonSpecificSecurity);
-        JobOwnerHelper.setProjectSpecificSecurity(getDescribedItem(), specific);
+        JSONObject form = req.getSubmittedForm();
+        
+        if (form.containsKey("itemSpecificSecurity")) {
+            JSONObject jsonSpecificSecurity = (JSONObject) req.getSubmittedForm().getJSONObject("itemSpecificSecurity");
+            ItemSpecificSecurity specific = ItemSpecificSecurity.DESCRIPTOR.newInstance(req, jsonSpecificSecurity);
+            JobOwnerHelper.setProjectSpecificSecurity(getDescribedItem(), specific);
+        } else { // drop security
+            JobOwnerHelper.setProjectSpecificSecurity(getDescribedItem(), null);
+        }
         rsp.sendRedirect(getDescribedItem().getAbsoluteUrl());
     }
 }
