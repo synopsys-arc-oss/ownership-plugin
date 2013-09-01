@@ -36,21 +36,28 @@ import hudson.security.Permission;
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  */
 @Extension
-public class ItemSpecificRoleMacroNoSid extends ItemSpecificRoleMacro {
+public class ItemSpecificRoleMacroWithUserID extends ItemSpecificRoleMacro {
 
     @Override
     public String getName() {
-        return super.getName()+NO_SID_SUFFIX;
+        return super.getName() + "WithUserID";
     }
     
     @Override
     public String getDescription() {
-        return super.getDescription()+Messages.Security_RoleStrategy_IgnoreSidDescriptionSuffix();
+        return super.getDescription()+Messages.Security_RoleStrategy_WithUserDescriptionSuffix();
     }
 
     @Override
     public boolean hasPermission(String sid, Permission p, RoleType type, AccessControlled item, Macro macro) {
-        User usr = User.current();
-        return usr != null ? super.hasPermission(usr.getId(), p, type, item, macro) : false; 
+        // check sid
+        boolean res = super.hasPermission(sid, p, type, item, macro);
+        if (res) return true;
+        
+        if (sid.equals(AUTHENTICATED_SID)) {
+            User usr = User.current();
+            return usr != null ? super.hasPermission(usr.getId(), p, type, item, macro) : false; 
+        }
+        return false;
     }    
 }

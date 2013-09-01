@@ -27,6 +27,7 @@ import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipItem;
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurity;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.AccessRightsFilter;
@@ -74,7 +75,9 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
     }
 
     public ItemSpecificSecurity getItemSpecificSecurity() {
-        return itemSpecificSecurity;
+        return itemSpecificSecurity != null 
+                ? itemSpecificSecurity 
+                : OwnershipPlugin.Instance().getDefaultJobsSecurity();
     }
     
     public String getDisplayName(User usr) {
