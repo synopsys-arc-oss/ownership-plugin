@@ -119,4 +119,14 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
         }
         rsp.sendRedirect(getDescribedItem().getAbsoluteUrl());
     }
+    
+    public void doRestoreDefaultSpecificSecuritySubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, Descriptor.FormException {
+        getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
+        // Get default security
+        ItemSpecificSecurity defaultJobsSecurity = OwnershipPlugin.Instance().getDefaultJobsSecurity();
+        ItemSpecificSecurity val = defaultJobsSecurity != null ? defaultJobsSecurity.clone() : null;
+        
+        JobOwnerHelper.setProjectSpecificSecurity(getDescribedItem(), val);
+        rsp.sendRedirect(getDescribedItem().getAbsoluteUrl());
+    }
 }

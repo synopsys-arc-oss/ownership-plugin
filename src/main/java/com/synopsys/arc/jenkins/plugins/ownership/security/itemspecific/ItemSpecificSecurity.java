@@ -38,7 +38,7 @@ import org.kohsuke.stapler.StaplerRequest;
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  * @since 0.3
  */
-public class ItemSpecificSecurity implements Describable<ItemSpecificSecurity> {
+public class ItemSpecificSecurity implements Describable<ItemSpecificSecurity>, Cloneable {
     private AuthorizationMatrixProperty permissionsMatrix;
     
     @DataBoundConstructor
@@ -53,6 +53,12 @@ public class ItemSpecificSecurity implements Describable<ItemSpecificSecurity> {
 
     public AuthorizationMatrixProperty getPermissionsMatrix() {
          return permissionsMatrix;
+    }
+
+    @Override
+    public ItemSpecificSecurity clone() {
+        AuthorizationMatrixProperty innerClone = new AuthorizationMatrixProperty(this.permissionsMatrix.getGrantedPermissions());
+        return new ItemSpecificSecurity(innerClone);
     }
         
     public static final ItemSpecificDescriptor DESCRIPTOR = new ItemSpecificDescriptor();
