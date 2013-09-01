@@ -27,6 +27,7 @@ import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.security.AuthorizationMatrixProperty;
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
@@ -37,10 +38,6 @@ import org.kohsuke.stapler.StaplerRequest;
  * @since 0.3
  */
 public class ItemSpecificSecurity implements Describable<ItemSpecificSecurity> {
-
-   // public static final ItemSpecificSecurity EMPTY
-    //        = new ItemSpecificSecurity(new TreeMap<Permission, Set<String>>());
-
     private AuthorizationMatrixProperty permissionsMatrix;
     
     @DataBoundConstructor
@@ -57,13 +54,6 @@ public class ItemSpecificSecurity implements Describable<ItemSpecificSecurity> {
         return permissionsMatrix;
     }
     
-    public static ItemSpecificSecurity Parse(StaplerRequest req, JSONObject form)
-            throws Descriptor.FormException
-    {
-        //TODO: implements
-        return null;
-    }
-      
     public static final ItemSpecificDescriptor DESCRIPTOR = new ItemSpecificDescriptor();
     
     @Extension
@@ -72,6 +62,15 @@ public class ItemSpecificSecurity implements Describable<ItemSpecificSecurity> {
         public String getDisplayName() {
             return "Item-specific security";
         }
-        
+
+        @Override
+        public ItemSpecificSecurity newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+            AuthorizationMatrixProperty prop = null;
+            if (formData.containsKey("permissionsMatrix")) {
+                Descriptor d= Jenkins.getInstance().getDescriptor(AuthorizationMatrixProperty.class);
+                prop = (AuthorizationMatrixProperty)d.newInstance(req, formData.getJSONObject("permissionsMatrix"));
+            }
+            return new ItemSpecificSecurity(prop);
+        }
     }
 }
