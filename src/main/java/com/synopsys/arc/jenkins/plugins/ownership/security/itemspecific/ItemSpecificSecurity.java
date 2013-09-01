@@ -23,6 +23,7 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific;
 
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
@@ -51,9 +52,9 @@ public class ItemSpecificSecurity implements Describable<ItemSpecificSecurity> {
     }
 
     public AuthorizationMatrixProperty getPermissionsMatrix() {
-        return permissionsMatrix;
+         return permissionsMatrix;
     }
-    
+        
     public static final ItemSpecificDescriptor DESCRIPTOR = new ItemSpecificDescriptor();
     
     @Extension

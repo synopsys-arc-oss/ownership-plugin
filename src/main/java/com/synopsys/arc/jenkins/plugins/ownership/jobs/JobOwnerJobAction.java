@@ -29,7 +29,6 @@ import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurity;
 import hudson.model.Descriptor;
 import hudson.model.Job;
-import hudson.security.AuthorizationMatrixProperty;
 import hudson.security.Permission;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -76,7 +75,16 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     
     public ItemSpecificSecurity getItemSpecificSecurity() {
         JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(getDescribedItem());
-        return prop != null ? prop.getItemSpecificSecurity() : null;
+        if (prop != null && prop.getItemSpecificSecurity() != null) {
+             return prop.getItemSpecificSecurity();
+        }
+        
+        return getGlobalIemSpecificSecurity();
+    }
+    
+    private static ItemSpecificSecurity getGlobalIemSpecificSecurity() {
+        ItemSpecificSecurity defaultJobsSecurity = OwnershipPlugin.Instance().getDefaultJobsSecurity();
+        return defaultJobsSecurity;
     }
     
     public ItemSpecificSecurity.ItemSpecificDescriptor getItemSpecificDescriptor() {
