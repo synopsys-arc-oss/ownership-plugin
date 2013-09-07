@@ -29,6 +29,7 @@ import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.ui.UserSelector;
 import com.synopsys.arc.jenkinsci.plugins.jobrestrictions.restrictions.JobRestriction;
 import com.synopsys.arc.jenkinsci.plugins.jobrestrictions.restrictions.JobRestrictionDescriptor;
+import hudson.Extension;
 import hudson.model.Job;
 import hudson.model.Queue;
 import hudson.model.Run;
@@ -70,13 +71,13 @@ public class OwnershipJobRestriction extends JobRestriction {
         return descr.isOwnershipEnabled() && usersList.contains(
                 new UserSelector(descr.getPrimaryOwnerId()));
     }
-    
-    public static class DescriptorImpl extends JobRestrictionDescriptor {
 
+
+    @Extension
+    public static class DescriptorImpl extends JobRestrictionDescriptor {
         @Override
         public String getDisplayName() {
             return Messages.Security_JobRestrictions_OwnershipRestriction_DisplayName();
-        }
-        
+        }       
     }
 }
