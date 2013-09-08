@@ -53,7 +53,11 @@ public class OwnershipTokenMacro extends DataBoundTokenMacro {
     
     @Override
     public String evaluate(AbstractBuild<?, ?> ab, TaskListener tl, String string) throws MacroEvaluationException, IOException, InterruptedException {
-        OwnershipFunction func;
+        OwnershipFunction func;      
+        if (var == null) {
+            throw new MacroEvaluationException(MACRO_NAME+" macro requires the 'var' parameter");
+        }
+        
         try {
             func = OwnershipFunction.valueOf(var);
         } catch (IllegalArgumentException ex) {
