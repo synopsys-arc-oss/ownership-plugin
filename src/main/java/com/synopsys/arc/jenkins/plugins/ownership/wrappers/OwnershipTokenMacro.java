@@ -26,6 +26,7 @@ package com.synopsys.arc.jenkins.plugins.ownership.wrappers;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.nodes.NodeOwnerHelper;
+import com.synopsys.arc.jenkins.plugins.ownership.util.OwnershipDescriptionHelper;
 import hudson.Extension;
 import hudson.model.AbstractBuild;
 import hudson.model.TaskListener;
@@ -96,11 +97,23 @@ public class OwnershipTokenMacro extends DataBoundTokenMacro {
                 throw new IOException("Node Ownership is disabled");
             }
             
-            switch (this) {
+            switch(this) {
                 case JOB_OWNER:
-                    return job.getPrimaryOwnerId();
+                    return OwnershipDescriptionHelper.getOwnerID(job);
+                case JOB_OWNER_EMAIL:
+                    return OwnershipDescriptionHelper.getOwnerEmail(job);
+                case JOB_COOWNERS:
+                    return OwnershipDescriptionHelper.getCoOwnerIDs(job);
+                case JOB_COOWNERS_EMAILS:
+                    return OwnershipDescriptionHelper.getCoOwnerEmails(job);   
                 case NODE_OWNER:
-                    return node.getPrimaryOwnerId();
+                    return OwnershipDescriptionHelper.getOwnerID(node);
+                case NODE_OWNER_EMAIL:
+                    return OwnershipDescriptionHelper.getOwnerEmail(node);
+                case NODE_COOWNERS:
+                    return OwnershipDescriptionHelper.getCoOwnerIDs(node);
+                case NODE_COOWNERS_EMAILS:
+                    return OwnershipDescriptionHelper.getCoOwnerEmails(node); 
                 default:
                     throw new IOException(this+" ownership function is not implemented");
             }
