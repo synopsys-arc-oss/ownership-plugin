@@ -23,7 +23,6 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific;
 
-import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;

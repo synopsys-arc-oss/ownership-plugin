@@ -26,7 +26,6 @@ package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import hudson.Extension;
-import hudson.model.Hudson;
 import hudson.model.Item;
 import hudson.model.Job;
 import hudson.model.User;

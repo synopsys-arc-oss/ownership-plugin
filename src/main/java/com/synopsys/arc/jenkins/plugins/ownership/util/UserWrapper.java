@@ -23,7 +23,6 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.util;
 
-import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import hudson.model.User;
 
 /**

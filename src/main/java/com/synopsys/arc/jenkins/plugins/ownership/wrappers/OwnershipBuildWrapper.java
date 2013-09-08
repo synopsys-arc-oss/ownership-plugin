@@ -67,7 +67,7 @@ public class OwnershipBuildWrapper extends BuildWrapper {
             getVariables(descr, vars, "JOB");
         }
         
-        if (injectNodeOwnership) {
+        if (injectNodeOwnership && build.getBuiltOn() != null) {
             OwnerNodeProperty prop = build.getBuiltOn().getNodeProperties().get(OwnerNodeProperty.class);
             OwnershipDescription descr = prop!=null ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
             getVariables(descr, vars, "NODE");
