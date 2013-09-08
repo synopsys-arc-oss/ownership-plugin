@@ -67,6 +67,13 @@
             <version>2.1.0</version>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>token-macro</artifactId>
+            <version>1.6</version>
+            <optional>true</optional>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
     <profiles>
