@@ -33,20 +33,47 @@ import hudson.Extension;
 import hudson.model.Job;
 import hudson.model.Queue;
 import hudson.model.Run;
+import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  *
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  */
-public class OwnershipJobRestriction extends JobRestriction {
+public class OwnersListJobRestriction extends JobRestriction {
     private static final JobOwnerHelper helper = new JobOwnerHelper();
-    private Set<UserSelector> usersList;
+    private List<UserSelector> usersList;
+    private boolean acceptsCoOwners;
+    transient private Set<String> usersMap;
 
     @DataBoundConstructor
-    public OwnershipJobRestriction(Set<UserSelector> usersList) {
+    public OwnersListJobRestriction(List<UserSelector> usersList, boolean acceptsCoOwners) {
         this.usersList = usersList;
+        this.acceptsCoOwners = acceptsCoOwners;
+        updateUsersMap();
+    }
+    
+    protected synchronized final void updateUsersMap() {
+        if (usersMap == null) {
+            // Update users map
+            usersMap = new TreeSet<String>();
+            for (UserSelector selector : usersList) {
+                String userId = hudson.Util.fixEmptyAndTrim(selector.getSelectedUserId());
+                if (userId != null && !usersMap.contains(userId)) {
+                    usersMap.add(userId);
+                }
+            }
+        }
+    }
+
+    public List<UserSelector> getUsersList() {
+        return usersList;
+    }
+
+    public boolean isAcceptsCoOwners() {
+        return acceptsCoOwners;
     }
     
     @Override
@@ -68,8 +95,27 @@ public class OwnershipJobRestriction extends JobRestriction {
     }
     
     private boolean canTake(OwnershipDescription descr) {
-        return descr.isOwnershipEnabled() && usersList.contains(
-                new UserSelector(descr.getPrimaryOwnerId()));
+        if (!descr.isOwnershipEnabled()) {
+            return false;
+        }
+        
+        updateUsersMap();
+        if (usersMap.contains(descr.getPrimaryOwnerId())) {
+            return true;
+        }
+        
+        // Handle co-owners if required
+        Set<String> itemCoOwners = descr.getCoownersIds();
+        if (acceptsCoOwners && itemCoOwners!=null && !itemCoOwners.isEmpty()) {
+            for (String userID : usersMap) {
+                if (itemCoOwners.contains(userID)) {
+                    return true;
+                }
+            }
+        }
+        
+        // Default fallback - user is not owner or co-owner
+        return false;
     }
 
 

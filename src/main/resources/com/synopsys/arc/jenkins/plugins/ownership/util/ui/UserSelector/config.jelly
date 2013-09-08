@@ -1,7 +1,7 @@
 <!--
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Synopsys Inc., Oleg Nenashev <nenashev@synopsys.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,24 +25,12 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
     xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
     xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-    <f:entry>
-        <f:repeatableProperty name="coOwners" field="">                                    
-            <table width="100%">
-                <f:entry title="Co-owner">
-                    <f:textbox field="coOwner" value="${_coownerId}"
-                               checkUrl="'${rootURL}/plugin/ownership/checkUser?userId='+this.value"
-                    />
-                    <f:description>
-                        ID of the user, who have specific access rights to the item. 
-                        Unregistered users are accepted as well.
-                    </f:description>  
-                </f:entry>
-                <f:entry title="">
-                    <div align="right">
-                        <f:repeatableDeleteButton value="Remove..."/> 
-                    </div>
-                </f:entry>
-            </table>        
-        </f:repeatable>
+    <f:entry title="User ID" field="selectedUserId">
+        <f:textbox checkUrl="'${rootURL}/plugin/ownership/checkUser?userId='+this.value"/> 
+    </f:entry>
+    <f:entry title="">
+        <div align="right">
+            <f:repeatableDeleteButton />
+        </div>
     </f:entry>
 </j:jelly>
