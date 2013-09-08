@@ -23,7 +23,6 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific;
 
-import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
@@ -57,7 +56,7 @@ public class ItemSpecificSecurity implements Describable<ItemSpecificSecurity>, 
 
     @Override
     public ItemSpecificSecurity clone() {
-        AuthorizationMatrixProperty innerClone = new AuthorizationMatrixProperty(this.permissionsMatrix.getGrantedPermissions());
+        AuthorizationMatrixProperty innerClone = new AuthorizationMatrixProperty(getPermissionsMatrix().getGrantedPermissions());
         return new ItemSpecificSecurity(innerClone);
     }
         

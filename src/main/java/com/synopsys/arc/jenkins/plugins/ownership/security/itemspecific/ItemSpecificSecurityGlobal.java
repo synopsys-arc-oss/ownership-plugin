@@ -51,6 +51,7 @@ public class ItemSpecificSecurityGlobal extends ItemSpecificSecurity {
     @DataBoundConstructor
     public ItemSpecificSecurityGlobal(GlobalMatrixAuthorizationConfig permissionsMatrix) {
         super(null);
+        this.permissionsMatrix = permissionsMatrix;
     }
 
     @Override
