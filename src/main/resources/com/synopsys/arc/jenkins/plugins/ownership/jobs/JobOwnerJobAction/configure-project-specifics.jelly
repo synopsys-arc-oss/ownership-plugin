@@ -32,8 +32,7 @@
             </h1>
             <f:form method="post" name="config" action="projectSpecificSecuritySubmit">
                 <j:set var="instance" value="${it}"/>
-                Instance=${instance}; it=${it}
-                
+                 
                 <!--Item-specific security-->
                 <f:optionalBlock name="itemSpecificSecurity" 
                      title="${%Use item-specific security}"

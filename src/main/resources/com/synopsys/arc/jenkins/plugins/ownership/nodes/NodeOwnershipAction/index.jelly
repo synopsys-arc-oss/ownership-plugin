@@ -49,9 +49,10 @@
               <local:feature icon="user.gif" href="manage-owners" title="${it.manageOwnershipTitle}">
                 ${%Manage Owners, add co-owners, etc.}
               </local:feature>
-              <local:feature icon="fingerprint.gif" href="configure-project-specifics" title="${it.configureSpecificAccessTitle}">
+              <!--Disabled in 0.3-->
+             <!-- <local:feature icon="fingerprint.gif" href="configure-project-specifics" title="${it.configureSpecificAccessTitle}">
                 ${%Configure node-specific access rights}. <a style="color:red"><b>(not supported in the ownership-0.2)</b></a>
-              </local:feature>              
+              </local:feature> -->             
             </table>
         </l:main-panel>
     </l:layout>
