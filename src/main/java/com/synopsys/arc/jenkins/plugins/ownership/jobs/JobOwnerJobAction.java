@@ -27,6 +27,7 @@ import com.synopsys.arc.jenkins.plugins.ownership.ItemOwnershipAction;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurity;
+import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurityGlobal;
 import hudson.model.Descriptor;
 import hudson.model.Job;
 import hudson.security.Permission;
@@ -79,11 +80,11 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
              return prop.getItemSpecificSecurity();
         }
         
-        return getGlobalIemSpecificSecurity();
+        return getGlobalItemSpecificSecurity();
     }
     
-    private static ItemSpecificSecurity getGlobalIemSpecificSecurity() {
-        ItemSpecificSecurity defaultJobsSecurity = OwnershipPlugin.Instance().getDefaultJobsSecurity();
+    private static ItemSpecificSecurityGlobal getGlobalItemSpecificSecurity() {
+        ItemSpecificSecurityGlobal defaultJobsSecurity = OwnershipPlugin.Instance().getDefaultJobsSecurity();
         return defaultJobsSecurity;
     }
     
@@ -123,8 +124,8 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     public void doRestoreDefaultSpecificSecuritySubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, Descriptor.FormException {
         getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
         // Get default security
-        ItemSpecificSecurity defaultJobsSecurity = OwnershipPlugin.Instance().getDefaultJobsSecurity();
-        ItemSpecificSecurity val = defaultJobsSecurity != null ? defaultJobsSecurity.clone() : null;
+        ItemSpecificSecurityGlobal defaultJobsSecurity = OwnershipPlugin.Instance().getDefaultJobsSecurity();
+        ItemSpecificSecurity val = defaultJobsSecurity != null ? defaultJobsSecurity.clone(): null;
         
         JobOwnerHelper.setProjectSpecificSecurity(getDescribedItem(), val);
         rsp.sendRedirect(getDescribedItem().getAbsoluteUrl());

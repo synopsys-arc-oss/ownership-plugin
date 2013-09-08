@@ -23,7 +23,7 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership;
 
-import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurity;
+import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurityGlobal;
 import hudson.ExtensionList;
 import hudson.Plugin;
 import hudson.Util;
@@ -65,7 +65,7 @@ public class OwnershipPlugin extends Plugin {
     private boolean assignOnCreate;
     private List<OwnershipAction> pluginActions = new ArrayList<OwnershipAction>();
     public String mailResolverClassName;
-    private ItemSpecificSecurity defaultJobsSecurity;
+    private ItemSpecificSecurityGlobal defaultJobsSecurity;
     
     public static OwnershipPlugin Instance() {
         Plugin plugin = Jenkins.getInstance().getPlugin(OwnershipPlugin.class);
@@ -87,7 +87,7 @@ public class OwnershipPlugin extends Plugin {
         return assignOnCreate;
     }
 
-    public ItemSpecificSecurity getDefaultJobsSecurity() {
+    public ItemSpecificSecurityGlobal getDefaultJobsSecurity() {
         return defaultJobsSecurity;
     }
      
@@ -96,8 +96,8 @@ public class OwnershipPlugin extends Plugin {
      * Required for jelly.
      * @return Descriptor
      */
-    public ItemSpecificSecurity.ItemSpecificDescriptor getItemSpecificDescriptor() {
-        return ItemSpecificSecurity.DESCRIPTOR;
+    public ItemSpecificSecurityGlobal.GlobalItemSpecificDescriptor getItemSpecificDescriptor() {
+        return ItemSpecificSecurityGlobal.GLOBAL_DESCRIPTOR;
     }
     
     @Override 
