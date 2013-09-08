@@ -23,6 +23,7 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership;
 
+import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurity;
 import hudson.ExtensionList;
 import hudson.Plugin;
 import hudson.Util;
@@ -33,11 +34,14 @@ import hudson.security.Permission;
 import hudson.security.PermissionGroup;
 import hudson.security.PermissionScope;
 import hudson.tasks.MailAddressResolver;
+import hudson.tasks.Mailer;
 import hudson.util.FormValidation;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
@@ -51,6 +55,7 @@ import org.kohsuke.stapler.StaplerRequest;
  */
 public class OwnershipPlugin extends Plugin {
     public static final String LOG_PREFIX="[OwnershipPlugin] - ";
+    public static final String FAST_RESOLVER_ID="Fast resolver for UI (recommended)";
     
     private static final PermissionGroup PERMISSIONS = new PermissionGroup(OwnershipPlugin.class, Messages._OwnershipPlugin_ManagePermissions_Title());    
     public static final Permission MANAGE_ITEMS_OWNERSHIP = new Permission(PERMISSIONS, "Jobs", Messages._OwnershipPlugin_ManagePermissions_JobDescription(), Permission.CONFIGURE, PermissionScope.ITEM);
@@ -60,6 +65,7 @@ public class OwnershipPlugin extends Plugin {
     private boolean assignOnCreate;
     private List<OwnershipAction> pluginActions = new ArrayList<OwnershipAction>();
     public String mailResolverClassName;
+    private ItemSpecificSecurity defaultJobsSecurity;
     
     public static OwnershipPlugin Instance() {
         Plugin plugin = Jenkins.getInstance().getPlugin(OwnershipPlugin.class);
@@ -80,7 +86,20 @@ public class OwnershipPlugin extends Plugin {
     public boolean isAssignOnCreate() {
         return assignOnCreate;
     }
+
+    public ItemSpecificSecurity getDefaultJobsSecurity() {
+        return defaultJobsSecurity;
+    }
      
+    /**
+     * Gets descriptor of ItemSpecificProperty.
+     * Required for jelly.
+     * @return Descriptor
+     */
+    public ItemSpecificSecurity.ItemSpecificDescriptor getItemSpecificDescriptor() {
+        return ItemSpecificSecurity.DESCRIPTOR;
+    }
+    
     @Override 
     public void configure(StaplerRequest req, JSONObject formData)
 	    throws IOException, ServletException, Descriptor.FormException {
@@ -93,6 +112,11 @@ public class OwnershipPlugin extends Plugin {
         } else {
             mailResolverClassName = null;
         }
+        
+        if (formData.containsKey("defaultJobsSecurity")) {
+            this.defaultJobsSecurity = getItemSpecificDescriptor().newInstance(req, formData.getJSONObject("defaultJobsSecurity"));
+        }
+        
         ReinitActionsList();
 	save();
         Hudson.getInstance().getActions().addAll(pluginActions);
@@ -130,16 +154,20 @@ public class OwnershipPlugin extends Plugin {
     }
     
     /**
-     * Resolves e-mail using resolvers and global config.
+     * Resolves e-mail using resolvers and global configuration.
      * @param user
      * @return 
      */
     public String resolveEmail(User user) {
         try {
             if (hasMailResolverRestriction()) {
-                Class<MailAddressResolver> resolverClass = (Class<MailAddressResolver>)Class.forName(mailResolverClassName);
-                MailAddressResolver res = MailAddressResolver.all().get(resolverClass);
-                return res.findMailAddressFor(user);
+                if (mailResolverClassName.equals(FAST_RESOLVER_ID)) {
+                    return FastEmailResolver.resolveFast(user);
+                } else {
+                    Class<MailAddressResolver> resolverClass = (Class<MailAddressResolver>)Class.forName(mailResolverClassName);
+                    MailAddressResolver res = MailAddressResolver.all().get(resolverClass);
+                    return res.findMailAddressFor(user);
+                }
             } 
         } catch (ClassNotFoundException ex) {
             // Do nothing - fallback do default handler
@@ -151,9 +179,75 @@ public class OwnershipPlugin extends Plugin {
     public Collection<String> getPossibleMailResolvers() {
         ExtensionList<MailAddressResolver> extensions = MailAddressResolver.all();
         List<String> items =new ArrayList<String>(extensions.size());
+        items.add(FAST_RESOLVER_ID);
         for (MailAddressResolver resolver : extensions) {
             items.add(resolver.getClass().getCanonicalName());
         }
         return items;
+    }
+    
+    
+    /**
+     * Implements e-mail resolution by suffix.
+     * @deprecated Class duplicates functionality of the Mailer 1.5 plugin. Will be removed in the new versions
+     * @author Kohsuke Kawaguchi, Oliver Gondža, Alex Earl
+     */
+    private static class FastEmailResolver {
+
+        /**
+         * Try to resolve user email address fast enough to be used from UI
+         * <p>
+         * This implementation does not trigger {@link MailAddressResolver}
+         * extension point.
+         *
+         * @return User address or null if resolution failed
+         */
+        public static String resolveFast(User u) {
+
+            String extractedAddress = extractAddressFromId(u.getFullName());
+            if (extractedAddress != null) {
+                return extractedAddress;
+            }
+      
+            if (u.getFullName().contains("@")) // this already looks like an e-mail ID
+            {
+                return u.getFullName();
+            }
+
+            String ds = Mailer.descriptor().getDefaultSuffix();
+            if (ds != null) {
+                // another common pattern is "DOMAIN\person" in Windows. Only
+                // do this when this full name is not manually set. see HUDSON-5164
+                Matcher m = WINDOWS_DOMAIN_REGEXP.matcher(u.getFullName());
+                if (m.matches() && u.getFullName().replace('\\', '_').equals(u.getId())) {
+                    return m.group(1) + ds; // user+defaultSuffix
+                }
+                return u.getId() + ds;
+            }
+
+            return null;
+        }
+    
+        /**
+         * Tries to extract an email address from the user id, or returns null
+         */
+        private static String extractAddressFromId(String id) {
+            Matcher m = EMAIL_ADDRESS_REGEXP.matcher(id);
+            if (m.matches()) {
+                return m.group(1);
+            }
+            return null;
+        }
+
+        /**
+         * Matches strings like "Kohsuke Kawaguchi
+         * &lt;kohsuke.kawaguchi@sun.com>"
+         * @see #extractAddressFromId(String)
+         */
+        private static final Pattern EMAIL_ADDRESS_REGEXP = Pattern.compile("^.*<([^>]+)>.*$");
+        /**
+         * Matches something like "DOMAIN\person"
+         */
+        private static final Pattern WINDOWS_DOMAIN_REGEXP = Pattern.compile("[^\\\\ ]+\\\\([^\\\\ ]+)");
     }
 }
