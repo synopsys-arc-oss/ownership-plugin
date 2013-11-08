@@ -99,24 +99,25 @@ public class OwnershipBuildWrapper extends BuildWrapper {
         String ownerEmail = UserStringFormatter.formatEmail(descr.getPrimaryOwnerId());  
         target.put(prefix+"_OWNER_EMAIL", ownerEmail != null ? ownerEmail : "");
         
-        String coowners=target.get(prefix+"_OWNER");
-        String coownerEmails=target.get(prefix+"_OWNER_EMAIL");
+        StringBuilder coowners=new StringBuilder(prefix+"_OWNER");   
+        StringBuilder coownerEmails= new StringBuilder(target.get(prefix+"_OWNER_EMAIL"));
         for (String userId : descr.getCoownersIds()) {
-            if (!coowners.isEmpty()) {
-                coowners+=",";
+            if (coowners.length() != 0) {
+                coowners.append(",");
             }
-            coowners += userId;
+            coowners.append(userId);
             
             String coownerEmail = UserStringFormatter.formatEmail(userId);
             if (coownerEmail != null) {
-                if (!coownerEmails.isEmpty()) {
-                    coownerEmails+=",";
+                //TODO: may corrupt logic on empty owner
+                if (coownerEmails.length() != 0) {
+                    coownerEmails.append(",");
                 }
-                coownerEmails+=coownerEmail;
+                coownerEmails.append(coownerEmail);
             }       
         }
-        target.put(prefix+"_COOWNERS", coowners);
-        target.put(prefix+"_COOWNERS_EMAILS", coownerEmails);     
+        target.put(prefix+"_COOWNERS", coowners.toString());
+        target.put(prefix+"_COOWNERS_EMAILS", coownerEmails.toString());     
     }
     
     public boolean isInjectJobOwnership() {

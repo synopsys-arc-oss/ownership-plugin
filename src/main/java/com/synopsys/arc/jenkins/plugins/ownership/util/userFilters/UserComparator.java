@@ -24,12 +24,13 @@
 package com.synopsys.arc.jenkins.plugins.ownership.util.userFilters;
 
 import hudson.model.User;
+import java.io.Serializable;
 
 /**
- *
+ * Compares two users by Full Names.
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
-public class UserComparator implements java.util.Comparator<User>
+public class UserComparator implements java.util.Comparator<User>, Serializable
 {
     @Override
     public int compare(User o1, User o2) {
