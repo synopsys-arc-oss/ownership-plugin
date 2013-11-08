@@ -66,6 +66,6 @@ public class ComputerOwnerHelper extends AbstractOwnershipHelper<Computer> {
             throw new IOException("Cannot set ownership. Probably, the node has been renamed or deleted.");
         }
         
-        ComputerOwnerHelper.setOwnership(computer, descr);
+        NodeOwnerHelper.setOwnership(node, descr);
     }
 }
