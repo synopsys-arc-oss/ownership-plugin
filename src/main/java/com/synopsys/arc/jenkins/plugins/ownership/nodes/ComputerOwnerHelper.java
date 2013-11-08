@@ -39,6 +39,10 @@ import java.util.Collection;
 public class ComputerOwnerHelper extends AbstractOwnershipHelper<Computer> {
 
     static final ComputerOwnerHelper Instance = new ComputerOwnerHelper();
+
+    public static ComputerOwnerHelper getInstance() {
+        return Instance;
+    }
         
     @Override
     public OwnershipDescription getOwnershipDescription(Computer item) {

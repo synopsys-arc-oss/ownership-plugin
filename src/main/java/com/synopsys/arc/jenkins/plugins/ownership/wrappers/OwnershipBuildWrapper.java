@@ -35,6 +35,7 @@ import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
+import hudson.model.Node;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildWrapperDescriptor;
 import java.io.IOException;
@@ -67,8 +68,14 @@ public class OwnershipBuildWrapper extends BuildWrapper {
             getVariables(descr, vars, "JOB");
         }
         
-        if (injectNodeOwnership && build.getBuiltOn() != null) {
-            OwnerNodeProperty prop = build.getBuiltOn().getNodeProperties().get(OwnerNodeProperty.class);
+        
+        if (injectNodeOwnership) {
+            Node node = build.getBuiltOn();
+            if (node == null) {
+                throw new IOException("Cannot retrieve node of the build. Probably, it has been deleted");
+            }
+            
+            OwnerNodeProperty prop = node.getNodeProperties().get(OwnerNodeProperty.class);
             OwnershipDescription descr = prop!=null ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
             getVariables(descr, vars, "NODE");
         }

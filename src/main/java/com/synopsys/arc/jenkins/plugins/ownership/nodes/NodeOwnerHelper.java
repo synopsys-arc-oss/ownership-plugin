@@ -60,6 +60,10 @@ public class NodeOwnerHelper extends AbstractOwnershipHelper<Node> {
         
     @Override
     public OwnershipDescription getOwnershipDescription(Node item) {
+        if (item == null) { // Handle renames, etc.
+            return OwnershipDescription.DISABLED_DESCR;
+        }
+        
         OwnerNodeProperty prop = getOwnerProperty(item);
         return prop != null ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
     }
