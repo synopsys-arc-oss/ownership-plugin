@@ -26,6 +26,8 @@ package com.synopsys.arc.jenkins.plugins.ownership.util;
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import hudson.model.User;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Provides basic operations for typical helpers.
@@ -35,7 +37,9 @@ import hudson.model.User;
 public abstract class AbstractOwnershipHelper<TObjectType>  
     implements IOwnershipHelper<TObjectType>  
 {
-    
+    /**An empty collection of users*/
+    protected final static Collection<User> EMPTY_USERS_COLLECTION = new ArrayList<User>(0);
+            
     @Override
     public final String getDisplayName(User usr) {
         return UserStringFormatter.format(usr);

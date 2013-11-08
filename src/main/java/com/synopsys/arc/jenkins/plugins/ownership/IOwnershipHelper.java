@@ -76,9 +76,9 @@ public interface IOwnershipHelper<TObjectType>  {
     
     
     /**
-     * Get list of users, who can be item's owner
+     * Get list of users, who can be item's owner.
      * @param item Item to be described
-     * @return List of users, who can be item's owner
+     * @return List of users, who can be item's owner (always non-null)
      * @since 0.0.3
      */
     public Collection<User> getPossibleOwners(TObjectType item);
