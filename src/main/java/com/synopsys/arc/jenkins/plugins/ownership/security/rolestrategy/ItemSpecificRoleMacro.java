@@ -31,7 +31,6 @@ import com.synopsys.arc.jenkins.plugins.rolestrategy.Macro;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.RoleType;
 import hudson.Extension;
 import hudson.model.Job;
-import hudson.model.JobProperty;
 import hudson.security.AccessControlled;
 import hudson.security.Permission;
 
@@ -59,7 +58,7 @@ public class ItemSpecificRoleMacro extends AbstractOwnershipRoleMacro {
    
     @Override
     public boolean hasPermission(String sid, Permission p, RoleType type, AccessControlled item, Macro macro) {
-        if (type == RoleType.Project && Job.class.isAssignableFrom(item.getClass())) { 
+        if (type == RoleType.Project && item instanceof Job) { 
             Job prj = (Job)item;       
             JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(prj);
 

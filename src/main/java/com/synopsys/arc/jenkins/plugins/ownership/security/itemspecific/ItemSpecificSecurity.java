@@ -27,6 +27,8 @@ import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.security.AuthorizationMatrixProperty;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -56,8 +58,15 @@ public class ItemSpecificSecurity implements Describable<ItemSpecificSecurity>, 
 
     @Override
     public ItemSpecificSecurity clone() {
-        AuthorizationMatrixProperty innerClone = new AuthorizationMatrixProperty(this.permissionsMatrix.getGrantedPermissions());
-        return new ItemSpecificSecurity(innerClone);
+        ItemSpecificSecurity newItem;
+        try {
+            newItem = (ItemSpecificSecurity)super.clone();
+            newItem.permissionsMatrix = new AuthorizationMatrixProperty(this.permissionsMatrix.getGrantedPermissions());
+            return newItem;
+        } catch (CloneNotSupportedException ex) {
+            Logger.getLogger(ItemSpecificSecurity.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }     
     }
         
     public static final ItemSpecificDescriptor DESCRIPTOR = new ItemSpecificDescriptor();

@@ -29,6 +29,7 @@ import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.User;
 import hudson.util.FormValidation;
+import java.io.Serializable;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -38,7 +39,7 @@ import org.kohsuke.stapler.QueryParameter;
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  */
 //TODO: Autocompletion
-public class UserSelector implements Describable<UserSelector> {
+public class UserSelector implements Describable<UserSelector>, Serializable {
     /**ID of the user*/
     String selectedUserId;
 
@@ -57,8 +58,7 @@ public class UserSelector implements Describable<UserSelector> {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        
+    public boolean equals(Object obj) {       
         if (obj instanceof UserSelector) {
             UserSelector cmp = (UserSelector)obj;
             return selectedUserId != null ? selectedUserId.equals(cmp.selectedUserId) : cmp.selectedUserId == null;
@@ -67,9 +67,14 @@ public class UserSelector implements Describable<UserSelector> {
         return false;
     
     }
-    
-    
-        
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (this.selectedUserId != null ? this.selectedUserId.hashCode() : 0);
+        return hash;
+    }
+          
     @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
     public static class DescriptorImpl extends Descriptor<UserSelector> {

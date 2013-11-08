@@ -75,7 +75,7 @@ public class OwnershipPlugin extends Plugin {
     @Override 
     public void start() throws Exception {
 	super.load();
-        ReinitActionsList();
+        reinitActionsList();
 	Hudson.getInstance().getActions().addAll(pluginActions);
     }
     
@@ -117,12 +117,12 @@ public class OwnershipPlugin extends Plugin {
             this.defaultJobsSecurity = getItemSpecificDescriptor().newInstance(req, formData.getJSONObject("defaultJobsSecurity"));
         }
         
-        ReinitActionsList();
+        reinitActionsList();
 	save();
         Hudson.getInstance().getActions().addAll(pluginActions);
     }
    
-    public void ReinitActionsList() {
+    private void reinitActionsList() {
         pluginActions.clear();
     }
     

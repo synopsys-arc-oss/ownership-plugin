@@ -39,7 +39,7 @@ import java.util.TreeSet;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- *
+ * Allows to restrict jobs execution by ownership.
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  */
 public class OwnersListJobRestriction extends JobRestriction {
