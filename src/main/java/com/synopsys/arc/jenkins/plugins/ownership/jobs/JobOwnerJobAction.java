@@ -97,7 +97,11 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
         JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(getDescribedItem());
         return prop != null && prop.hasItemSpecificSecurity();
     }
-    
+
+    /**
+     * Gets descriptor of item-specific security page. 
+     * This method is being used by UI.
+     */
     public ItemSpecificSecurity.ItemSpecificDescriptor getItemSpecificDescriptor() {
         return ItemSpecificSecurity.DESCRIPTOR;
     }

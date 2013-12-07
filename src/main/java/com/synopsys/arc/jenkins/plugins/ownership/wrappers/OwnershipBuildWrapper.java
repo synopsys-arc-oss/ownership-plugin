@@ -35,6 +35,7 @@ import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
+import hudson.model.Node;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildWrapperDescriptor;
 import java.io.IOException;
@@ -44,7 +45,8 @@ import java.util.TreeMap;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * Provides wrapper, which injects ownership variables into the build environment;
+ * Provides wrapper, which injects ownership variables into the build environment.
+ * The wrapper support both slave and node ownership information.
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  * @since 0.2
  */
@@ -67,8 +69,14 @@ public class OwnershipBuildWrapper extends BuildWrapper {
             getVariables(descr, vars, "JOB");
         }
         
-        if (injectNodeOwnership && build.getBuiltOn() != null) {
-            OwnerNodeProperty prop = build.getBuiltOn().getNodeProperties().get(OwnerNodeProperty.class);
+        
+        if (injectNodeOwnership) {
+            Node node = build.getBuiltOn();
+            if (node == null) {
+                throw new IOException("Cannot retrieve node of the build. Probably, it has been deleted");
+            }
+            
+            OwnerNodeProperty prop = node.getNodeProperties().get(OwnerNodeProperty.class);
             OwnershipDescription descr = prop!=null ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
             getVariables(descr, vars, "NODE");
         }
@@ -86,30 +94,31 @@ public class OwnershipBuildWrapper extends BuildWrapper {
         };
     }
     
-    //TODO: Replace by ownershipDescriptionHelper
+    //TODO: Replace by OwnershipDescriptionHelper
     private static void getVariables(OwnershipDescription descr, Map<String, String> target, String prefix) {      
         target.put(prefix+"_OWNER", descr.hasPrimaryOwner() ? descr.getPrimaryOwnerId() : "");
         String ownerEmail = UserStringFormatter.formatEmail(descr.getPrimaryOwnerId());  
         target.put(prefix+"_OWNER_EMAIL", ownerEmail != null ? ownerEmail : "");
         
-        String coowners=target.get(prefix+"_OWNER");
-        String coownerEmails=target.get(prefix+"_OWNER_EMAIL");
+        StringBuilder coowners=new StringBuilder(prefix+"_OWNER");   
+        StringBuilder coownerEmails= new StringBuilder(target.get(prefix+"_OWNER_EMAIL"));
         for (String userId : descr.getCoownersIds()) {
-            if (!coowners.isEmpty()) {
-                coowners+=",";
+            if (coowners.length() != 0) {
+                coowners.append(",");
             }
-            coowners += userId;
+            coowners.append(userId);
             
             String coownerEmail = UserStringFormatter.formatEmail(userId);
             if (coownerEmail != null) {
-                if (!coownerEmails.isEmpty()) {
-                    coownerEmails+=",";
+                //TODO: may corrupt logic on empty owner
+                if (coownerEmails.length() != 0) {
+                    coownerEmails.append(",");
                 }
-                coownerEmails+=coownerEmail;
+                coownerEmails.append(coownerEmail);
             }       
         }
-        target.put(prefix+"_COOWNERS", coowners);
-        target.put(prefix+"_COOWNERS_EMAILS", coownerEmails);     
+        target.put(prefix+"_COOWNERS", coowners.toString());
+        target.put(prefix+"_COOWNERS_EMAILS", coownerEmails.toString());     
     }
     
     public boolean isInjectJobOwnership() {

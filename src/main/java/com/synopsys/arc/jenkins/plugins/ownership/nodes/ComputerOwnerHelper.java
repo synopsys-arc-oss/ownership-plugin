@@ -26,29 +26,46 @@ package com.synopsys.arc.jenkins.plugins.ownership.nodes;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import hudson.model.Computer;
+import hudson.model.Node;
 import hudson.model.User;
 import java.io.IOException;
 import java.util.Collection;
 
 /**
- *
+ * Provides ownership helper for {@link Computer}.
+ * The class implements a wrapper of {@link NodeOwnerHelper}.
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  */
 public class ComputerOwnerHelper extends AbstractOwnershipHelper<Computer> {
 
     static final ComputerOwnerHelper Instance = new ComputerOwnerHelper();
+
+    public static ComputerOwnerHelper getInstance() {
+        return Instance;
+    }
         
     @Override
     public OwnershipDescription getOwnershipDescription(Computer item) {
-        return NodeOwnerHelper.Instance.getOwnershipDescription(item.getNode());
+        Node node = item.getNode();      
+        return node != null 
+                ? NodeOwnerHelper.Instance.getOwnershipDescription(node)
+                : OwnershipDescription.DISABLED_DESCR; // No node - no ownership
     }
     
     @Override
-    public Collection<User> getPossibleOwners(Computer item) {
-        return NodeOwnerHelper.Instance.getPossibleOwners(item.getNode());
+    public Collection<User> getPossibleOwners(Computer computer) {
+        Node node = computer.getNode();
+        return node != null 
+                ? NodeOwnerHelper.Instance.getPossibleOwners(node)
+                : EMPTY_USERS_COLLECTION;
     }  
     
     public static void setOwnership(Computer computer, OwnershipDescription descr) throws IOException {
-       NodeOwnerHelper.setOwnership(computer.getNode(), descr);
+        Node node = computer.getNode();
+        if (node == null) {
+            throw new IOException("Cannot set ownership. Probably, the node has been renamed or deleted.");
+        }
+        
+        NodeOwnerHelper.setOwnership(node, descr);
     }
 }

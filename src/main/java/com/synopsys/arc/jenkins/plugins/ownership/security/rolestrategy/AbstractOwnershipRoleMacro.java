@@ -35,7 +35,6 @@ import static com.synopsys.arc.jenkins.plugins.rolestrategy.RoleType.Project;
 import static com.synopsys.arc.jenkins.plugins.rolestrategy.RoleType.Slave;
 import hudson.model.Computer;
 import hudson.model.Job;
-import hudson.model.JobProperty;
 import hudson.model.Node;
 import hudson.model.User;
 import hudson.security.AccessControlled;
@@ -64,7 +63,7 @@ abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
         IOwnershipItem ownership = null;
         switch(type) {
             case Project:
-                if (Job.class.isAssignableFrom(item.getClass())) { 
+                if (item instanceof Job) { 
                     Job prj = (Job)item;
                     JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(prj);
                     if (prop != null) {
@@ -73,7 +72,7 @@ abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
                 }
                 break;
             case Slave:
-                if (Computer.class.isAssignableFrom(item.getClass())) {
+                if (item instanceof Computer) {
                     Computer comp = (Computer)item;
                     Node node = comp.getNode();
                     if (node != null) {

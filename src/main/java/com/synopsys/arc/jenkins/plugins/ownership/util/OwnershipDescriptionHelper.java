@@ -49,27 +49,27 @@ public class OwnershipDescriptionHelper {
      * @return 
      */
     public static String getCoOwnerIDs(OwnershipDescription descr) {
-        String coowners=getOwnerID(descr);
+        StringBuilder coowners= new StringBuilder(getOwnerID(descr));
         for (String userId : descr.getCoownersIds()) {
-            if (!coowners.isEmpty()) {
-                coowners+=",";
+            if (coowners.length() == 0) {
+                coowners.append(",");
             }
-            coowners += userId;      
+            coowners.append(userId);      
         }
-        return coowners;
+        return coowners.toString();
     }
     
     public static String getCoOwnerEmails(OwnershipDescription descr) {
-        String coownerEmails=getOwnerEmail(descr);
+        StringBuilder coownerEmails=new StringBuilder(getOwnerEmail(descr));
         for (String userId : descr.getCoownersIds()) {          
             String coownerEmail = UserStringFormatter.formatEmail(userId);
             if (coownerEmail != null) {
-                if (!coownerEmails.isEmpty()) {
-                    coownerEmails+=",";
+                if (coownerEmails.length() != 0) {
+                    coownerEmails.append(",");
                 }
-                coownerEmails+=coownerEmail;
+                coownerEmails.append(coownerEmail);
             }       
         }
-        return coownerEmails;
+        return coownerEmails.toString();
     }
 }

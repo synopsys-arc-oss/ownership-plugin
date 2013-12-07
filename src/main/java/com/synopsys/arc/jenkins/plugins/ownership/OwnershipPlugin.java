@@ -75,7 +75,7 @@ public class OwnershipPlugin extends Plugin {
     @Override 
     public void start() throws Exception {
 	super.load();
-        ReinitActionsList();
+        reinitActionsList();
 	Hudson.getInstance().getActions().addAll(pluginActions);
     }
     
@@ -117,12 +117,12 @@ public class OwnershipPlugin extends Plugin {
             this.defaultJobsSecurity = getItemSpecificDescriptor().newInstance(req, formData.getJSONObject("defaultJobsSecurity"));
         }
         
-        ReinitActionsList();
+        reinitActionsList();
 	save();
         Hudson.getInstance().getActions().addAll(pluginActions);
     }
    
-    public void ReinitActionsList() {
+    private void reinitActionsList() {
         pluginActions.clear();
     }
     
@@ -155,9 +155,10 @@ public class OwnershipPlugin extends Plugin {
     
     /**
      * Resolves e-mail using resolvers and global configuration.
-     * @param user
-     * @return 
+     * @param user A user to be used
+     * @return A e-mail string or null (if resolution fails)
      */
+    //TODO: Replace the implementation by Mailer-1.6
     public String resolveEmail(User user) {
         try {
             if (hasMailResolverRestriction()) {
@@ -185,7 +186,6 @@ public class OwnershipPlugin extends Plugin {
         }
         return items;
     }
-    
     
     /**
      * Implements e-mail resolution by suffix.

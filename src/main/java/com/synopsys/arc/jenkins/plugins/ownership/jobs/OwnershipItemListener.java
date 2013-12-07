@@ -33,12 +33,14 @@ import hudson.model.listeners.ItemListener;
 import java.io.IOException;
 
 /**
- *
+ * Listener checks for job configuration changes and
+ * applies and modifies its ownership info.
+ * By default, the plugin drops initial ownership settings.
+ * It can also set the current user as a new owner (can be enabled in global configs). 
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  */
 @Extension
 public class OwnershipItemListener extends ItemListener {
-
     @Override
     public void onCopied(Item src, Item item) {
         modifyOwnership(item);
@@ -57,7 +59,7 @@ public class OwnershipItemListener extends ItemListener {
                 try {
                     JobOwnerHelper.setOwnership(job, new OwnershipDescription(true, creator.getId()));
                 } catch (IOException ex) {
-                    //TODO: do sowething
+                    //TODO: do something
                 }
             }
         }
