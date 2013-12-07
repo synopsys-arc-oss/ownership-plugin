@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Provides basic operations for typical helpers.
+ * Provides basic operations for ownership helpers.
  * @since 0.0.4
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */

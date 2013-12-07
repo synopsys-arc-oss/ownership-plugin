@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- * Provides helper for Node owner
+ * Provides helper for Node owner.
  * @todo Add Bug reference
  * @since 0.0.3
  * @author Oleg Nenashev <nenashev@synopsys.com>
@@ -48,7 +48,7 @@ public class NodeOwnerHelper extends AbstractOwnershipHelper<Node> {
     public static final NodeOwnerHelper Instance = new NodeOwnerHelper();
 
     /**
-     * Gets OwnerNodeProperty from job if possible
+     * Gets OwnerNodeProperty from job if possible.
      * @param node Node
      * @return OwnerNodeProperty or null
      */
@@ -78,7 +78,13 @@ public class NodeOwnerHelper extends AbstractOwnershipHelper<Node> {
         }
     }  
     
-     public static void setOwnership(Node node, OwnershipDescription descr) throws IOException {
+    /**
+     * Sets ownership of the node.
+     * @param node A target node
+     * @param descr An ownership description to be assigned
+     * @throws IOException A property modification error
+     */
+    public static void setOwnership(Node node, OwnershipDescription descr) throws IOException {
         OwnerNodeProperty prop = NodeOwnerHelper.getOwnerProperty(node);
         if (prop == null) {
             prop = new OwnerNodeProperty(node, descr);

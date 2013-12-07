@@ -36,6 +36,9 @@ import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
 
 /**
  * Provides OWNERSHIP token macro.
+ * This macro allows to extract information about ownership.
+ * An information type can be specified by additional var parameter
+ * (see {@link OwnershipFunction} to get a list of supported operations).
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  * @since 0.4
  */
@@ -43,6 +46,10 @@ import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
 public class OwnershipTokenMacro extends DataBoundTokenMacro {
     public static final String MACRO_NAME="OWNERSHIP";
     
+    /**
+     * An information type to be retrieved.
+     * {@link OwnershipFunction} contains list of supported commands.
+     */
     @Parameter
     public String var;
 

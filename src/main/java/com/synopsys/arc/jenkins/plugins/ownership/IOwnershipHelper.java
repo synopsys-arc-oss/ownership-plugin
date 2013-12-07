@@ -36,14 +36,14 @@ import java.util.Collection;
  */
 public interface IOwnershipHelper<TObjectType>  {
     /**
-     * Get ownerId of the item
+     * Get ID of the item's owner.
      * @param item Item to be describes
-     * @return userId
+     * @return userId or null
      */
     public String getOwner(TObjectType item);
     
     /**
-     * Get e-mail of the owner
+     * Get e-mail of the owner.
      * @param item Item to be describes
      * @return Owner's e-mail
      * @since 0.0.4
@@ -51,29 +51,26 @@ public interface IOwnershipHelper<TObjectType>  {
     public String getOwnerEmail(TObjectType item);
     
     /**
-     * Check if item has owners
+     * Check if item has owners.
      * @param item Item to be checked
      * @return true if item has owners
      */
     public boolean isOwnerExists(TObjectType item);
     
     /**
-     * Get Display string of the owner (and coowners)
+     * Get Display string of the owner (and coowners).
      * @param item Item to be described
      * @return User description string
      */
     public String getOwnerLongString(TObjectType item);
     
-    
-    
     /**
-     * Gets ownership description of the requested item
+     * Gets ownership description of the requested item.
      * @param item Item to be described
      * @return Ownership description
      * @since 0.0.3
      */
     public OwnershipDescription getOwnershipDescription(TObjectType item);
-    
     
     /**
      * Get list of users, who can be item's owner.
@@ -84,7 +81,7 @@ public interface IOwnershipHelper<TObjectType>  {
     public Collection<User> getPossibleOwners(TObjectType item);
     
     /**
-     * Gets User's name for visualization
+     * Gets User's name for visualization.
      * @param usr User
      * @return String for display
      */

@@ -85,7 +85,6 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>>{
     public static void setOwnership(Job<?, ?> job, OwnershipDescription descr) throws IOException {
         JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(job);
         if (prop == null) {
-            //TODO: Use default?
             prop = new JobOwnerJobProperty(descr, null);
             job.addProperty(prop);
         } else {

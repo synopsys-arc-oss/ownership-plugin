@@ -45,7 +45,8 @@ import java.util.TreeMap;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * Provides wrapper, which injects ownership variables into the build environment;
+ * Provides wrapper, which injects ownership variables into the build environment.
+ * The wrapper support both slave and node ownership information.
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  * @since 0.2
  */

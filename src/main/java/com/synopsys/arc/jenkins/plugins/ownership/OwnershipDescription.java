@@ -34,6 +34,7 @@ import net.sf.json.JSONObject;
 
 /**
  * Contains description of item's ownership. 
+ * This class is a main information entry for all ownership features.
  * @author Oleg Nenashev <nenashev@synopsys.com>
  * @since 0.0.3
  */
@@ -141,7 +142,7 @@ public class OwnershipDescription implements Serializable {
     }
     
     /**
-     * Parse OwershipDescription
+     * Parse a JSON input to construct {@link OwershipDescription}.
      * @param formData Object with data
      * @return OwnershipDescription 
      * @throws hudson.model.Descriptor.FormException Parsing error
@@ -177,7 +178,7 @@ public class OwnershipDescription implements Serializable {
     }
               
     /**
-     * Check if User is owner.
+     * Check if User is an owner.
      * @param user User to be checked
      * @param acceptCoowners Check if user belongs to coowners
      * @return true if User belongs to primary owners (and/or coowners)

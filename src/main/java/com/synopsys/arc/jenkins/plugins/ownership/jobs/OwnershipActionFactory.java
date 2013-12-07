@@ -41,7 +41,8 @@ import java.util.LinkedList;
 @Extension
 public class OwnershipActionFactory extends TransientProjectActionFactory {
     /**Empty actions collection for invalid project type*/
-    private static final Collection<? extends Action> EMPTY_ACTIONS = new LinkedList<Action>();
+    private static final Collection<? extends Action> EMPTY_ACTIONS 
+            = new LinkedList<Action>();
     
     @Override
     public Collection<? extends Action> createFor(AbstractProject target) {
