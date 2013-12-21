@@ -26,12 +26,13 @@ package com.synopsys.arc.jenkins.plugins.ownership.nodes;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import hudson.Extension;
 import hudson.model.Computer;
-import hudson.model.User;
 import hudson.node_monitors.AbstractNodeMonitorDescriptor;
 import hudson.node_monitors.NodeMonitor;
+import hudson.slaves.OfflineCause;
 import java.io.IOException;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.export.ExportedBean;
 
 /**
  * Implements monitoring of ownership.
@@ -45,15 +46,15 @@ public class OwnershipNodeMonitor extends NodeMonitor {
         return DESCRIPTOR;
     }
     
-    private static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-    
     @Extension
-    public static class DescriptorImpl extends AbstractNodeMonitorDescriptor<String> {
-        protected String monitor(Computer c) throws IOException, InterruptedException {
+    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+
+    public static class DescriptorImpl extends AbstractNodeMonitorDescriptor<Data> {
+        protected Data monitor(Computer c) throws IOException, InterruptedException {
             OwnershipDescription ownership = ComputerOwnerHelper.getInstance().getOwnershipDescription(c);
-            return ownership.getPrimaryOwnerId();
+            return new Data(ownership);
         }      
-        
+
         @Override
         public String getDisplayName() {
             return "Ownership";
@@ -62,8 +63,26 @@ public class OwnershipNodeMonitor extends NodeMonitor {
         @Override
         public NodeMonitor newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             return new OwnershipNodeMonitor();
+        }      
+    }
+    /**
+     * Immutable representation of the monitoring data.
+     */
+    @ExportedBean  
+    public static class Data extends OfflineCause {
+        private final OwnershipDescription ownershipDescription;
+
+        public Data(OwnershipDescription ownershipDescription) {
+            this.ownershipDescription = ownershipDescription;
         }
-        
-        
+
+        public OwnershipDescription getOwnershipDescription() {
+            return ownershipDescription;
+        }
+                
+        @Override
+        public String toString() {
+            return ownershipDescription.getPrimaryOwnerId();
+        }        
     }
 }
