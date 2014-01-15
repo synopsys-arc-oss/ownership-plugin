@@ -50,6 +50,8 @@ public class OwnershipNodeMonitor extends NodeMonitor {
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     public static class DescriptorImpl extends AbstractNodeMonitorDescriptor<Data> {
+        
+        @Override
         protected Data monitor(Computer c) throws IOException, InterruptedException {
             OwnershipDescription ownership = ComputerOwnerHelper.getInstance().getOwnershipDescription(c);
             return new Data(ownership);
