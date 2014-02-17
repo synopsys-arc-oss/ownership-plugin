@@ -28,8 +28,8 @@
     <f:entry field="acceptsCoOwners" title="${%Co-owners}">
         <f:checkbox title="${%Accept job co-owners}" checked="${it.acceptsCoOwners}"/>
     </f:entry>
-    <f:entry title="Users list"> 
-        <f:repeatableProperty field="usersList" add="Add owner"/>  
+    <f:entry title="${%Users list}"> 
+        <f:repeatableProperty field="usersList" add="${%Add owner}"/>  
     </f:entry>
     
     

@@ -29,19 +29,20 @@ import hudson.security.Permission;
 /**
  * Abstract class for ownership actions, which describes item at the floating box.
  * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @param <TObjectType> A class, for which action is being created
  * @since 0.0.2
  */
 public abstract class ItemOwnershipAction<TObjectType extends Actionable> 
     extends OwnershipAction implements IOwnershipItem<TObjectType> {
     
-    private TObjectType describedItem;
-    
+    private final TObjectType describedItem;
+        
     /**
      * Constructor.
-     * @param discribedItem Item, which is related to action
+     * @param describedItem Item, which is related to action
      */
-    public ItemOwnershipAction(TObjectType discribedItem)  {
-        this.describedItem = discribedItem;
+    public ItemOwnershipAction(TObjectType describedItem)  {
+        this.describedItem = describedItem;
     }
      
     @Override
