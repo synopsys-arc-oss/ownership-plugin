@@ -23,6 +23,9 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership;
 
+import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy;
+import com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy.AssignCreatorPolicy;
+import com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy.DropOwnershipPolicy;
 import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurity;
 import hudson.ExtensionList;
 import hudson.Plugin;
@@ -59,10 +62,15 @@ public class OwnershipPlugin extends Plugin {
     public static final Permission MANAGE_SLAVES_OWNERSHIP = new Permission(PERMISSIONS, "Nodes", Messages._OwnershipPlugin_ManagePermissions_SlaveDescription(), Permission.CONFIGURE, PermissionScope.COMPUTER);
      
     private boolean requiresConfigureRights;
-    private boolean assignOnCreate;
+    
+    /**
+     * @deprecated Replaced by {@link ItemOwnershipPolicy}
+     */
+    private transient boolean assignOnCreate;
     private List<OwnershipAction> pluginActions = new ArrayList<OwnershipAction>();
     public String mailResolverClassName;
     private ItemSpecificSecurity defaultJobsSecurity;
+    private ItemOwnershipPolicy itemOwnershipPolicy;
     
     public static OwnershipPlugin Instance() {
         Plugin plugin = Jenkins.getInstance().getPlugin(OwnershipPlugin.class);
@@ -71,11 +79,23 @@ public class OwnershipPlugin extends Plugin {
     
     @Override 
     public void start() throws Exception {
-	super.load();
+	load();
         reinitActionsList();
 	Hudson.getInstance().getActions().addAll(pluginActions);
     }
-    
+
+    @Override
+    protected void load() throws IOException {
+        super.load();
+        
+        // Migration to 1.5.0: Check ItemOwnershipPolicy
+        if (itemOwnershipPolicy == null) {
+            itemOwnershipPolicy = (assignOnCreate) 
+                    ? new AssignCreatorPolicy() : new DropOwnershipPolicy();
+            save();
+        }
+    }
+       
     public boolean isRequiresConfigureRights() {
         return requiresConfigureRights;
     }
@@ -86,6 +106,14 @@ public class OwnershipPlugin extends Plugin {
 
     public ItemSpecificSecurity getDefaultJobsSecurity() {
         return defaultJobsSecurity;
+    }
+    
+    public ItemOwnershipPolicy getItemOwnershipPolicy() {
+        return itemOwnershipPolicy;
+    }
+    
+    public OwnershipPluginConfiguration getConfiguration() {
+        return new OwnershipPluginConfiguration(itemOwnershipPolicy);
     }
      
     /**
@@ -102,7 +130,12 @@ public class OwnershipPlugin extends Plugin {
 	    throws IOException, ServletException, Descriptor.FormException {
 	Hudson.getInstance().getActions().removeAll(pluginActions);
         requiresConfigureRights = formData.getBoolean("requiresConfigureRights");
-        assignOnCreate=formData.getBoolean("assignOnCreate");
+        
+        // Manage ItemOwnershipPolicy
+        OwnershipPluginConfiguration config = 
+                req.bindJSON(OwnershipPluginConfiguration.class, formData);              
+        itemOwnershipPolicy = config.getItemOwnershipPolicy();
+              
         if (formData.containsKey("enableResolverRestrictions")) {
             JSONObject mailResolversConf = formData.getJSONObject("enableResolverRestrictions");
             mailResolverClassName = hudson.Util.fixEmptyAndTrim(mailResolversConf.getString("mailResolverClassName"));
