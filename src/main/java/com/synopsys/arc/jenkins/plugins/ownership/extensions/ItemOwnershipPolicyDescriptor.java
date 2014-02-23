@@ -1,7 +1,7 @@
-<!--
+/*
  * The MIT License
  *
- * Copyright 2013 Synopsys Inc., Oleg Nenashev <nenashev@synopsys.com>
+ * Copyright 2014 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,17 +20,17 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- -->
-<?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-    xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
-    xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-    <f:entry field="acceptsCoOwners" title="${%Co-owners}">
-        <f:checkbox title="${%Accept job co-owners}" checked="${it.acceptsCoOwners}"/>
-    </f:entry>
-    <f:entry title="${%Users list}"> 
-        <f:repeatableProperty field="usersList" add="${%Add owner}"/>  
-    </f:entry>
+ */
+
+package com.synopsys.arc.jenkins.plugins.ownership.extensions;
+
+import hudson.model.Descriptor;
+
+/**
+ * Defines a descriptor for {@link ItemOwnershipPolicy}.
+ * @author Oleg Nenashev <nenashev@synopsys.com>
+ */
+public abstract class ItemOwnershipPolicyDescriptor 
+        extends Descriptor<ItemOwnershipPolicy> {
     
-    
-</j:jelly>
+}

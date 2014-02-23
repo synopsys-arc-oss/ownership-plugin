@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2014 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,36 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.synopsys.arc.jenkins.plugins.ownership;
 
-import hudson.model.Actionable;
-import hudson.security.Permission;
+package com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy;
+
+import com.synopsys.arc.jenkins.plugins.ownership.Messages;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy;
+import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicyDescriptor;
+import hudson.Extension;
+import hudson.model.Item;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * Abstract class for ownership actions, which describes item at the floating box.
+ *
  * @author Oleg Nenashev <nenashev@synopsys.com>
- * @param <TObjectType> A class, for which action is being created
- * @since 0.0.2
  */
-public abstract class ItemOwnershipAction<TObjectType extends Actionable> 
-    extends OwnershipAction implements IOwnershipItem<TObjectType> {
-    
-    private final TObjectType describedItem;
-        
-    /**
-     * Constructor.
-     * @param describedItem Item, which is related to action
-     */
-    public ItemOwnershipAction(TObjectType describedItem)  {
-        this.describedItem = describedItem;
+public class DropOwnershipPolicy extends ItemOwnershipPolicy {
+
+    @DataBoundConstructor
+    public DropOwnershipPolicy() {
     }
-     
+    
     @Override
-    public final TObjectType getDescribedItem() {
-        return describedItem;
-    } 
-    
-    public abstract Permission getOwnerPermission();
-    public abstract Permission getProjectSpecificPermission();
-    
+    public OwnershipDescription onCreated(Item item) {
+        return null;
+    }
+
+    @Override
+    public OwnershipDescription onCopied(Item src, Item item) {
+        return null;
+    }
+        
+    @Extension
+    public static class DescriptorImpl extends ItemOwnershipPolicyDescriptor {
+
+        @Override
+        public String getDisplayName() {
+            return Messages.ItemOwnershipPolicy_DropOwnershipPolicy_dipslayName();
+        }
+    }
 }

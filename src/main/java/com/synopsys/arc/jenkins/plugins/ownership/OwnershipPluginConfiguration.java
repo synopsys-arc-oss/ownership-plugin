@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2014 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,36 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package com.synopsys.arc.jenkins.plugins.ownership;
 
-import hudson.model.Actionable;
-import hudson.security.Permission;
+import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy;
+import hudson.Extension;
+import hudson.model.Describable;
+import hudson.model.Descriptor;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * Abstract class for ownership actions, which describes item at the floating box.
+ *
  * @author Oleg Nenashev <nenashev@synopsys.com>
- * @param <TObjectType> A class, for which action is being created
- * @since 0.0.2
  */
-public abstract class ItemOwnershipAction<TObjectType extends Actionable> 
-    extends OwnershipAction implements IOwnershipItem<TObjectType> {
-    
-    private final TObjectType describedItem;
-        
-    /**
-     * Constructor.
-     * @param describedItem Item, which is related to action
-     */
-    public ItemOwnershipAction(TObjectType describedItem)  {
-        this.describedItem = describedItem;
+public class OwnershipPluginConfiguration 
+        implements Describable<OwnershipPluginConfiguration> {
+
+    private final ItemOwnershipPolicy itemOwnershipPolicy;
+
+    @DataBoundConstructor
+    public OwnershipPluginConfiguration(ItemOwnershipPolicy itemOwnershipPolicy) {
+        this.itemOwnershipPolicy = itemOwnershipPolicy;
     }
-     
+
+    public ItemOwnershipPolicy getItemOwnershipPolicy() {
+        return itemOwnershipPolicy;
+    }
+   
     @Override
-    public final TObjectType getDescribedItem() {
-        return describedItem;
-    } 
+    public Descriptor<OwnershipPluginConfiguration> getDescriptor() {
+        return DESCRIPTOR;
+    }
     
-    public abstract Permission getOwnerPermission();
-    public abstract Permission getProjectSpecificPermission();
+    @Extension
+    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+    
+    public static class DescriptorImpl extends Descriptor<OwnershipPluginConfiguration> {
+
+        @Override
+        public String getDisplayName() {
+            return "N/A";
+        }
+    }
     
 }

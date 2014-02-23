@@ -73,7 +73,8 @@ public class OwnershipDescription implements Serializable {
 
     /**
      * Constructor.
-     * Class is being used as DataBound in "OwnerNodeProperty".
+     * Class is being used as DataBound in {@link OwnerNodeProperty}.
+     * @param ownershipEnabled Indicates that the ownership is enabled.
      * @param primaryOwnerId userId of primary owner 
      * @param coownersIds userIds of secondary owners
      */

@@ -25,10 +25,10 @@
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <f:entry title="" description="">
         <table width="100%">
-            <f:entry title="Job Ownership" field="injectJobOwnership">
+            <f:entry title="${%Job Ownership}" field="injectJobOwnership">
                 <f:checkbox/>
             </f:entry>
-            <f:entry title="Node Ownership" field="injectNodeOwnership">
+            <f:entry title="${%Node Ownership}" field="injectNodeOwnership">
                 <f:checkbox/>
             </f:entry>
         </table>   

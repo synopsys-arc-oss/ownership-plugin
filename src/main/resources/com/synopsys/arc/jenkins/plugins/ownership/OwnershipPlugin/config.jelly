@@ -23,17 +23,24 @@
  -->
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:sl="/hudson/plugins/sidebar_link">
-  <f:section title="${%Ownership}" description="${%Configuration of the ownership plugin}">
-    <f:entry title="Require Configure rights" field="requiresConfigureRights">
+  <f:section title="${%ownership_section.title}" description="${%Configuration of the ownership plugin}">
+    <f:entry title="${%requireConfigRights.title}" field="requiresConfigureRights">
         <f:checkbox checked="${it.requiresConfigureRights}"/>
-        <f:description>If checked, only users with Configure rights will be able to become owners.</f:description>
+        <f:description>${%requireConfigRights.description}</f:description>
     </f:entry>
-    <f:entry title="${%Setup after creation}" field="assignOnCreate">
+    <f:entry title="${%assignOnCreate.title}" field="assignOnCreate">
         <f:checkbox checked="${it.assignOnCreate}"/>
-        <f:description>Assign current user as owner after creation of any job (nodes aren't supported)</f:description>
+        <f:description>${%assignOnCreate.description}</f:description>
     </f:entry>
+    
+  
+    <!-- Newest parts of the configuration -->
+    <j:set var="instance" value="${it.configuration}" /> 
+    <j:set var="descriptor" value="${instance.descriptor}" />
+    <st:include from="${descriptor}" page="${descriptor.configPage}" optional="false" />
+    
     <f:optionalBlock name="enableResolverRestrictions" 
-                     title="${%Restrict usage of MailAddressResolvers (recommended)}" 
+                     title="${%enableResolverRestrictions.title}" 
                      checked="${it.hasMailResolverRestriction()}">
         <f:entry title="${%Use the following resolver:}">
             <select  name="mailResolverClassName">
@@ -43,12 +50,12 @@
                     </f:option>
                 </j:forEach>
             </select>
-            <f:description>Allows to avoid usage of time-consuming resolvers (like Subversion AddressMailResolver)</f:description>
+            <f:description>${%enableResolverRestrictions.description}</f:description>
         </f:entry>
     </f:optionalBlock>
     <!--Manual implementation of the optionalProperty-->
     <f:optionalBlock name="defaultJobsSecurity" 
-                     title="${%Setup default permissions for job's item-specific security}"
+                     title="${%defaultJobsSecurity.title}"
                      checked="${it.defaultJobsSecurity != null}">
         <j:set var="descriptor" value="${it.itemSpecificDescriptor}"/>
         <j:set var="instance" value="${it.defaultJobsSecurity}"/>
