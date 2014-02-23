@@ -36,6 +36,7 @@ import jenkins.model.Jenkins;
 import org.acegisecurity.Authentication;
 import org.jenkinsci.plugins.authorizeproject.AuthorizeProjectStrategy;
 import org.jenkinsci.plugins.authorizeproject.AuthorizeProjectStrategyDescriptor;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Provides support of the ownership {@link AuthorizeProjectStrategy}.
@@ -45,6 +46,10 @@ import org.jenkinsci.plugins.authorizeproject.AuthorizeProjectStrategyDescriptor
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
 public class OwnershipAuthorizeProjectStrategy extends AuthorizeProjectStrategy {
+
+    @DataBoundConstructor
+    public OwnershipAuthorizeProjectStrategy() {
+    }
 
     @Override
     public Authentication authenticate(AbstractProject<?, ?> ap, Queue.Item item) {    
