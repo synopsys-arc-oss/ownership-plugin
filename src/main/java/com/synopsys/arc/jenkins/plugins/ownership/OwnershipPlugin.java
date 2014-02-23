@@ -70,7 +70,7 @@ public class OwnershipPlugin extends Plugin {
     private List<OwnershipAction> pluginActions = new ArrayList<OwnershipAction>();
     public String mailResolverClassName;
     private ItemSpecificSecurity defaultJobsSecurity;
-    private ItemOwnershipPolicy itemOwnershipPolicy;
+    private OwnershipPluginConfiguration configuration;
     
     public static OwnershipPlugin Instance() {
         Plugin plugin = Jenkins.getInstance().getPlugin(OwnershipPlugin.class);
@@ -89,9 +89,12 @@ public class OwnershipPlugin extends Plugin {
         super.load();
         
         // Migration to 1.5.0: Check ItemOwnershipPolicy
-        if (itemOwnershipPolicy == null) {
-            itemOwnershipPolicy = (assignOnCreate) 
+        if (configuration == null) {
+            
+            ItemOwnershipPolicy itemOwnershipPolicy = (assignOnCreate) 
                     ? new AssignCreatorPolicy() : new DropOwnershipPolicy();
+            configuration = new OwnershipPluginConfiguration(itemOwnershipPolicy);
+            
             save();
         }
     }
@@ -100,20 +103,21 @@ public class OwnershipPlugin extends Plugin {
         return requiresConfigureRights;
     }
 
+    /**
+     * @deprecated This method is deprecated since 0.5
+     * @return true if the {@link #itemOwnershipPolicy} is an instance of
+     * {@link AssignCreatorPolicy}.
+     */
     public boolean isAssignOnCreate() {
-        return assignOnCreate;
+        return (getConfiguration().getItemOwnershipPolicy() instanceof AssignCreatorPolicy);
     }
 
     public ItemSpecificSecurity getDefaultJobsSecurity() {
         return defaultJobsSecurity;
     }
     
-    public ItemOwnershipPolicy getItemOwnershipPolicy() {
-        return itemOwnershipPolicy;
-    }
-    
     public OwnershipPluginConfiguration getConfiguration() {
-        return new OwnershipPluginConfiguration(itemOwnershipPolicy);
+        return configuration;
     }
      
     /**
@@ -131,10 +135,8 @@ public class OwnershipPlugin extends Plugin {
 	Hudson.getInstance().getActions().removeAll(pluginActions);
         requiresConfigureRights = formData.getBoolean("requiresConfigureRights");
         
-        // Manage ItemOwnershipPolicy
-        OwnershipPluginConfiguration config = 
-                req.bindJSON(OwnershipPluginConfiguration.class, formData);              
-        itemOwnershipPolicy = config.getItemOwnershipPolicy();
+        // Configurations
+        configuration = req.bindJSON(OwnershipPluginConfiguration.class, formData);              
               
         if (formData.containsKey("enableResolverRestrictions")) {
             JSONObject mailResolversConf = formData.getJSONObject("enableResolverRestrictions");
