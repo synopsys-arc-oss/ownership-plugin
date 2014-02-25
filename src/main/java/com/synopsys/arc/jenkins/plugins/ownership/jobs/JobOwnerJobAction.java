@@ -39,6 +39,8 @@ import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Ownership action for jobs.
+ * The action displays "Manage Ownership" action on the left panel.
+ * Actually, this action injects {@link JobOwnerJobProperty} into the project.
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
 public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
@@ -101,6 +103,7 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     /**
      * Gets descriptor of item-specific security page. 
      * This method is being used by UI.
+     * @return A descriptor of {@link ItemSpecificSecurity}
      */
     public ItemSpecificSecurity.ItemSpecificDescriptor getItemSpecificDescriptor() {
         return ItemSpecificSecurity.DESCRIPTOR;

@@ -30,6 +30,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import net.sf.json.JSONObject;
 
 /**
@@ -62,6 +64,7 @@ public class OwnershipDescription implements Serializable {
 
     /**
      * Constructor.
+     * @param ownershipEnabled indicates that the ownership is enabled
      * @param primaryOwnerId userId of primary owner
      * @deprecated Use constructor with co-owners specification
      */
@@ -74,6 +77,7 @@ public class OwnershipDescription implements Serializable {
     /**
      * Constructor.
      * Class is being used as DataBound in "OwnerNodeProperty".
+     * @param ownershipEnabled indicates that the ownership is enabled
      * @param primaryOwnerId userId of primary owner 
      * @param coownersIds userIds of secondary owners
      */
@@ -119,7 +123,8 @@ public class OwnershipDescription implements Serializable {
 
     /**
      * Gets id of primary owner.
-     * @return userId of primary owner 
+     * @return userId of the primary owner. The result will be "unknown" if the
+     * user is not specified.
      */
     public String getPrimaryOwnerId() {
         return ownershipEnabled ? primaryOwnerId :  User.getUnknown().getId();
@@ -127,38 +132,41 @@ public class OwnershipDescription implements Serializable {
     
     /**
      * Get primary owner.
-     * @return Primary owner's user.
+     * @return Primary owner's user. The result may be null if someone deletes
+     * a user.
      */
+    @CheckForNull
     public User getPrimaryOwner() {
         return User.get(primaryOwnerId, false, null);
     }
 
     /**
-     * Gets list of coowners.
+     * Gets list of co-owners.
      * @return Collection of co-owners
      */
+    @Nonnull
     public Set<String> getCoownersIds() {
         return coownersIds;
     }
     
     /**
      * Parse a JSON input to construct {@link OwershipDescription}.
-     * @param formData Object with data
+     * @param formData Object with a data
      * @return OwnershipDescription 
      * @throws hudson.model.Descriptor.FormException Parsing error
      */
-    public static OwnershipDescription Parse(JSONObject debugJSON)
+    public static OwnershipDescription Parse(JSONObject formData)
             throws Descriptor.FormException
     {
         // Read primary owner
-        String primaryOwner = debugJSON.getString( "primaryOwner" );
+        String primaryOwner = formData.getString( "primaryOwner" );
 
         // Read coowners
         Set<String> coOwnersSet = new TreeSet<String>();
-        if (debugJSON.has("coOwners")) {
-            JSONObject coOwners = debugJSON.optJSONObject("coOwners");
+        if (formData.has("coOwners")) {
+            JSONObject coOwners = formData.optJSONObject("coOwners");
             if (coOwners == null) {         
-                for (Object obj : debugJSON.getJSONArray("coOwners")) {
+                for (Object obj : formData.getJSONArray("coOwners")) {
                    addUser(coOwnersSet, (JSONObject)obj);
                 }
             } else {
@@ -180,8 +188,8 @@ public class OwnershipDescription implements Serializable {
     /**
      * Check if User is an owner.
      * @param user User to be checked
-     * @param acceptCoowners Check if user belongs to coowners
-     * @return true if User belongs to primary owners (and/or coowners)
+     * @param acceptCoowners Check if user belongs to co-owners
+     * @return true if User belongs to primary owners (and/or co-owners)
      */
     public boolean isOwner(User user, boolean acceptCoowners) {
         if (user == null) {
@@ -204,6 +212,7 @@ public class OwnershipDescription implements Serializable {
     /**
      * Check if ownership is enabled.
      * @param descr Ownership description (can be null)
+     * @return True if the ownership is enabled
      * @since 0.1
      */
     public static boolean isEnabled(OwnershipDescription descr) {
