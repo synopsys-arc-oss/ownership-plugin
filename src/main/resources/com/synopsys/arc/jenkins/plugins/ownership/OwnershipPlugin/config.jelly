@@ -32,6 +32,13 @@
         <f:checkbox checked="${it.assignOnCreate}"/>
         <f:description>${%assignOnCreate.description}</f:description>
     </f:entry>
+    
+  
+    <!-- Newest parts of the configuration -->
+    <j:set var="instance" value="${it.configuration}" /> 
+    <j:set var="descriptor" value="${instance.descriptor}" />
+    <st:include from="${descriptor}" page="${descriptor.configPage}" optional="false" />
+    
     <f:optionalBlock name="enableResolverRestrictions" 
                      title="${%enableResolverRestrictions.title}" 
                      checked="${it.hasMailResolverRestriction()}">

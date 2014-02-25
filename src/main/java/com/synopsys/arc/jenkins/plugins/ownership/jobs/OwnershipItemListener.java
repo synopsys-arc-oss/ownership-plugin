@@ -25,10 +25,10 @@ package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
+import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy;
 import hudson.Extension;
 import hudson.model.Item;
 import hudson.model.Job;
-import hudson.model.User;
 import hudson.model.listeners.ItemListener;
 import java.io.IOException;
 
@@ -42,25 +42,28 @@ import java.io.IOException;
 @Extension
 public class OwnershipItemListener extends ItemListener {
     @Override
-    public void onCopied(Item src, Item item) {
-        modifyOwnership(item);
+    public void onCopied(Item src, Item item) {      
+        OwnershipDescription d = getPolicy().onCopied(src, item);
+        modifyOwnership(item, d);
     }
 
     @Override
     public void onCreated(Item item) {
-        modifyOwnership(item);
+        OwnershipDescription d = getPolicy().onCreated(item);
+        modifyOwnership(item, d);
     }
     
-    private void modifyOwnership(Item item) {
-        if (OwnershipPlugin.Instance().isAssignOnCreate()) {
-            User creator = User.current();
-            if (creator != null && creator != User.getUnknown() && item instanceof Job) {
-                Job job = (Job) item;
-                try {
-                    JobOwnerHelper.setOwnership(job, new OwnershipDescription(true, creator.getId()));
-                } catch (IOException ex) {
-                    //TODO: do something
-                }
+    private ItemOwnershipPolicy getPolicy() {
+        return OwnershipPlugin.Instance().getConfiguration().getItemOwnershipPolicy();
+    }
+    
+    private void modifyOwnership(Item item, OwnershipDescription ownership) {
+        if (item instanceof Job) {
+            Job job = (Job) item;
+            try {
+                JobOwnerHelper.setOwnership(job, ownership);
+            } catch (IOException ex) {
+                //TODO: do something
             }
         }
     }
