@@ -86,7 +86,7 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     }
     
     private static ItemSpecificSecurity getGlobalItemSpecificSecurity() {
-        ItemSpecificSecurity defaultJobsSecurity = OwnershipPlugin.Instance().getDefaultJobsSecurity();
+        ItemSpecificSecurity defaultJobsSecurity = OwnershipPlugin.getInstance().getDefaultJobsSecurity();
         return defaultJobsSecurity;
     }
     
@@ -118,7 +118,7 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
         getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
         
         JSONObject jsonOwnership = (JSONObject) req.getSubmittedForm().getJSONObject("owners");
-        OwnershipDescription descr = OwnershipDescription.Parse(jsonOwnership);
+        OwnershipDescription descr = OwnershipDescription.parseJSON(jsonOwnership);
         JobOwnerHelper.setOwnership(getDescribedItem(), descr);
         
         rsp.sendRedirect(getDescribedItem().getAbsoluteUrl());
@@ -141,7 +141,7 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     public void doRestoreDefaultSpecificSecuritySubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, Descriptor.FormException {
         getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
         // Get default security
-        ItemSpecificSecurity defaultJobsSecurity = OwnershipPlugin.Instance().getDefaultJobsSecurity();
+        ItemSpecificSecurity defaultJobsSecurity = OwnershipPlugin.getInstance().getDefaultJobsSecurity();
         ItemSpecificSecurity val = defaultJobsSecurity != null ? defaultJobsSecurity.clone() : null;
         
         JobOwnerHelper.setProjectSpecificSecurity(getDescribedItem(), val);

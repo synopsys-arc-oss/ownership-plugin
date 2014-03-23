@@ -52,7 +52,7 @@ public class OwnershipItemListener extends ItemListener {
     }
     
     private void modifyOwnership(Item item) {
-        if (OwnershipPlugin.Instance().isAssignOnCreate()) {
+        if (OwnershipPlugin.getInstance().isAssignOnCreate()) {
             User creator = User.current();
             if (creator != null && creator != User.getUnknown() && item instanceof Job) {
                 Job job = (Job) item;

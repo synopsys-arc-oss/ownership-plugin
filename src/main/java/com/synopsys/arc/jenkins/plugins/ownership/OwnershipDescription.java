@@ -126,6 +126,7 @@ public class OwnershipDescription implements Serializable {
      * @return userId of the primary owner. The result will be "unknown" if the
      * user is not specified.
      */
+    @Nonnull
     public String getPrimaryOwnerId() {
         return ownershipEnabled ? primaryOwnerId :  User.getUnknown().getId();
     }
@@ -150,12 +151,23 @@ public class OwnershipDescription implements Serializable {
     }
     
     /**
+     * @deprecated Use {@link #parseJSON(net.sf.json.JSONObject)} instead.
+     */
+    @Nonnull
+    public static OwnershipDescription Parse(JSONObject formData)
+            throws Descriptor.FormException
+    {
+        return parseJSON(formData);
+    }
+    
+    /**
      * Parse a JSON input to construct {@link OwershipDescription}.
      * @param formData Object with a data
      * @return OwnershipDescription 
      * @throws hudson.model.Descriptor.FormException Parsing error
      */
-    public static OwnershipDescription Parse(JSONObject formData)
+    @Nonnull
+    public static OwnershipDescription parseJSON(JSONObject formData)
             throws Descriptor.FormException
     {
         // Read primary owner
