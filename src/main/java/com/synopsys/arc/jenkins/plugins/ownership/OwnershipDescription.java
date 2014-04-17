@@ -28,10 +28,13 @@ import hudson.model.Descriptor;
 import hudson.model.User;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.sf.json.JSONObject;
 
 /**
@@ -68,27 +71,24 @@ public class OwnershipDescription implements Serializable {
      * @param primaryOwnerId userId of primary owner
      * @deprecated Use constructor with co-owners specification
      */
-    public OwnershipDescription(boolean ownershipEnabled, String primaryOwnerId) {
-        this.ownershipEnabled = ownershipEnabled;
-        this.primaryOwnerId = primaryOwnerId;
-        this.coownersIds = new TreeSet<String>();
+    public OwnershipDescription(boolean ownershipEnabled, @Nonnull String primaryOwnerId) {
+        this(ownershipEnabled, primaryOwnerId, null);
     }
 
     /**
      * Constructor.
      * Class is being used as DataBound in {@link OwnerNodeProperty}.
      * @param ownershipEnabled Indicates that the ownership is enabled.
-     * @param ownershipEnabled indicates that the ownership is enabled
      * @param primaryOwnerId userId of primary owner 
-     * @param coownersIds userIds of secondary owners
+     * @param coownersIds userIds of secondary owners. Use null if there is no owners.
      */
-    public OwnershipDescription(boolean ownershipEnabled, String primaryOwnerId, Collection<String> coownersIds) {
+    public OwnershipDescription(boolean ownershipEnabled, @Nonnull String primaryOwnerId, @Nullable Collection<String> coownersIds) {
         this.ownershipEnabled = ownershipEnabled;
         this.primaryOwnerId = primaryOwnerId;
-        this.coownersIds = new TreeSet<String>(coownersIds);
+        this.coownersIds =  coownersIds != null ? new TreeSet<String>(coownersIds) : new TreeSet<String>();
     }
     
-    public void assign(OwnershipDescription descr) {
+    public void assign(@Nonnull OwnershipDescription descr) {
         this.ownershipEnabled = descr.ownershipEnabled;
         this.primaryOwnerId = descr.primaryOwnerId;
         this.coownersIds = descr.coownersIds;
@@ -121,14 +121,14 @@ public class OwnershipDescription implements Serializable {
     public boolean isOwnershipEnabled() {
         return ownershipEnabled;
     }
-
+   
     /**
      * Gets id of primary owner.
      * @return userId of the primary owner. The result will be "unknown" if the
      * user is not specified.
      */
     @Nonnull
-    public String getPrimaryOwnerId() {
+    public String getPrimaryOwnerId() {        
         return ownershipEnabled ? primaryOwnerId :  User.getUnknown().getId();
     }
     
