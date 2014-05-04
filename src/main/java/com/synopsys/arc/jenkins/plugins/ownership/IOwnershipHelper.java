@@ -58,14 +58,14 @@ public interface IOwnershipHelper<TObjectType>  {
      * @since 0.0.4
      */
     @CheckForNull
-    public String getOwnerEmail(TObjectType item);
+    public String getOwnerEmail(@Nonnull TObjectType item);
     
     /**
      * Check if item has owners.
      * @param item Item to be checked
      * @return true if item has owners
      */
-    public boolean isOwnerExists(TObjectType item);
+    public boolean isOwnerExists(@Nonnull TObjectType item);
     
     /**
      * Get Display string of the owner (and coowners).
@@ -73,7 +73,7 @@ public interface IOwnershipHelper<TObjectType>  {
      * @return User description string
      */
     @Nonnull
-    public String getOwnerLongString(TObjectType item);
+    public String getOwnerLongString(@Nonnull TObjectType item);
     
     /**
      * Gets ownership description of the requested item.
@@ -83,7 +83,7 @@ public interface IOwnershipHelper<TObjectType>  {
      * @since 0.0.3
      */
     @Nonnull
-    public OwnershipDescription getOwnershipDescription(TObjectType item);
+    public OwnershipDescription getOwnershipDescription(@Nonnull TObjectType item);
     
     /**
      * Get list of users, who can be item's owner.
@@ -92,13 +92,13 @@ public interface IOwnershipHelper<TObjectType>  {
      * @since 0.0.3
      */
     @Nonnull
-    public Collection<User> getPossibleOwners(TObjectType item);
+    public Collection<User> getPossibleOwners(@Nonnull TObjectType item);
     
     /**
-     * Gets User's name for visualization.
-     * @param usr User
+     * Gets User's name for visualization in ownership.
+     * @param usr User to be displayed
      * @return String for display
      */
     @Nonnull
-    public String getDisplayName(User usr);
+    public String getDisplayName(@Nonnull User usr);
 }

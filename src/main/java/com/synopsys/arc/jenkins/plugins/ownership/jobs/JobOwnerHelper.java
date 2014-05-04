@@ -36,13 +36,16 @@ import hudson.model.JobProperty;
 import hudson.model.User;
 import java.io.IOException;
 import java.util.Collection;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 /**
  * Helper for Jobs Ownership.
  * @since 0.0.3
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
-public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>>{
+public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
+    
     public final static JobOwnerHelper Instance = new JobOwnerHelper();
     
     /**
@@ -52,7 +55,8 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>>{
      * @param job Job
      * @return JobOwnerJobProperty or null if it is not configured
      */
-    public static JobOwnerJobProperty getOwnerProperty(Job<?,?> job) {
+    @CheckForNull
+    public static JobOwnerJobProperty getOwnerProperty(@Nonnull Job<?,?> job) {
         // Get property from the main job
         JobProperty prop = job.getProperty(JobOwnerJobProperty.class);
         if (prop != null) {
@@ -66,18 +70,19 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>>{
         return null;
     }
     
-    public static boolean isUserExists(User user) {
+    public static boolean isUserExists(@Nonnull User user) {
         assert (user != null);
         return isUserExists(user.getId());
     }
     
-    public static boolean isUserExists(String userIdOrFullName) {
+    public static boolean isUserExists(@Nonnull String userIdOrFullName) {
         assert (userIdOrFullName != null);
         return User.get(userIdOrFullName, false, null) != null;
     }
-        
+     
+    @Nonnull
     @Override
-    public OwnershipDescription getOwnershipDescription(Job<?, ?> job) {
+    public OwnershipDescription getOwnershipDescription(@Nonnull Job<?, ?> job) {
         JobOwnerJobProperty prop = getOwnerProperty(job);     
         return (prop != null) ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
     }
@@ -88,7 +93,8 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>>{
      * @param descr A description to be set. Use null to drop settings.
      * @throws IOException 
      */
-    public static void setOwnership(Job<?, ?> job, OwnershipDescription descr) throws IOException {
+    public static void setOwnership(@Nonnull Job<?, ?> job, 
+            @CheckForNull OwnershipDescription descr) throws IOException {
         JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(job);
         if (prop == null) {
             prop = new JobOwnerJobProperty(descr, null);
@@ -105,7 +111,8 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>>{
      * @param security Security settings to be set. Use null to drop settings 
      * @throws IOException 
      */
-    public static void setProjectSpecificSecurity(Job<?, ?> job, ItemSpecificSecurity security) throws IOException {
+    public static void setProjectSpecificSecurity(@Nonnull Job<?, ?> job, 
+            @CheckForNull ItemSpecificSecurity security) throws IOException {
         JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(job);
         if (prop == null) {
             throw new IOException("Ownership is not configured for "+job);
@@ -114,8 +121,9 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>>{
         }
     }
 
+    @Nonnull
     @Override
-    public Collection<User> getPossibleOwners(Job<?, ?> item) {
+    public Collection<User> getPossibleOwners(@Nonnull Job<?, ?> item) {
         if (OwnershipPlugin.getInstance().isRequiresConfigureRights()) {
             IUserFilter filter = new AccessRightsFilter(item, Job.CONFIGURE);
             return UserCollectionFilter.filterUsers(User.getAll(), true, filter);

@@ -107,7 +107,7 @@ public class OwnersListJobRestriction extends JobRestriction {
         
         // Handle co-owners if required
         Set<String> itemCoOwners = descr.getCoownersIds();
-        if (acceptsCoOwners && itemCoOwners!=null && !itemCoOwners.isEmpty()) {
+        if (acceptsCoOwners && !itemCoOwners.isEmpty()) {
             for (String userID : usersMap) {
                 if (itemCoOwners.contains(userID)) {
                     return true;

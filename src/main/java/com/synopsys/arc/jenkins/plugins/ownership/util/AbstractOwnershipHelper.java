@@ -28,6 +28,8 @@ import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import hudson.model.User;
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 /**
  * Provides basic operations for ownership helpers.
@@ -41,27 +43,31 @@ public abstract class AbstractOwnershipHelper<TObjectType>
     /**An empty collection of users*/
     protected final static Collection<User> EMPTY_USERS_COLLECTION = new ArrayList<User>(0);
             
+    @Nonnull
     @Override
-    public final String getDisplayName(User usr) {
+    public final String getDisplayName(@CheckForNull User usr) {
         return UserStringFormatter.format(usr);
     } 
     
+    @CheckForNull
     @Override
-    public final String getOwnerEmail(TObjectType item) {
+    public final String getOwnerEmail(@Nonnull TObjectType item) {
         OwnershipDescription descr = getOwnershipDescription(item);
         return  UserStringFormatter.formatEmail(descr.getPrimaryOwner());      
     }
     
+    @Nonnull
     @Override
-    public final String getOwnerLongString(TObjectType item) {
+    public final String getOwnerLongString(@Nonnull TObjectType item) {
         OwnershipDescription descr = getOwnershipDescription(item);     
         return descr.isOwnershipEnabled() 
                 ? UserStringFormatter.format(descr.getPrimaryOwner()) 
                 : UserStringFormatter.UNKNOWN_USER_STRING;
     }
     
+    @Nonnull 
     @Override
-    public final String getOwner(TObjectType item) {
+    public final String getOwner(@Nonnull TObjectType item) {
         OwnershipDescription descr = getOwnershipDescription(item);
         return (descr.isOwnershipEnabled()) 
                 ? UserStringFormatter.formatShort(descr.getPrimaryOwnerId())
@@ -69,7 +75,7 @@ public abstract class AbstractOwnershipHelper<TObjectType>
     }    
     
     @Override
-    public final boolean isOwnerExists(TObjectType item) {
+    public final boolean isOwnerExists(@Nonnull TObjectType item) {
         OwnershipDescription descr = getOwnershipDescription(item);
         return descr.isOwnershipEnabled() ? descr.hasPrimaryOwner() : false;
     }

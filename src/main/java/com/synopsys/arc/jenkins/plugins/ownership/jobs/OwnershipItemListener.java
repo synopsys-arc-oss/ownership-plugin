@@ -41,6 +41,7 @@ import java.io.IOException;
  */
 @Extension
 public class OwnershipItemListener extends ItemListener {
+    
     @Override
     public void onCopied(Item src, Item item) {      
         OwnershipDescription d = getPolicy().onCopied(src, item);

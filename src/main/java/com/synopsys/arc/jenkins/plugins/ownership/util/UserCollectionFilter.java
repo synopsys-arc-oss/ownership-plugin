@@ -30,33 +30,31 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import javax.annotation.Nonnull;
 
 /**
  *
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
 public class UserCollectionFilter {
-    public static Collection<User> filterUsers(Collection<User> input, boolean enableSort, IUserFilter ... filters)
-    {   
+
+    @Nonnull
+    public static Collection<User> filterUsers(Collection<User> input, boolean enableSort, IUserFilter... filters) {
         // Sort users
         UserComparator comparator = new UserComparator();
-        LinkedList<User> userList = new LinkedList<User>(User.getAll());   
-        if (enableSort)
-        {
+        LinkedList<User> userList = new LinkedList<User>(User.getAll());
+        if (enableSort) {
             Collections.sort(userList, comparator);
         }
         // Prepare new list
         Collection<User> res = new ArrayList<User>();
-        for (User user : userList)
-        {
+        for (User user : userList) {
             boolean meets = true;
-            for (int i=0; meets && i < filters.length; i++)
-            {
+            for (int i = 0; meets && i < filters.length; i++) {
                 meets = filters[i].filter(user);
             }
-            
-            if (meets)
-            {
+
+            if (meets) {
                 res.add(user);
             }
         }

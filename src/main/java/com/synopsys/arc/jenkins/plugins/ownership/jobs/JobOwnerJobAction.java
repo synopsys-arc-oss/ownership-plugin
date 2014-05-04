@@ -32,6 +32,8 @@ import hudson.model.Job;
 import hudson.security.Permission;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
@@ -49,6 +51,7 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
       super(job);
     }
 
+    @Nonnull
     @Override
     public JobOwnerHelper helper() {
         return JobOwnerHelper.Instance;
@@ -77,6 +80,7 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
         return helper().getOwnershipDescription(getDescribedItem());
     } 
     
+    @CheckForNull
     public ItemSpecificSecurity getItemSpecificSecurity() {
         JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(getDescribedItem());
         if (prop != null && prop.hasItemSpecificSecurity()) {
@@ -85,9 +89,9 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
         return getGlobalItemSpecificSecurity();
     }
     
+    @CheckForNull
     private static ItemSpecificSecurity getGlobalItemSpecificSecurity() {
-        ItemSpecificSecurity defaultJobsSecurity = OwnershipPlugin.getInstance().getDefaultJobsSecurity();
-        return defaultJobsSecurity;
+        return OwnershipPlugin.getInstance().getDefaultJobsSecurity();
     }
     
     /**

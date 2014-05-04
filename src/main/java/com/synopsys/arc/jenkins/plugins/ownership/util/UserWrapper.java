@@ -24,6 +24,7 @@
 package com.synopsys.arc.jenkins.plugins.ownership.util;
 
 import hudson.model.User;
+import javax.annotation.Nonnull;
 
 /**
  * Implements a wrapper, which allows to implement "non-existent" user macros.
@@ -37,7 +38,7 @@ public class UserWrapper {
     String macro;
     public static final String USER_MACRO_PREFIX = "@";
 
-    public UserWrapper(User user) {
+    public UserWrapper(@Nonnull User user) {
         this.isUser = true;
         this.user = user;
     }
@@ -45,11 +46,11 @@ public class UserWrapper {
     /**
      * Creates Wrapper from user id or wrapper.
      *
-     * @todo Just a hack for "@ME" macro. Need to extend functionality in the
+     * TODO: Just a hack for "@ME" macro. Need to extend functionality in the
      * future.
      * @param userMacro
      */
-    public UserWrapper(String userMacro) {
+    public UserWrapper(@Nonnull String userMacro) {
         if (userMacro.startsWith(USER_MACRO_PREFIX)) {
             this.isUser = false;
             this.macro = userMacro;

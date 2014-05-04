@@ -82,6 +82,7 @@ public class OwnershipPlugin extends Plugin {
         return getInstance();
     }
     
+    //TODO: Null is not an option
     public static OwnershipPlugin getInstance() {
         Plugin plugin = Jenkins.getInstance().getPlugin(OwnershipPlugin.class);
         return plugin != null ? (OwnershipPlugin)plugin : null;

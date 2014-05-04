@@ -46,6 +46,8 @@ import hudson.model.User;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -82,6 +84,7 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
      * @return ItemSpecific security or null if it is not configured
      * @since 0.3
      */
+    @Nonnull
     public ItemSpecificSecurity getItemSpecificSecurity() {
         return itemSpecificSecurity != null 
                 ? itemSpecificSecurity 
@@ -148,12 +151,12 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
         setOwnershipDescription(OwnershipDescription.parseJSON(jsonOwnership));
     }
     
-    public void setOwnershipDescription(OwnershipDescription descr) throws IOException {
+    public void setOwnershipDescription(@CheckForNull OwnershipDescription descr) throws IOException {
         ownership = descr;
         owner.save();
     }
     
-    public void setItemSpecificSecurity(ItemSpecificSecurity security) throws IOException {
+    public void setItemSpecificSecurity(@CheckForNull ItemSpecificSecurity security) throws IOException {
         itemSpecificSecurity = security;
         owner.save();
     }

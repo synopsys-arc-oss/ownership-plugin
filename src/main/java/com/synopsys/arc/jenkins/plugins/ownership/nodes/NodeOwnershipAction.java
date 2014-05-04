@@ -33,6 +33,7 @@ import hudson.model.Descriptor;
 import hudson.security.Permission;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
@@ -81,10 +82,11 @@ public class NodeOwnershipAction extends ItemOwnershipAction<Computer> {
      * @param computer
      * @return 
      */
-    public static String getAbsoluteUrl(Computer computer) {
+    public static String getAbsoluteUrl(@Nonnull Computer computer) {
         String r = Jenkins.getInstance().getRootUrl();
-        if(r==null)
+        if(r==null) {
             throw new IllegalStateException("Root URL isn't configured yet. Cannot compute absolute URL.");
+        }
         return Util.encode(r+computer.getUrl());
     }
     

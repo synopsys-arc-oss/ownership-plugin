@@ -30,6 +30,8 @@ import hudson.model.Node;
 import hudson.model.User;
 import java.io.IOException;
 import java.util.Collection;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 /**
  * Provides ownership helper for {@link Computer}.
@@ -45,7 +47,7 @@ public class ComputerOwnerHelper extends AbstractOwnershipHelper<Computer> {
     }
         
     @Override
-    public OwnershipDescription getOwnershipDescription(Computer item) {
+    public OwnershipDescription getOwnershipDescription(@Nonnull Computer item) {
         Node node = item.getNode();      
         return node != null 
                 ? NodeOwnerHelper.Instance.getOwnershipDescription(node)
@@ -53,14 +55,15 @@ public class ComputerOwnerHelper extends AbstractOwnershipHelper<Computer> {
     }
     
     @Override
-    public Collection<User> getPossibleOwners(Computer computer) {
+    public Collection<User> getPossibleOwners(@Nonnull Computer computer) {
         Node node = computer.getNode();
         return node != null 
                 ? NodeOwnerHelper.Instance.getPossibleOwners(node)
                 : EMPTY_USERS_COLLECTION;
     }  
     
-    public static void setOwnership(Computer computer, OwnershipDescription descr) throws IOException {
+    public static void setOwnership(@Nonnull Computer computer, 
+            @CheckForNull OwnershipDescription descr) throws IOException {
         Node node = computer.getNode();
         if (node == null) {
             throw new IOException("Cannot set ownership. Probably, the node has been renamed or deleted.");

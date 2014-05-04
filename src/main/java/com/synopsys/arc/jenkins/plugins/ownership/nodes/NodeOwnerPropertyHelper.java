@@ -30,6 +30,8 @@ import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
 import hudson.model.User;
 import hudson.slaves.NodeProperty;
 import java.util.Collection;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 /**
  * Provides helper for Node owner
@@ -46,18 +48,20 @@ public class NodeOwnerPropertyHelper extends AbstractOwnershipHelper<NodePropert
      * @param node Node
      * @return OwnerNodeProperty or null
      */
-    private static OwnerNodeProperty getOwnerProperty(NodeProperty node)
-    {
+    @CheckForNull
+    private static OwnerNodeProperty getOwnerProperty(@CheckForNull NodeProperty node)  {
         return (OwnerNodeProperty)node;
     }
       
+    @Nonnull
     @Override
-    public OwnershipDescription getOwnershipDescription(NodeProperty item) {
+    public OwnershipDescription getOwnershipDescription(@CheckForNull NodeProperty item) {
         OwnerNodeProperty prop = getOwnerProperty(item);
         OwnershipDescription descr = (prop != null) ? prop.getOwnership() : null;
         return descr != null ? descr : OwnershipDescription.DISABLED_DESCR;
     }
     
+    @Nonnull
     @Override
     public Collection<User> getPossibleOwners(NodeProperty item) {
         if (OwnershipPlugin.getInstance().isRequiresConfigureRights()) {

@@ -34,6 +34,7 @@ import hudson.slaves.NodeProperty;
 import hudson.slaves.NodePropertyDescriptor;
 import hudson.slaves.SlaveComputer;
 import java.util.List;
+import javax.annotation.CheckForNull;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.Ancestor;
@@ -73,6 +74,7 @@ public class OwnerNodeProperty extends NodeProperty<Node>
         getDescriptor().save();
     }
     
+    @CheckForNull
     public Node getNode() {
         if (node == null) {
             setNode(Jenkins.getInstance().getNode(nodeName));

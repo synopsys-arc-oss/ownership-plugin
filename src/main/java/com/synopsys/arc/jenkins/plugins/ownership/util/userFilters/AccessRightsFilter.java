@@ -26,6 +26,8 @@ package com.synopsys.arc.jenkins.plugins.ownership.util.userFilters;
 import hudson.model.User;
 import hudson.security.AccessControlled;
 import hudson.security.Permission;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import org.acegisecurity.Authentication;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
@@ -38,14 +40,15 @@ public class AccessRightsFilter implements IUserFilter {
     AccessControlled item;
     Permission permission;
 
-    public AccessRightsFilter(AccessControlled item, Permission permission) {
+    public AccessRightsFilter(@Nonnull AccessControlled item, @Nonnull Permission permission) {
         this.item = item;
         this.permission = permission;
     }
    
     @Override
-    public boolean filter(User user) {
-        if (user == null) return false;
+    public boolean filter(@CheckForNull User user) {
+        if (user == null) 
+            return false;
         
         boolean res = false;
         Authentication auth = user.impersonate();

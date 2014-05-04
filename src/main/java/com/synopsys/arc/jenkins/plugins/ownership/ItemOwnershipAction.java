@@ -36,7 +36,7 @@ import javax.annotation.Nonnull;
 public abstract class ItemOwnershipAction<TObjectType extends Actionable> 
     extends OwnershipAction implements IOwnershipItem<TObjectType> {
     
-    private final TObjectType describedItem;
+    private final @Nonnull TObjectType describedItem;
         
     /**
      * Constructor.

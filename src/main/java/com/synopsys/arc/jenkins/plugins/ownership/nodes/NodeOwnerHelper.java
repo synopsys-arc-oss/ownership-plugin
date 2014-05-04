@@ -35,6 +35,8 @@ import hudson.model.User;
 import hudson.slaves.NodeProperty;
 import java.io.IOException;
 import java.util.Collection;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 /**
  * Provides helper for Node owner.
@@ -52,8 +54,8 @@ public class NodeOwnerHelper extends AbstractOwnershipHelper<Node> {
      * @param node Node
      * @return OwnerNodeProperty or null
      */
-    public static OwnerNodeProperty getOwnerProperty(Node node)
-    {
+    @CheckForNull
+    public static OwnerNodeProperty getOwnerProperty(@Nonnull Node node) {
         NodeProperty prop = node.getNodeProperties().get(OwnerNodeProperty.class);
         return prop != null ? (OwnerNodeProperty)prop : null;
     }
@@ -84,7 +86,8 @@ public class NodeOwnerHelper extends AbstractOwnershipHelper<Node> {
      * @param descr An ownership description to be assigned
      * @throws IOException A property modification error
      */
-    public static void setOwnership(Node node, OwnershipDescription descr) throws IOException {
+    public static void setOwnership(@Nonnull Node node, 
+            @CheckForNull OwnershipDescription descr) throws IOException {
         OwnerNodeProperty prop = NodeOwnerHelper.getOwnerProperty(node);
         if (prop == null) {
             prop = new OwnerNodeProperty(node, descr);
