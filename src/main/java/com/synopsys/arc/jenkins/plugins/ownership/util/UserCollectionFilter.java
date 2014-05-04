@@ -39,16 +39,21 @@ import javax.annotation.Nonnull;
 public class UserCollectionFilter {
 
     @Nonnull
-    public static Collection<User> filterUsers(Collection<User> input, boolean enableSort, IUserFilter... filters) {
+    public static Collection<User> filterUsers(@Nonnull Collection<User> input, boolean enableSort, @Nonnull IUserFilter... filters) {
         // Sort users
         UserComparator comparator = new UserComparator();
         LinkedList<User> userList = new LinkedList<User>(User.getAll());
         if (enableSort) {
             Collections.sort(userList, comparator);
         }
+        
         // Prepare new list
         Collection<User> res = new ArrayList<User>();
         for (User user : userList) {
+            if (user == null) {
+                continue;
+            }
+            
             boolean meets = true;
             for (int i = 0; meets && i < filters.length; i++) {
                 meets = filters[i].filter(user);

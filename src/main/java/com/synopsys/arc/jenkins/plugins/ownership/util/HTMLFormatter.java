@@ -24,6 +24,7 @@
 package com.synopsys.arc.jenkins.plugins.ownership.util;
 
 import hudson.model.User;
+import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
 
 /**
@@ -37,24 +38,24 @@ public class HTMLFormatter {
      * @param userId id of the user
      * @return 
      */
-    public static String formatEmailURI(String userId) {
+    public static String formatEmailURI(@Nonnull String userId) {
         String email = UserStringFormatter.formatEmail(userId);
-        if (userId != null && email != null) {
+        if (email != null) {
             return "<a href=\"mailto://"+email+"\">"+email+"</a>";
         } else {
             return null;
         }          
     }
     
-    public static String formatShortUserURI(String userId) {
+    public static String formatShortUserURI(@Nonnull String userId) {
         return formatUserURI(userId, false);
     }
     
-    public static String formatUserURI(String userId) {
+    public static String formatUserURI(@Nonnull String userId) {
         return formatUserURI(userId, true);
     }
     
-    public static String formatUserURI(String userId, boolean useLongFormat) {
+    public static String formatUserURI(@Nonnull String userId, boolean useLongFormat) {
         User usr = User.get(userId, false, null);
         if (usr != null) {
             String userStr = useLongFormat 

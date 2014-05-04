@@ -30,6 +30,7 @@ import hudson.model.Descriptor;
 import hudson.model.User;
 import hudson.util.FormValidation;
 import java.io.Serializable;
+import javax.annotation.CheckForNull;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -40,14 +41,16 @@ import org.kohsuke.stapler.QueryParameter;
  */
 //TODO: Autocompletion
 public class UserSelector implements Describable<UserSelector>, Serializable {
+    
     /**ID of the user*/
-    String selectedUserId;
+    @CheckForNull String selectedUserId;
 
     @DataBoundConstructor
-    public UserSelector(String selectedUserId) {
+    public UserSelector(@CheckForNull String selectedUserId) {
         this.selectedUserId = hudson.Util.fixEmptyAndTrim(selectedUserId);
     }
 
+    @CheckForNull
     public String getSelectedUserId() {
         return selectedUserId;
     }
@@ -62,25 +65,24 @@ public class UserSelector implements Describable<UserSelector>, Serializable {
         if (obj instanceof UserSelector) {
             UserSelector cmp = (UserSelector)obj;
             return selectedUserId != null ? selectedUserId.equals(cmp.selectedUserId) : cmp.selectedUserId == null;
-        }
-            
-        return false;
-    
+        }           
+        return false;    
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 17 * hash + (this.selectedUserId != null ? this.selectedUserId.hashCode() : 0);
+        hash = 17 * hash + (selectedUserId != null ? selectedUserId.hashCode() : 0);
         return hash;
     }
           
     @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
     public static class DescriptorImpl extends Descriptor<UserSelector> {
+        
         @Override
         public String getDisplayName() {
-            return "Messages";
+            return "N/A";
         }
         
         public FormValidation doCheckSelectedUserId(@QueryParameter String selectedUserId) {

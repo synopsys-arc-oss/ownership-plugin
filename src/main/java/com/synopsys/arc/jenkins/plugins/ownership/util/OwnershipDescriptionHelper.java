@@ -24,6 +24,7 @@
 package com.synopsys.arc.jenkins.plugins.ownership.util;
 
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import javax.annotation.Nonnull;
 
 /**
  * Provides handlers for ownership description.
@@ -32,13 +33,14 @@ import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
  */
 //TODO: refactoring
 public class OwnershipDescriptionHelper {
+    
     private OwnershipDescriptionHelper() {}
     
-    public static String getOwnerID(OwnershipDescription descr) {
+    public static String getOwnerID(@Nonnull OwnershipDescription descr) {
         return descr.getPrimaryOwnerId();
     }
     
-    public static String getOwnerEmail(OwnershipDescription descr) {
+    public static String getOwnerEmail(@Nonnull OwnershipDescription descr) {
         String ownerEmail = UserStringFormatter.formatEmail(descr.getPrimaryOwnerId());
         return ownerEmail != null ? ownerEmail : "";
     }
@@ -48,7 +50,7 @@ public class OwnershipDescriptionHelper {
      * @param descr
      * @return 
      */
-    public static String getCoOwnerIDs(OwnershipDescription descr) {
+    public static String getCoOwnerIDs(@Nonnull OwnershipDescription descr) {
         StringBuilder coowners= new StringBuilder(getOwnerID(descr));
         for (String userId : descr.getCoownersIds()) {
             if (coowners.length() == 0) {
