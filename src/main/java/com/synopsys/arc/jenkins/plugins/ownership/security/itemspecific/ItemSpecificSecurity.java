@@ -27,8 +27,13 @@ import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.security.AuthorizationMatrixProperty;
+import hudson.security.Permission;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -36,15 +41,19 @@ import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * Implements item-specific property map.
+ * This class relies on {@link AuthorizationMatrixProperty} from Jenkins core.
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  * @since 0.3
  */
 public class ItemSpecificSecurity implements Describable<ItemSpecificSecurity>, Cloneable {
-    private AuthorizationMatrixProperty permissionsMatrix;
+    
+    private @Nonnull AuthorizationMatrixProperty permissionsMatrix;
     
     @DataBoundConstructor
-    public ItemSpecificSecurity(AuthorizationMatrixProperty permissionsMatrix) {
-        this.permissionsMatrix = permissionsMatrix;
+    public ItemSpecificSecurity(@CheckForNull AuthorizationMatrixProperty permissionsMatrix) {
+        this.permissionsMatrix = permissionsMatrix != null 
+                ? permissionsMatrix
+                : new AuthorizationMatrixProperty(new TreeMap<Permission, Set<String>>());
     }
 
     @Override
@@ -52,6 +61,7 @@ public class ItemSpecificSecurity implements Describable<ItemSpecificSecurity>, 
         return DESCRIPTOR; 
     }
 
+    @Nonnull
     public AuthorizationMatrixProperty getPermissionsMatrix() {
          return permissionsMatrix;
     }
