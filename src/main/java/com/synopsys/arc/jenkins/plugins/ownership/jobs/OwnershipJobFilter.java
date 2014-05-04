@@ -45,70 +45,69 @@ import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * Filters owner's and co-owners.
+ *
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
 public class OwnershipJobFilter extends ViewJobFilter {
+
     /**
-     * Macro, which allows to select currently logged user for "My owned jobs" filter
+     * Macro, which allows to select currently logged user for "My owned jobs"
+     * filter
      */
     private static final String MACRO_ME = "@Me";
-    
+
     String ownerId;
     boolean acceptsCoowners;
-    
+
     public String getOwnerName() {
         return ownerId;
     }
-    
+
     public boolean isAcceptsCoowners() {
         return acceptsCoowners;
     }
-    
+
     public boolean isSelected(UserWrapper usr) {
         return ownerId.equals(usr.getId());
     }
-           
+
     @DataBoundConstructor
     public OwnershipJobFilter(String ownerName, boolean acceptCoowners) {
         this.ownerId = ownerName;
         this.acceptsCoowners = acceptCoowners;
     }
-    
+
     @Override
-    public List<TopLevelItem> filter(List<TopLevelItem> added, List<TopLevelItem> all, View filteringView) {        
-        ArrayList<TopLevelItem> newList = new ArrayList<TopLevelItem>();     
-        UserWrapper wuserWrapper = new UserWrapper(ownerId);
-            
-        for(TopLevelItem item : added) {
-            // Convert to project
-            AbstractProject project = (AbstractProject)item;
-            JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(project);
-                  
-            if (prop != null) {
-                boolean matches = false;
-                OwnershipDescription ownership = prop.getOwnership();    
+    public List<TopLevelItem> filter(List<TopLevelItem> added, List<TopLevelItem> all, View filteringView) {
+        final ArrayList<TopLevelItem> newList = new ArrayList<TopLevelItem>();
+        final UserWrapper userWrapper = new UserWrapper(ownerId);
+
+        for (TopLevelItem item : added) {
+            if (item instanceof AbstractProject) { // Ignore non-project items
+                AbstractProject project = (AbstractProject) item;
+                OwnershipDescription ownership = JobOwnerHelper.Instance.getOwnershipDescription(project);
                 if (!ownership.isOwnershipEnabled()) {
                     continue;
                 }
-                
-                if (wuserWrapper.meetsMacro(ownership.getPrimaryOwnerId())) {
+
+                boolean matches = false; // Check owner
+                if (userWrapper.meetsMacro(ownership.getPrimaryOwnerId())) {
                     matches = true;
-                }            
-                if (acceptsCoowners && !matches) {
+                }
+                if (acceptsCoowners && !matches) { // Check co-owners
                     for (String coOwnerId : ownership.getCoownersIds()) {
-                        if (wuserWrapper.meetsMacro(coOwnerId)) {
+                        if (userWrapper.meetsMacro(coOwnerId)) {
                             matches = true;
                             break;
                         }
                     }
                 }
-                
                 if (matches) {
                     newList.add(item);
                 }
             }
         }
-        
+
         return newList;
     }
 
@@ -119,33 +118,33 @@ public class OwnershipJobFilter extends ViewJobFilter {
         public String getDisplayName() {
             return Messages.JobOwnership_Filter_DisplayName();
         }
-   
+
         @Override
         public ViewJobFilter newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-                String jobOwner = formData.getString( "jobOwner" );
-                boolean acceptCoowners = formData.getBoolean("acceptsCoowners" );
-                OwnershipJobFilter instance = new OwnershipJobFilter( jobOwner, acceptCoowners );
-                return instance;
-        } 
+            String jobOwner = formData.getString("jobOwner");
+            boolean acceptCoowners = formData.getBoolean("acceptsCoowners");
+            OwnershipJobFilter instance = new OwnershipJobFilter(jobOwner, acceptCoowners);
+            return instance;
+        }
     }
-    
+
     /**
-    * Get list of users for the selector.
-    * @return Collection of all registered users 
-    */
-    public static Collection<UserWrapper> getAvailableUsers() {                    
+     * Get list of users for the selector.
+     *
+     * @return Collection of all registered users
+     */
+    public static Collection<UserWrapper> getAvailableUsers() {
         // Sort users
         UserComparator comparator = new UserComparator();
-        LinkedList<User> userList = new LinkedList<User>(User.getAll());                     
+        LinkedList<User> userList = new LinkedList<User>(User.getAll());
         Collections.sort(userList, comparator);
 
         // Prepare new list
-        Collection<UserWrapper> res = new ArrayList<UserWrapper>(userList.size()+1);
+        Collection<UserWrapper> res = new ArrayList<UserWrapper>(userList.size() + 1);
         res.add(new UserWrapper(MACRO_ME));
         for (User user : userList) {
             res.add(new UserWrapper(user));
         }
         return res;
-    } 
+    }
 }
-
