@@ -39,6 +39,7 @@ import hudson.security.Permission;
 @Extension
 public class NoOwnerRoleMacro extends AbstractOwnershipRoleMacro {
 
+    @Override
     public String getName() {
         return Messages.Security_RoleStrategy_NoOwnerRoleMacro_Name();
     }

@@ -39,6 +39,7 @@ import hudson.security.Permission;
  */
 @Extension
 public class CoOwnerRoleMacroNoSid extends AbstractOwnershipRoleMacro{
+    
     @Override
     public String getName() {
         return Messages.Security_RoleStrategy_CoOwnerRoleMacro_Name()+NO_SID_SUFFIX; 

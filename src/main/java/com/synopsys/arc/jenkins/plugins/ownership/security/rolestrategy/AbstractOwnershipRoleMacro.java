@@ -40,10 +40,11 @@ import hudson.model.User;
 import hudson.security.AccessControlled;
 
 /**
- *
+ * An abstract class for {@link RoleMacroExtension}s provided by the ownership plugin.
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  */
 abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
+    
     public static final String NO_SID_SUFFIX="NoSid";
     protected static final String AUTHENTICATED_SID = "authenticated";
     
@@ -81,7 +82,7 @@ abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
                 }
                 break;
             default:
-                //do nothing
+                //do nothing => Ownership is disabled
         }
         return ownership!=null ? ownership.getOwnership() : OwnershipDescription.DISABLED_DESCR;
     }

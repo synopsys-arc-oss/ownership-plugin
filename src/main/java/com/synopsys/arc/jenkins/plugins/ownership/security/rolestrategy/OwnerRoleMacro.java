@@ -43,8 +43,7 @@ public class OwnerRoleMacro extends AbstractOwnershipRoleMacro {
     public String getName() {
         return Messages.Security_RoleStrategy_OwnerRoleMacro_Name(); 
     }
-
-
+    
     @Override
     public String getDescription() {
         return Messages.Security_RoleStrategy_OwnerRoleMacro_Description();
@@ -54,6 +53,5 @@ public class OwnerRoleMacro extends AbstractOwnershipRoleMacro {
     public boolean hasPermission(String sid, Permission p, RoleType type, AccessControlled item, Macro macro) {    
         User user = User.get(sid, false, null);              
         return hasPermission(user, type, item, macro, false);
-    }
-    
+    }   
 }

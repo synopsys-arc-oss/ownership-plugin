@@ -50,11 +50,11 @@ public class ItemSpecificRoleMacroWithUserID extends ItemSpecificRoleMacro {
 
     @Override
     public boolean hasPermission(String sid, Permission p, RoleType type, AccessControlled item, Macro macro) {
-        // check sid
         boolean res = super.hasPermission(sid, p, type, item, macro);
         if (res) return true;
         
-        if (sid.equals(AUTHENTICATED_SID)) {
+        // Specific handler for the current user
+        if (sid.equals(AUTHENTICATED_SID)) { 
             User usr = User.current();
             return usr != null ? super.hasPermission(usr.getId(), p, type, item, macro) : false; 
         }

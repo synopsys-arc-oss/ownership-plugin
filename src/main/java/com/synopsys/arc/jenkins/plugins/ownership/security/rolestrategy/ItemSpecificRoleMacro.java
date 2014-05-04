@@ -41,6 +41,7 @@ import hudson.security.Permission;
  */
 @Extension
 public class ItemSpecificRoleMacro extends AbstractOwnershipRoleMacro {
+    
     @Override
     public String getName() {
         return Messages.Security_RoleStrategy_ItemSpecificMacro_Name();
