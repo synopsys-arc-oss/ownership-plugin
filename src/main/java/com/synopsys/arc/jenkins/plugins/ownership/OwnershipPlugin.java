@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
@@ -58,6 +59,8 @@ import org.kohsuke.stapler.StaplerRequest;
 public class OwnershipPlugin extends Plugin {
     
     public static final String LOG_PREFIX="[OwnershipPlugin] - ";
+    private static final Logger LOGGER = Logger.getLogger(OwnershipPlugin.class.getName());
+
     public static final String FAST_RESOLVER_ID="Fast resolver for UI (recommended)";
     
     private static final PermissionGroup PERMISSIONS = new PermissionGroup(OwnershipPlugin.class, Messages._OwnershipPlugin_ManagePermissions_Title());    
@@ -234,5 +237,9 @@ public class OwnershipPlugin extends Plugin {
             items.add(resolver.getClass().getCanonicalName());
         }
         return items;
+    }
+
+    public static Logger getLogger() {
+        return LOGGER;
     }
 }
