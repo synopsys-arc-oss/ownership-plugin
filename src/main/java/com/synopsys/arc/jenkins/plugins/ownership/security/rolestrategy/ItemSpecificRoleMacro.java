@@ -39,7 +39,7 @@ import hudson.security.Permission;
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  * @since 0.4
  */
-@Extension
+@Extension(optional = true)
 public class ItemSpecificRoleMacro extends AbstractOwnershipRoleMacro {
     
     @Override

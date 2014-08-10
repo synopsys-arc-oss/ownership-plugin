@@ -68,7 +68,7 @@ public class OwnershipAuthorizeProjectStrategy extends AuthorizeProjectStrategy 
         return auth;
     }
       
-    @Extension
+    @Extension(optional = true)
     public static class DescriptorImpl extends AuthorizeProjectStrategyDescriptor {
         
         @Override

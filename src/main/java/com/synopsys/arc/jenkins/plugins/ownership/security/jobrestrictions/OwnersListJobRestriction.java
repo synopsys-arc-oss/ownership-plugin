@@ -120,7 +120,7 @@ public class OwnersListJobRestriction extends JobRestriction {
     }
 
 
-    @Extension
+    @Extension(optional = true)
     public static class DescriptorImpl extends JobRestrictionDescriptor {
         @Override
         public String getDisplayName() {
