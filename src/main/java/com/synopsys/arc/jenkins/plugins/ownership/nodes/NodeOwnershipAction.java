@@ -27,16 +27,23 @@ import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.ItemOwnershipAction;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
+
 import hudson.Util;
 import hudson.model.Computer;
 import hudson.model.Descriptor;
 import hudson.security.Permission;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+
 import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
+
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
+
+import org.kohsuke.stapler.HttpResponse;
+import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -90,13 +97,13 @@ public class NodeOwnershipAction extends ItemOwnershipAction<Computer> {
         return Util.encode(r+computer.getUrl());
     }
     
-    public void doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
+    public HttpResponse doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
         getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_SLAVES_OWNERSHIP);
         
         JSONObject jsonOwnership = (JSONObject) req.getSubmittedForm().getJSONObject("owners");
         OwnershipDescription descr = OwnershipDescription.parseJSON(jsonOwnership);
         ComputerOwnerHelper.setOwnership(getDescribedItem(), descr);
         
-        rsp.sendRedirect(getAbsoluteUrl(getDescribedItem()));
+        return HttpResponses.redirectViaContextPath(getDescribedItem().getUrl());
     }
 }
