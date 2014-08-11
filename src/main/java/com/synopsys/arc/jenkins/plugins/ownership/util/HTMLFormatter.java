@@ -70,11 +70,4 @@ public class HTMLFormatter {
             return userId + " (unregistered)";
         }
     }
-    
-    public static String formatUserDisplayEntry(@Nonnull String userId) {
-        final String userURI = formatUserURI(userId, true);
-        final String userEmail = formatEmailURI(userId);
-        final String userInfoHTML = userURI + (userEmail != null ? " "+userEmail:"");
-        return "<div class=\"ownership-user-info\">"+userInfoHTML+"</div>";
-    }
 }

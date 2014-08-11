@@ -30,6 +30,7 @@ import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurity;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
+import com.synopsys.arc.jenkins.plugins.ownership.util.ui.OwnershipLayoutFormatter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.AccessRightsFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.IUserFilter;
 import net.sf.json.JSONObject;
@@ -126,6 +127,10 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
     public JobProperty<?> reconfigure(StaplerRequest req, JSONObject form) throws Descriptor.FormException {
         return new JobOwnerJobProperty(ownership, itemSpecificSecurity);
     }
+    
+    public OwnershipLayoutFormatter<Job<?, ?>> getLayoutFormatter() {
+        return OwnershipPlugin.getInstance().getOwnershipLayoutFormatterProvider().getLayoutFormatter(getDescribedItem());
+    }   
     
     @Extension
     public static class DescriptorImpl extends JobPropertyDescriptor {

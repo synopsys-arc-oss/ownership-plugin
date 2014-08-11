@@ -36,6 +36,7 @@
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <!--Stuff-->
     <link rel="stylesheet" href="${rootURL}/plugin/ownership/css/ownership.css" type="text/css" />
+    <j:set var="layoutFormatter" value="${it.layoutFormatter}"/>
     
     <!-- Layout -->
     <div class="ownership-summary-box">   
@@ -46,18 +47,9 @@
                     <div class="ownership-section">${%Owner}</div>
                 </td>
                 <td>
-                    <j:choose>
-                        <j:when test="${helper.isOwnerExists(item)}">
-                            <j:set var="_ownerId" value="${helper.getOwner(item)}"/>   
-                            <j:invokeStatic var="_ownerInfo" className="com.synopsys.arc.jenkins.plugins.ownership.util.HTMLFormatter" method="formatUserDisplayEntry">
-                                <j:arg type="java.lang.String" value="${_ownerId}" />              
-                            </j:invokeStatic>
-                            ${_ownerInfo}
-                        </j:when>
-                        <j:otherwise>
-                            <div class="ownership-user-info">${helper.getOwner(item)}</div>
-                        </j:otherwise>
-                    </j:choose>
+                    <div class="ownership-user-info">
+                        ${layoutFormatter.formatOwner(item, helper.getOwner(item))}
+                    </div>
                 </td>
             </tr>
         
@@ -69,11 +61,10 @@
                         <div class="ownership-section">${%Co-owners}</div>
                     </td>       
                     <td>
-                        <j:forEach var="coownerId" items="${coownersList}">                   
-                            <j:invokeStatic var="_coownerInfo" className="com.synopsys.arc.jenkins.plugins.ownership.util.HTMLFormatter" method="formatUserDisplayEntry">
-                                <j:arg type="java.lang.String" value="${coownerId}" />              
-                            </j:invokeStatic>
-                            ${_coownerInfo}
+                        <j:forEach var="coownerId" items="${coownersList}">
+                            <div class="ownership-user-info">                   
+                                ${layoutFormatter.formatOwner(item, coownerId)}
+                            </div>
                         </j:forEach>  
                     </td>
                 </tr>

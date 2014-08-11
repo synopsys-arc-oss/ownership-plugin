@@ -27,6 +27,8 @@ import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipItem;
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
+import com.synopsys.arc.jenkins.plugins.ownership.util.ui.OwnershipLayoutFormatter;
 import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.model.Node;
@@ -44,6 +46,7 @@ import org.kohsuke.stapler.StaplerRequest;
 /**
  * Implements owner property for Jenkins Nodes.
  * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @deprecated Will be removed in future versions
  * @since 0.0.3
  */
 public class OwnerNodeProperty extends NodeProperty<Node> 
@@ -101,6 +104,10 @@ public class OwnerNodeProperty extends NodeProperty<Node>
     public NodeProperty getDescribedItem() {
         return this;
     }
+    
+    public OwnershipLayoutFormatter<Node> getLayoutFormatter() {
+        return OwnershipPlugin.getInstance().getOwnershipLayoutFormatterProvider().getLayoutFormatter(getNode());
+    }  
       
     @Extension
     public static class DescriptorImpl extends NodePropertyDescriptor {       
