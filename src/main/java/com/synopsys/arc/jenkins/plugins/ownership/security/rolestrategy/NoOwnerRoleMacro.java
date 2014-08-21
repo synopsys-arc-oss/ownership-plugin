@@ -36,7 +36,7 @@ import hudson.security.Permission;
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  * @since 0.2
  */
-@Extension
+@Extension(optional = true)
 public class NoOwnerRoleMacro extends AbstractOwnershipRoleMacro {
 
     @Override

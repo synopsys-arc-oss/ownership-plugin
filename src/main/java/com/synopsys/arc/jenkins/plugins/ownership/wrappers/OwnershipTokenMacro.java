@@ -42,7 +42,7 @@ import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  * @since 0.4
  */
-@Extension
+@Extension(optional = true)
 public class OwnershipTokenMacro extends DataBoundTokenMacro {
     public static final String MACRO_NAME="OWNERSHIP";
     
