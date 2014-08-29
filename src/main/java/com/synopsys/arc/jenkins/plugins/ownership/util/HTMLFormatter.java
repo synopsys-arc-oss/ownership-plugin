@@ -24,24 +24,28 @@
 package com.synopsys.arc.jenkins.plugins.ownership.util;
 
 import hudson.model.User;
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Provides additional formatters for jelly layout.
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  * @since 0.2
  */
+@Restricted(NoExternalUse.class)
 public class HTMLFormatter {
     /**
      * Formats user's e-mail link.
      * @param userId id of the user
-     * @return 
+     * @return User e-mail in the following format: &lt;user@doma.in&gt;
      */
-    public static String formatEmailURI(@Nonnull String userId) {
+    public static @CheckForNull String formatEmailURI(@Nonnull String userId) {
         String email = UserStringFormatter.formatEmail(userId);
         if (email != null) {
-            return "<a href=\"mailto://"+email+"\">"+email+"</a>";
+            return "<a href=\"mailto://"+email+"\">&lt;"+email+"&gt;</a>";
         } else {
             return null;
         }          
@@ -59,11 +63,11 @@ public class HTMLFormatter {
         User usr = User.get(userId, false, null);
         if (usr != null) {
             String userStr = useLongFormat 
-                ? UserStringFormatter.format(usr) 
+                ? usr.getDisplayName()
                 : UserStringFormatter.formatShort(usr.getId());
             return "<a href=\""+Jenkins.getInstance().getRootUrl()+"user/"+userId+"\">"+userStr+"</a>";
         } else { // just return name w/o hyperlink
-            return userId;
+            return userId + " (unregistered)";
         }
     }
 }

@@ -26,6 +26,5 @@
   <j:set var="item" value="${it}"/>
   <j:set var="helper" value="${it.helper()}"/>
   <j:set var="itemType" value="Node"/>
-  <j:set var="styleClass" value="changeset-message"/>
   <st:include page="floatingBoxTemplate.jelly" class="com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin" optional="false"/>      	
 </j:jelly>

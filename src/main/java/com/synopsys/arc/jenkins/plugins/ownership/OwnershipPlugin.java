@@ -24,6 +24,7 @@
 package com.synopsys.arc.jenkins.plugins.ownership;
 
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy;
+import com.synopsys.arc.jenkins.plugins.ownership.extensions.OwnershipLayoutFormatterProvider;
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy.AssignCreatorPolicy;
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy.DropOwnershipPolicy;
 import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurity;
@@ -189,6 +190,16 @@ public class OwnershipPlugin extends Plugin {
     public String getMailResolverClassName() {
         return mailResolverClassName;
     }
+    
+    /**
+     * Gets the configured {@link OwnershipLayoutFormatterProvider}.
+     * @since 0.5
+     * @return Ownership Layout Formatter to be used
+     */
+    public @Nonnull OwnershipLayoutFormatterProvider getOwnershipLayoutFormatterProvider() {
+        //TODO: replace by the extension point
+        return OwnershipLayoutFormatterProvider.DEFAULT_PROVIDER;
+    } 
     
     public FormValidation doCheckUser(@QueryParameter String userId) {
         userId = Util.fixEmptyAndTrim(userId);

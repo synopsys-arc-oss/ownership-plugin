@@ -1,0 +1,25 @@
+.ownership-summary-box {
+    width: 400px;
+    background-color: #F0F0F0;
+    border-color: #BBBBBB;
+    border-style: double;
+}
+
+.ownership-user-info {
+    margin-bottom: 5px;
+    margin-left: 10px;
+}
+
+.ownership-header {
+    text-align: center;
+    font-weight: bold;
+}
+
+.ownership-section {
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+.ownership-text {
+    
+}
