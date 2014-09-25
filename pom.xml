@@ -8,7 +8,7 @@
 
     <groupId>com.synopsys.jenkinsci</groupId>
     <artifactId>ownership</artifactId>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.5</version>
     <name>Job and Slave ownership plugin</name>
     <packaging>hpi</packaging>
     <description>Provides explicit ownership of jobs and slaves</description>
@@ -44,7 +44,8 @@
         <connection>scm:git:ssh://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-    </scm>
+      <tag>ownership-0.5</tag>
+  </scm>
 	
     <repositories>
         <repository>
