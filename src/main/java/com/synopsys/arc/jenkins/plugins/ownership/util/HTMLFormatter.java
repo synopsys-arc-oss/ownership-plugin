@@ -37,6 +37,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
  */
 @Restricted(NoExternalUse.class)
 public class HTMLFormatter {
+    
     /**
      * Formats user's e-mail link.
      * @param userId id of the user
@@ -51,15 +52,15 @@ public class HTMLFormatter {
         }          
     }
     
-    public static String formatShortUserURI(@Nonnull String userId) {
+    public static @Nonnull String formatShortUserURI(@Nonnull String userId) {
         return formatUserURI(userId, false);
     }
     
-    public static String formatUserURI(@Nonnull String userId) {
+    public static @Nonnull String formatUserURI(@Nonnull String userId) {
         return formatUserURI(userId, true);
     }
     
-    public static String formatUserURI(@Nonnull String userId, boolean useLongFormat) {
+    public static @Nonnull String formatUserURI(@Nonnull String userId, boolean useLongFormat) {
         User usr = User.get(userId, false, null);
         if (usr != null) {
             String userStr = useLongFormat 

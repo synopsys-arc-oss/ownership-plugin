@@ -43,31 +43,27 @@ public abstract class AbstractOwnershipHelper<TObjectType>
     /**An empty collection of users*/
     protected final static Collection<User> EMPTY_USERS_COLLECTION = new ArrayList<User>(0);
             
-    @Nonnull
     @Override
-    public final String getDisplayName(@CheckForNull User usr) {
+    public final @Nonnull String getDisplayName(@CheckForNull User usr) {
         return UserStringFormatter.format(usr);
     } 
     
-    @CheckForNull
     @Override
-    public final String getOwnerEmail(@Nonnull TObjectType item) {
+    public final @CheckForNull String getOwnerEmail(@Nonnull TObjectType item) {
         OwnershipDescription descr = getOwnershipDescription(item);
         return  UserStringFormatter.formatEmail(descr.getPrimaryOwner());      
     }
-    
-    @Nonnull
+      
     @Override
-    public final String getOwnerLongString(@Nonnull TObjectType item) {
+    public final @Nonnull String getOwnerLongString(@Nonnull TObjectType item) {
         OwnershipDescription descr = getOwnershipDescription(item);     
         return descr.isOwnershipEnabled() 
                 ? UserStringFormatter.format(descr.getPrimaryOwner()) 
                 : UserStringFormatter.UNKNOWN_USER_STRING;
     }
-    
-    @Nonnull 
+       
     @Override
-    public final String getOwner(@Nonnull TObjectType item) {
+    public final @Nonnull  String getOwner(@Nonnull TObjectType item) {
         OwnershipDescription descr = getOwnershipDescription(item);
         return (descr.isOwnershipEnabled()) 
                 ? UserStringFormatter.formatShort(descr.getPrimaryOwnerId())

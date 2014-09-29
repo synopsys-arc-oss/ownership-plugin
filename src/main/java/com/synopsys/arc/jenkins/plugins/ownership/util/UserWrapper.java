@@ -25,12 +25,15 @@ package com.synopsys.arc.jenkins.plugins.ownership.util;
 
 import hudson.model.User;
 import javax.annotation.Nonnull;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
- * Implements a wrapper, which allows to implement "non-existent" user macros.
- *
+ * Implements a wrapper, which allows to implement the "non-existent" user macro.
  * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @since 0.1
  */
+@Restricted(NoExternalUse.class)
 public class UserWrapper {
 
     boolean isUser;

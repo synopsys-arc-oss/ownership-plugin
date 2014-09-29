@@ -47,7 +47,7 @@ public class OwnershipDescription implements Serializable {
     /**
      * Disabled description, which means that ownership is disabled
      */
-    public static final OwnershipDescription DISABLED_DESCR = new OwnershipDescription(false, null);
+    public static final OwnershipDescription DISABLED_DESCR = new OwnershipDescription(false, "");
     
     /**
      * Indicates if ownership is enabled
@@ -156,8 +156,7 @@ public class OwnershipDescription implements Serializable {
      */
     @Nonnull
     public static OwnershipDescription Parse(JSONObject formData)
-            throws Descriptor.FormException
-    {
+            throws Descriptor.FormException {
         return parseJSON(formData);
     }
     

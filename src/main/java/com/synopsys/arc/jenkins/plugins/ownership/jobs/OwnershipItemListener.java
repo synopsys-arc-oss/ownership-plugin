@@ -55,7 +55,7 @@ public class OwnershipItemListener extends ItemListener {
     }
     
     private ItemOwnershipPolicy getPolicy() {
-        return OwnershipPlugin.Instance().getConfiguration().getItemOwnershipPolicy();
+        return OwnershipPlugin.getInstance().getConfiguration().getItemOwnershipPolicy();
     }
     
     private void modifyOwnership(Item item, OwnershipDescription ownership) {
