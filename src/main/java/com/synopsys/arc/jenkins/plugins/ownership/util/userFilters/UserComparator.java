@@ -25,16 +25,18 @@ package com.synopsys.arc.jenkins.plugins.ownership.util.userFilters;
 
 import hudson.model.User;
 import java.io.Serializable;
+import javax.annotation.Nonnull;
 
 /**
- * Compares two users by Full Names.
+ * Compares two {@link User}s by their full names.
  * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @since 0.1
  */
 public class UserComparator implements java.util.Comparator<User>, Serializable
 {
-    // TODO: here is a risk of NPE if null user sneaks into the collection
+    
     @Override
-    public int compare(User o1, User o2) {
+    public int compare(@Nonnull User o1, @Nonnull User o2) {
         return o1.getFullName().compareTo(o2.getFullName());
     }
 }

@@ -27,11 +27,14 @@ import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import hudson.model.User;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Helper for User string formatting.
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
+@Restricted(NoExternalUse.class)
 public class UserStringFormatter {
     
     public static final String UNKNOWN_USER_STRING="N/A";
@@ -41,18 +44,15 @@ public class UserStringFormatter {
      * @param user User
      * @return Formatted string
      */
-    @Nonnull
-    public static String format(@CheckForNull User user) {
+    public static @Nonnull String format(@CheckForNull User user) {
         return user !=null ? user.getFullName()+" ("+user.getId()+")" : UNKNOWN_USER_STRING;
     }
     
-    @Nonnull
-    public static String format(@Nonnull String userId) {
+    public static @Nonnull String format(@Nonnull String userId) {
         return format(User.get(userId, false, null));
     }
     
-    @Nonnull
-    public static String formatShort(@CheckForNull String userId) {
+    public static @Nonnull String formatShort(@CheckForNull String userId) {
         return (userId != null && !userId.isEmpty()) ? userId : UNKNOWN_USER_STRING;
     } 
         
@@ -62,13 +62,11 @@ public class UserStringFormatter {
      * @return e-mail
      * @since 0.2
      */
-    @CheckForNull
-    public static String formatEmail(@Nonnull String userId) {
+    public static  @CheckForNull String formatEmail(@Nonnull String userId) {
         return formatEmail(User.get(userId, false, null));
     }
     
-    @CheckForNull
-    public static String formatEmail(@CheckForNull User user) {
+    public static @CheckForNull String formatEmail(@CheckForNull User user) {
         return (user != null && user != User.getUnknown()) 
             ? OwnershipPlugin.getInstance().resolveEmail(user) : null;
     }

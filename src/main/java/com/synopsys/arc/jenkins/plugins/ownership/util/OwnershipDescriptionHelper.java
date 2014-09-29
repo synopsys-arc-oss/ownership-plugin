@@ -46,11 +46,10 @@ public class OwnershipDescriptionHelper {
     }
     
     /**
-     * Gets comma-separated list of co-owners
-     * @param descr
-     * @return 
+     * Gets a comma-separated list of co-owners.
+     * @param descr Ownership description
      */
-    public static String getCoOwnerIDs(@Nonnull OwnershipDescription descr) {
+    public static @Nonnull String getCoOwnerIDs(@Nonnull OwnershipDescription descr) {
         StringBuilder coowners= new StringBuilder(getOwnerID(descr));
         for (String userId : descr.getCoownersIds()) {
             if (coowners.length() == 0) {
