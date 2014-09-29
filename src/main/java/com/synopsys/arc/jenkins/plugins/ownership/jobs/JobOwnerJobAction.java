@@ -27,15 +27,22 @@ import com.synopsys.arc.jenkins.plugins.ownership.ItemOwnershipAction;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurity;
+
 import hudson.model.Descriptor;
 import hudson.model.Job;
 import hudson.security.Permission;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
+
 import net.sf.json.JSONObject;
+
+import org.kohsuke.stapler.HttpResponse;
+import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -118,17 +125,17 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
         return getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
     }
     
-    public void doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
+    public HttpResponse doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
         getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
         
         JSONObject jsonOwnership = (JSONObject) req.getSubmittedForm().getJSONObject("owners");
         OwnershipDescription descr = OwnershipDescription.parseJSON(jsonOwnership);
         JobOwnerHelper.setOwnership(getDescribedItem(), descr);
         
-        rsp.sendRedirect(getDescribedItem().getAbsoluteUrl());
+        return HttpResponses.redirectViaContextPath(getDescribedItem().getUrl());
     }
     
-    public void doProjectSpecificSecuritySubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, Descriptor.FormException {
+    public HttpResponse doProjectSpecificSecuritySubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, Descriptor.FormException {
         getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
         JSONObject form = req.getSubmittedForm();
         
@@ -139,16 +146,17 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
         } else { // drop security
             JobOwnerHelper.setProjectSpecificSecurity(getDescribedItem(), null);
         }
-        rsp.sendRedirect(getDescribedItem().getAbsoluteUrl());
+
+        return HttpResponses.redirectViaContextPath(getDescribedItem().getUrl());
     }
     
-    public void doRestoreDefaultSpecificSecuritySubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, Descriptor.FormException {
+    public HttpResponse doRestoreDefaultSpecificSecuritySubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, Descriptor.FormException {
         getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
         // Get default security
         ItemSpecificSecurity defaultJobsSecurity = OwnershipPlugin.getInstance().getDefaultJobsSecurity();
         ItemSpecificSecurity val = defaultJobsSecurity != null ? defaultJobsSecurity.clone() : null;
         
         JobOwnerHelper.setProjectSpecificSecurity(getDescribedItem(), val);
-        rsp.sendRedirect(getDescribedItem().getAbsoluteUrl());
+        return HttpResponses.redirectViaContextPath(getDescribedItem().getUrl());
     }
 }

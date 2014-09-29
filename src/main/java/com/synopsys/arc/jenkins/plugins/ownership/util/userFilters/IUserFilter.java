@@ -24,16 +24,17 @@
 package com.synopsys.arc.jenkins.plugins.ownership.util.userFilters;
 
 import hudson.model.User;
-import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 /**
  * Provides filtering of users.
  * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @since 0.1
  */
 public interface IUserFilter {
+    
     /**
-     * Filters users
+     * Checks if the specified {@link User} satisfies the filter.
      * @param user User to be checked
      * @return true if User passed filter
      */

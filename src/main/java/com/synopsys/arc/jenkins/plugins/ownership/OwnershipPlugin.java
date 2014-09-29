@@ -24,6 +24,7 @@
 package com.synopsys.arc.jenkins.plugins.ownership;
 
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy;
+import com.synopsys.arc.jenkins.plugins.ownership.extensions.OwnershipLayoutFormatterProvider;
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy.AssignCreatorPolicy;
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy.DropOwnershipPolicy;
 import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurity;
@@ -42,6 +43,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
@@ -58,6 +60,8 @@ import org.kohsuke.stapler.StaplerRequest;
 public class OwnershipPlugin extends Plugin {
     
     public static final String LOG_PREFIX="[OwnershipPlugin] - ";
+    private static final Logger LOGGER = Logger.getLogger(OwnershipPlugin.class.getName());
+
     public static final String FAST_RESOLVER_ID="Fast resolver for UI (recommended)";
     
     private static final PermissionGroup PERMISSIONS = new PermissionGroup(OwnershipPlugin.class, Messages._OwnershipPlugin_ManagePermissions_Title());    
@@ -82,10 +86,14 @@ public class OwnershipPlugin extends Plugin {
         return getInstance();
     }
     
-    //TODO: Null is not an option
     public static OwnershipPlugin getInstance() {
-        Plugin plugin = Jenkins.getInstance().getPlugin(OwnershipPlugin.class);
-        return plugin != null ? (OwnershipPlugin)plugin : null;
+        Jenkins j = Jenkins.getInstance();
+        OwnershipPlugin plugin = j != null ? j.getPlugin(OwnershipPlugin.class) : null;
+        if (plugin == null) { // Fail horribly
+            // TODO: throw a graceful error
+            throw new IllegalStateException("Cannot get the plugin's instance. Jenkins or the plugin have not been initialized yet");
+        }
+        return plugin;
     }
     
     @Override 
@@ -187,6 +195,16 @@ public class OwnershipPlugin extends Plugin {
         return mailResolverClassName;
     }
     
+    /**
+     * Gets the configured {@link OwnershipLayoutFormatterProvider}.
+     * @since 0.5
+     * @return Ownership Layout Formatter to be used
+     */
+    public @Nonnull OwnershipLayoutFormatterProvider getOwnershipLayoutFormatterProvider() {
+        //TODO: replace by the extension point
+        return OwnershipLayoutFormatterProvider.DEFAULT_PROVIDER;
+    } 
+    
     public FormValidation doCheckUser(@QueryParameter String userId) {
         userId = Util.fixEmptyAndTrim(userId);
         if (userId == null) {
@@ -234,5 +252,9 @@ public class OwnershipPlugin extends Plugin {
             items.add(resolver.getClass().getCanonicalName());
         }
         return items;
+    }
+
+    public static Logger getLogger() {
+        return LOGGER;
     }
 }

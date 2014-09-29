@@ -34,6 +34,7 @@ import hudson.model.User;
 import java.util.Collections;
 import jenkins.model.Jenkins;
 import org.acegisecurity.Authentication;
+import org.acegisecurity.userdetails.UsernameNotFoundException;
 import org.jenkinsci.plugins.authorizeproject.AuthorizeProjectStrategy;
 import org.jenkinsci.plugins.authorizeproject.AuthorizeProjectStrategyDescriptor;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -61,14 +62,15 @@ public class OwnershipAuthorizeProjectStrategy extends AuthorizeProjectStrategy 
         if (owner == null) { // fallback to anonymous
             return Jenkins.ANONYMOUS;
         }
-        Authentication auth = owner.impersonate();
-        if (auth == null) { // fallback to anonymous
+        try {
+            Authentication auth = owner.impersonate();
+            return (auth != null) ? auth : Jenkins.ANONYMOUS;
+        } catch (UsernameNotFoundException ex) { // fallback to anonymous
             return Jenkins.ANONYMOUS;
         }
-        return auth;
     }
       
-    @Extension
+    @Extension(optional = true)
     public static class DescriptorImpl extends AuthorizeProjectStrategyDescriptor {
         
         @Override

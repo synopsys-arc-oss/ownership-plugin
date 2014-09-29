@@ -31,11 +31,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import javax.annotation.Nonnull;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
- *
+ * Filters {@link Collection}s of {@link User}s.
  * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @since 0.1
  */
+@Restricted(NoExternalUse.class)
 public class UserCollectionFilter {
 
     @Nonnull

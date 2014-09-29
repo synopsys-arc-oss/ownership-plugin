@@ -30,16 +30,23 @@ import javax.annotation.Nonnull;
 import org.acegisecurity.Authentication;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.userdetails.UsernameNotFoundException;
 
 /**
  * Filters user according to access rights to specified item.
  * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @since 0.1
  */
 public class AccessRightsFilter implements IUserFilter {
     
-    AccessControlled item;
-    Permission permission;
+    private final AccessControlled item;
+    private final Permission permission;
 
+    /**
+     * Primary constructor.
+     * @param item Controlled item
+     * @param permission Permission to be checked
+     */
     public AccessRightsFilter(@Nonnull AccessControlled item, @Nonnull Permission permission) {
         this.item = item;
         this.permission = permission;
@@ -50,19 +57,19 @@ public class AccessRightsFilter implements IUserFilter {
         boolean permissionCheckResult = false;
         
         // Impersonate to check the permission
-        Authentication auth = user.impersonate();
         SecurityContext initialContext = null;
         try {
+            Authentication auth = user.impersonate();
             initialContext = hudson.security.ACL.impersonate(auth);
             permissionCheckResult = item.hasPermission(permission);
-        }
-        finally {
+        } catch (UsernameNotFoundException ex) {
+            return false; // Ignore non-existent users like "unknown"
+        } finally {
             if (initialContext != null) {
                 SecurityContextHolder.setContext(initialContext);
             }
         }
         
         return  permissionCheckResult;
-    }
-    
+    } 
 }
