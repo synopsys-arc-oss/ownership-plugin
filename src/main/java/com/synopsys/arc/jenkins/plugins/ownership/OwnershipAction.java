@@ -33,7 +33,7 @@ import hudson.model.Action;
  * @see NodeOwnershipAction 
  */
 public abstract class OwnershipAction implements Action {
-    public static final String ICON_FILENAME = "user.gif";
+    public static final String ICON_FILENAME = "user.png";
     public static final String URL_NAME = "ownership";
     
     @Override
