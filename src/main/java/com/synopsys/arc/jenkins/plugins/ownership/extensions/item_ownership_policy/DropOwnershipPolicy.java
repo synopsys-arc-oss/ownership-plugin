@@ -33,7 +33,7 @@ import hudson.model.Item;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- *
+ * A policy, which drops the project's ownership.
  * @author Oleg Nenashev <nenashev@synopsys.com>
  * @since 0.5
  */

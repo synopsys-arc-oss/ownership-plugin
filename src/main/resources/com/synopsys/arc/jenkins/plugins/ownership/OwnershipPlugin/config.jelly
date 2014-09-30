@@ -28,12 +28,7 @@
         <f:checkbox checked="${it.requiresConfigureRights}"/>
         <f:description>${%requireConfigRights.description}</f:description>
     </f:entry>
-    <f:entry title="${%assignOnCreate.title}" field="assignOnCreate">
-        <f:checkbox checked="${it.assignOnCreate}"/>
-        <f:description>${%assignOnCreate.description}</f:description>
-    </f:entry>
-    
-  
+
     <!-- Newest parts of the configuration -->
     <j:set var="instance" value="${it.configuration}" /> 
     <j:set var="descriptor" value="${instance.descriptor}" />
