@@ -30,16 +30,27 @@ import javax.annotation.Nonnull;
  * Provides handlers for ownership description.
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
  * @since 0.4
+ * @see OwnershipDescription
  */
-//TODO: refactoring
 public class OwnershipDescriptionHelper {
     
     private OwnershipDescriptionHelper() {}
     
-    public static String getOwnerID(@Nonnull OwnershipDescription descr) {
+    /**
+     * Gets id of the owner.
+     * @param descr Ownership description 
+     * @return userId of the primary owner. The result will be "unknown" if the
+     * user is not specified.
+     */
+    public static @Nonnull String getOwnerID(@Nonnull OwnershipDescription descr) {
         return descr.getPrimaryOwnerId();
     }
     
+    /**
+     * Gets owner's e-mail.
+     * @param descr Ownership description
+     * @return Owner's e-mail or empty string if it is not available 
+     */
     public static String getOwnerEmail(@Nonnull OwnershipDescription descr) {
         String ownerEmail = UserStringFormatter.formatEmail(descr.getPrimaryOwnerId());
         return ownerEmail != null ? ownerEmail : "";
@@ -48,6 +59,7 @@ public class OwnershipDescriptionHelper {
     /**
      * Gets a comma-separated list of co-owners.
      * @param descr Ownership description
+     * @return List of co-owner user IDs
      */
     public static @Nonnull String getCoOwnerIDs(@Nonnull OwnershipDescription descr) {
         StringBuilder coowners= new StringBuilder(getOwnerID(descr));
@@ -60,7 +72,12 @@ public class OwnershipDescriptionHelper {
         return coowners.toString();
     }
     
-    public static String getCoOwnerEmails(OwnershipDescription descr) {
+    /**
+     * Gets e-mails of co-owners.
+     * @param descr Ownership description
+     * @return Comma-separated list of co-owner e-mails (may be empty)
+     */
+    public static String getCoOwnerEmails(@Nonnull OwnershipDescription descr) {
         StringBuilder coownerEmails=new StringBuilder(getOwnerEmail(descr));
         for (String userId : descr.getCoownersIds()) {          
             String coownerEmail = UserStringFormatter.formatEmail(userId);

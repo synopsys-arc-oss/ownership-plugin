@@ -32,8 +32,9 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- *
+ * Configuration of {@link OwnershipPlugin}.
  * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @since 0.5
  */
 public class OwnershipPluginConfiguration 
         implements Describable<OwnershipPluginConfiguration> {
@@ -45,8 +46,7 @@ public class OwnershipPluginConfiguration
         this.itemOwnershipPolicy = itemOwnershipPolicy;
     }
 
-    @Nonnull
-    public ItemOwnershipPolicy getItemOwnershipPolicy() {
+    public @Nonnull ItemOwnershipPolicy getItemOwnershipPolicy() {
         return itemOwnershipPolicy;
     }
    

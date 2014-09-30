@@ -34,6 +34,7 @@ import hudson.security.Permission;
 /**
  * Macro invokes evaluation of item-specific access rights for the current user.
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @since 0.4
  */
 @Extension(optional = true)
 public class ItemSpecificRoleMacroWithUserID extends ItemSpecificRoleMacro {

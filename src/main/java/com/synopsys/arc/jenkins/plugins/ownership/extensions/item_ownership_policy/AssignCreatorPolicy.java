@@ -35,8 +35,9 @@ import hudson.model.User;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- *
+ * A policy, which sets the item creator as an owner.
  * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @since 0.5
  */
 public class AssignCreatorPolicy extends ItemOwnershipPolicy {
 

@@ -42,6 +42,7 @@ import hudson.security.AccessControlled;
 /**
  * An abstract class for {@link RoleMacroExtension}s provided by the ownership plugin.
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @since 0.1
  */
 abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
     
@@ -84,7 +85,7 @@ abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
             default:
                 //do nothing => Ownership is disabled
         }
-        return ownership!=null ? ownership.getOwnership() : OwnershipDescription.DISABLED_DESCR;
+        return ownership != null ? ownership.getOwnership() : OwnershipDescription.DISABLED_DESCR;
     }
     
     public static boolean hasPermission(User user, RoleType type, AccessControlled item, Macro macro, boolean acceptCoowners) {

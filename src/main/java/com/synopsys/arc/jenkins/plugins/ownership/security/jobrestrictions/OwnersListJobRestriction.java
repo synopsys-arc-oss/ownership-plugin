@@ -41,6 +41,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 /**
  * Allows to restrict job executions by ownership.
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @since 0.2
  */
 public class OwnersListJobRestriction extends JobRestriction {
     

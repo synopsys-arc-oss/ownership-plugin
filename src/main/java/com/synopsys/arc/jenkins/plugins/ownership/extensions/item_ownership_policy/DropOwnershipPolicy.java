@@ -35,6 +35,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 /**
  *
  * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @since 0.5
  */
 public class DropOwnershipPolicy extends ItemOwnershipPolicy {
 

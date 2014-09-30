@@ -45,14 +45,13 @@ import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * Filters owner's and co-owners.
- *
  * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @since 0.1
  */
 public class OwnershipJobFilter extends ViewJobFilter {
 
     /**
-     * Macro, which allows to select currently logged user for "My owned jobs"
-     * filter
+     * Macro, which allows to select currently logged user for the filter.
      */
     private static final String MACRO_ME = "@Me";
 

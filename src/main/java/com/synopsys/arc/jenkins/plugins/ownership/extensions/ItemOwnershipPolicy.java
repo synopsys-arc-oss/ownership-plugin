@@ -30,6 +30,8 @@ import hudson.ExtensionPoint;
 import hudson.model.Describable;
 import hudson.model.Item;
 import java.util.List;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
 
 /**
@@ -47,7 +49,7 @@ public abstract class ItemOwnershipPolicy
      * @return An ownership description to be assigned. Return null to 
      * leave the ownership unassigned.
      */
-    public OwnershipDescription onCreated(Item item) {
+    public @CheckForNull OwnershipDescription onCreated(@Nonnull Item item) {
         return null; // Do not assign ownership
     }
     
@@ -59,7 +61,7 @@ public abstract class ItemOwnershipPolicy
      * @return An ownership description to be assigned. Return null to 
      * leave the ownership unassigned.
      */
-    public OwnershipDescription onCopied(Item src, Item item) {
+    public @CheckForNull OwnershipDescription onCopied(@Nonnull Item src, @Nonnull Item item) {
         return onCreated(item);
     }
        

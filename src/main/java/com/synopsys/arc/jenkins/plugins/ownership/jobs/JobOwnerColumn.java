@@ -33,6 +33,7 @@ import hudson.views.ListViewColumn;
 /**
  * Provides Ownership column for the list view.
  * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @since 0.1
  */
 public class JobOwnerColumn extends ListViewColumn {
 

@@ -32,7 +32,7 @@ import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
- * The extension creates {@link OwnershipLayoutFormatter} for various object types.
+ * The extension creates {@link OwnershipLayoutFormatter}s for various object types.
  * @since 0.5
  * @author Oleg Nenashev <o.v.nenashev@gmail.com>
  */

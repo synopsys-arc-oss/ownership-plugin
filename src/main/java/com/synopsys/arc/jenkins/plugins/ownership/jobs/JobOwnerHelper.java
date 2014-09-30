@@ -80,9 +80,8 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
         return User.get(userIdOrFullName, false, null) != null;
     }
      
-    @Nonnull
     @Override
-    public OwnershipDescription getOwnershipDescription(@Nonnull Job<?, ?> job) {
+    public @Nonnull OwnershipDescription getOwnershipDescription(@Nonnull Job<?, ?> job) {
         JobOwnerJobProperty prop = getOwnerProperty(job);     
         return (prop != null) ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
     }
@@ -103,8 +102,7 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
             prop.setOwnershipDescription(descr);
         }
     }
-    
-    
+        
     /**
      * Sets the project-specific security.
      * @param job A job to be modified
@@ -121,9 +119,8 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
         }
     }
 
-    @Nonnull
     @Override
-    public Collection<User> getPossibleOwners(@Nonnull Job<?, ?> item) {
+    public @Nonnull Collection<User> getPossibleOwners(@Nonnull Job<?, ?> item) {
         if (OwnershipPlugin.getInstance().isRequiresConfigureRights()) {
             IUserFilter filter = new AccessRightsFilter(item, Job.CONFIGURE);
             return UserCollectionFilter.filterUsers(User.getAll(), true, filter);

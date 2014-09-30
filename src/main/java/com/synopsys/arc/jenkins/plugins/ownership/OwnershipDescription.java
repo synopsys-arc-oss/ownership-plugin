@@ -127,8 +127,7 @@ public class OwnershipDescription implements Serializable {
      * @return userId of the primary owner. The result will be "unknown" if the
      * user is not specified.
      */
-    @Nonnull
-    public String getPrimaryOwnerId() {        
+    public @Nonnull String getPrimaryOwnerId() {        
         return ownershipEnabled ? primaryOwnerId :  User.getUnknown().getId();
     }
     
