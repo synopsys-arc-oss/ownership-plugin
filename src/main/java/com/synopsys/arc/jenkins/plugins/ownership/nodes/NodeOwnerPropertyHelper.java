@@ -27,6 +27,7 @@ import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
+import hudson.model.Node;
 import hudson.model.User;
 import hudson.slaves.NodeProperty;
 import java.util.Collection;
@@ -45,7 +46,7 @@ public class NodeOwnerPropertyHelper extends AbstractOwnershipHelper<NodePropert
 
     /**
      * Gets OwnerNodeProperty from job if possible
-     * @param node Node
+     * @param node Node property
      * @return OwnerNodeProperty or null
      */
     @CheckForNull
@@ -71,6 +72,22 @@ public class NodeOwnerPropertyHelper extends AbstractOwnershipHelper<NodePropert
             return User.getAll();
         }
     }   
+
+    private @CheckForNull Node getNode(@Nonnull NodeProperty item){
+        if (item instanceof OwnerNodeProperty) {
+            OwnerNodeProperty prop = (OwnerNodeProperty) item;
+            return prop.getNode();
+        }
+        return null;
+    }
     
-      
+    public String getItemSummary(NodeProperty item) { 
+        Node node = getNode(item);
+        return node != null ? NodeOwnerHelper.Instance.getItemSummary(node) : "unknown node";
+    }
+
+    public String getItemURL(NodeProperty item) {
+        Node node = getNode(item);
+        return node != null ? NodeOwnerHelper.Instance.getItemURL(node) : null;
+    }     
 }

@@ -24,6 +24,8 @@
 
 package com.synopsys.arc.jenkins.plugins.ownership.util.ui;
 
+import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
+import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.util.HTMLFormatter;
 import javax.annotation.Nonnull;
@@ -47,6 +49,14 @@ public abstract class OwnershipLayoutFormatter<TObjectType> {
     public String formatCoOwner(@Nonnull TObjectType item, String userId) {
         return formatUser(item, userId);
     }
+    
+    /**
+     * Formats URL, which allows to contact item owners
+     * @param item
+     * @param helper 
+     * @return HTML-formatted link or empty string
+     */
+    public abstract String formatContactOwnersLink(@Nonnull TObjectType item, IOwnershipHelper helper);
       
     /**
      * Default user formatter for {@link OwnershipPlugin}.
@@ -60,6 +70,14 @@ public abstract class OwnershipLayoutFormatter<TObjectType> {
             final String userEmail = HTMLFormatter.formatEmailURI(userId);
             final String userInfoHTML = userURI + (userEmail != null ? " " + userEmail : "");
             return userInfoHTML;
+        }
+
+        @Override
+        public String formatContactOwnersLink(TObjectType item, IOwnershipHelper helper) {
+            String url = helper.getContactOwnersMailToURL(item);
+            return url != null 
+                    ? "<a href=\""+url+"\">"+Messages.OwnershipPlugin_FloatingBox_ContactOwners_Title()+"</a>"
+                    : "";     
         }
     }
 }

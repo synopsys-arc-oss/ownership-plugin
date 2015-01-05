@@ -70,5 +70,10 @@
                 </tr>
             </j:if>
         </table>
+        
+        <!-- Contact link -->
+        <div class="ownership-contact-links"> 
+            ${layoutFormatter.formatContactOwnersLink(item,helper)}
+        </div>
     </div>
 </j:jelly>

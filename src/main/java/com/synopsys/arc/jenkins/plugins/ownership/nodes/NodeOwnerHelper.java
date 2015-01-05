@@ -96,4 +96,13 @@ public class NodeOwnerHelper extends AbstractOwnershipHelper<Node> {
             prop.setOwnershipDescription(descr);
         }
     }
+
+    public String getItemSummary(Node item) {
+        return "node "+item.getDisplayName();
+    }
+
+    public String getItemURL(Node item) {
+        Computer c = item.toComputer();
+        return c != null ? ComputerOwnerHelper.Instance.getItemURL(c) : null;
+    }
 }
