@@ -71,9 +71,20 @@
             </j:if>
         </table>
         
-        <!-- Contact link -->
-        <div class="ownership-contact-links"> 
-            ${layoutFormatter.formatContactOwnersLink(item,helper)}
-        </div>
+        <!-- Contact Owners link -->
+        <j:set var="ownersMailToLink" value="${layoutFormatter.formatContactOwnersLink(item,helper)}"/>
+        <j:if test="${ownersMailToLink != null}">
+            <div class="contact-owners-links"> 
+                <a href="${ownersMailToLink}">${%Contact owners}</a>
+            </div>
+        </j:if>
+        
+        <!-- Contact Admins link -->
+        <j:set var="adminsMailToLink" value="${layoutFormatter.formatContactAdminsLink(item,helper)}"/>
+        <j:if test="${adminsMailToLink != null}">
+            <div class="contact-admins-links"> 
+                <a href="${adminsMailToLink}">${%Contact service admins}</a>
+            </div>
+        </j:if>
     </div>
 </j:jelly>

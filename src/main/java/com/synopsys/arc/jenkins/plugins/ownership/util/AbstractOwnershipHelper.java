@@ -50,7 +50,7 @@ public abstract class AbstractOwnershipHelper<TObjectType>
     
     /**An empty collection of users*/
     protected final static Collection<User> EMPTY_USERS_COLLECTION = new ArrayList<User>(0);
-    private static final MailFormatter MAIL_FORMATTER = new MailFormatter();
+    
     
     @Override
     public final @Nonnull String getDisplayName(@CheckForNull User usr) {
@@ -83,69 +83,5 @@ public abstract class AbstractOwnershipHelper<TObjectType>
     public final boolean isOwnerExists(@Nonnull TObjectType item) {
         OwnershipDescription descr = getOwnershipDescription(item);
         return descr.isOwnershipEnabled() ? descr.hasPrimaryOwner() : false;
-    }
-
-    @Override
-    public String getContactOwnersMailToURL(TObjectType item) {
-        final Jenkins instance = Jenkins.getInstance();
-        if (instance == null) {
-            // Cannot construct e-mail if Jenkins has not been initialized
-            return null;
-        }
-        OwnershipPlugin plugin = instance.getPlugin(OwnershipPlugin.class);
-        if (plugin == null) {
-            // Plugin is not initialized
-            assert false : "Ownership plugin has not been loaded yet";
-            return null;
-        }
-        
-        OwnershipDescription ownershipDescription = getOwnershipDescription(item);
-        if (!ownershipDescription.isOwnershipEnabled()) {
-            return null;
-        }
-
-        // to - job owner
-        List<String> to = null;
-        if (ownershipDescription.hasPrimaryOwner()) {
-            String email = UserStringFormatter.formatEmail(ownershipDescription.getPrimaryOwnerId());
-            if (email != null) {
-                to = Arrays.asList(email);
-            }
-        }
-
-        // cc - job co-owners
-        List<String> cc = null;
-        final Set<String> coOwners = ownershipDescription.getCoownersIds();
-        if (!coOwners.isEmpty()) {
-            cc = new ArrayList<String>(coOwners.size());
-            for (String coOwnerId : coOwners) {
-                String email = UserStringFormatter.formatEmail(coOwnerId);
-                if (email != null) {
-                    cc.add(email);
-                }
-            }
-        }
-
-        // Prepare subject and body using formatters
-        final User user = User.current();
-        final String userName = (user != null && user != User.getUnknown())
-                ? user.getFullName() : "TODO: user name";
-        final String relativeUrl = getItemURL(item);
-        final String itemUrl = relativeUrl != null ? instance.getRootUrl()+relativeUrl : "unknown";
-        final String emailSubjectPrefix = plugin.getConfiguration().getMailOptions().getEmailSubjectPrefix();
-        
-        //TODO: make header configurable
-        String subject = Messages.OwnershipPlugin_FloatingBox_ContactOwners_EmailSubjectTemplate
-            (emailSubjectPrefix, getItemSummary(item));
-        String body = Messages.OwnershipPlugin_FloatingBox_ContactOwners_EmailBodyTemplate(
-            getItemSummary(item), itemUrl, userName);
-
-        try {
-            final String formattedURL = MAIL_FORMATTER.createMailToString(
-                to, cc, null, subject, body);
-            return formattedURL;
-        } catch (UnsupportedEncodingException ex) {
-            throw new IllegalStateException("Unsupported encoding: "+MAIL_FORMATTER.getEncoding(), ex);
-        }    
     }
 }

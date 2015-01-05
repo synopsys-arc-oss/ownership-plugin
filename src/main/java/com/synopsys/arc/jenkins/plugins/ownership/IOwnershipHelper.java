@@ -62,15 +62,6 @@ public interface IOwnershipHelper<TObjectType>  {
     public @CheckForNull String getItemURL(@Nonnull TObjectType item);
     
     /**
-     * Generate a mailto URL, which allows to contact owners.
-     * This URL should define default subject and body.
-     * @param item 
-     * @return MailTo URL or null if it is not available
-     * @since 0.6
-     */
-    public @CheckForNull String getContactOwnersMailToURL(@Nonnull TObjectType item);
-    
-    /**
      * Get ID of the item's owner.
      * @param item Item to be describes
      * @return userId or null
