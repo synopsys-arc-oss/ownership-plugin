@@ -26,6 +26,7 @@ package com.synopsys.arc.jenkins.plugins.ownership.util;
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.util.mail.MailFormatter;
 import hudson.model.User;
 import java.io.UnsupportedEncodingException;
@@ -91,7 +92,13 @@ public abstract class AbstractOwnershipHelper<TObjectType>
             // Cannot construct e-mail if Jenkins has not been initialized
             return null;
         }
-
+        OwnershipPlugin plugin = instance.getPlugin(OwnershipPlugin.class);
+        if (plugin == null) {
+            // Plugin is not initialized
+            assert false : "Ownership plugin has not been loaded yet";
+            return null;
+        }
+        
         OwnershipDescription ownershipDescription = getOwnershipDescription(item);
         if (!ownershipDescription.isOwnershipEnabled()) {
             return null;
@@ -125,10 +132,11 @@ public abstract class AbstractOwnershipHelper<TObjectType>
                 ? user.getFullName() : "TODO: user name";
         final String relativeUrl = getItemURL(item);
         final String itemUrl = relativeUrl != null ? instance.getRootUrl()+relativeUrl : "unknown";
+        final String emailSubjectPrefix = plugin.getConfiguration().getMailOptions().getEmailSubjectPrefix();
         
         //TODO: make header configurable
         String subject = Messages.OwnershipPlugin_FloatingBox_ContactOwners_EmailSubjectTemplate
-            ("[Jenkins] - On ", getItemSummary(item));
+            (emailSubjectPrefix, getItemSummary(item));
         String body = Messages.OwnershipPlugin_FloatingBox_ContactOwners_EmailBodyTemplate(
             getItemSummary(item), itemUrl, userName);
 
