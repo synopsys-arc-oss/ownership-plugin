@@ -84,4 +84,9 @@ public abstract class AbstractOwnershipHelper<TObjectType>
         OwnershipDescription descr = getOwnershipDescription(item);
         return descr.isOwnershipEnabled() ? descr.hasPrimaryOwner() : false;
     }
+
+    @Override
+    public Collection<User> getPossibleOwners(TObjectType item) {
+        return EMPTY_USERS_COLLECTION;
+    }
 }
