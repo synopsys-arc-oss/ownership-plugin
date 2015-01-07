@@ -41,9 +41,7 @@ import jenkins.model.Jenkins;
  * @author Oleg Nenashev <o.v.nenashev@gmail.com>
  */
 public class OwnershipMailHelper {
-
-    private static final MailFormatter MAIL_FORMATTER = new MailFormatter();
-    
+   
     private static enum Mode { ContactOwners, ContactAdmins };
 
     /**
@@ -71,12 +69,13 @@ public class OwnershipMailHelper {
             // Cannot construct e-mail if Jenkins has not been initialized
             return null;
         }
-        OwnershipPlugin plugin = instance.getPlugin(OwnershipPlugin.class);
+        final OwnershipPlugin plugin = instance.getPlugin(OwnershipPlugin.class);
         if (plugin == null) {
             // Plugin is not initialized
             assert false : "Ownership plugin has not been loaded yet";
             return null;
         }
+        final MailOptions mailOptions = plugin.getConfiguration().getMailOptions();
         
         OwnershipDescription ownershipDescription = helper.getOwnershipDescription(item);
         if (!ownershipDescription.isOwnershipEnabled()) {
@@ -117,7 +116,7 @@ public class OwnershipMailHelper {
                 ? user.getFullName() : "TODO: user name";
         final String relativeUrl = helper.getItemURL(item);
         final String itemUrl = relativeUrl != null ? instance.getRootUrl()+relativeUrl : "unknown";
-        final String emailSubjectPrefix = plugin.getConfiguration().getMailOptions().getEmailSubjectPrefix();
+        final String emailSubjectPrefix = mailOptions.getEmailSubjectPrefix();
         
         //TODO: make header configurable
         String subject = Messages.OwnershipPlugin_FloatingBox_ContactOwners_EmailSubjectTemplate
@@ -131,9 +130,9 @@ public class OwnershipMailHelper {
                        helper.getItemSummary(item), itemUrl, userName);
                 break;
             case ContactAdmins:
-                final String adminEmail = plugin.getConfiguration().getMailOptions().getAdminsContactEmail();
+                final String adminEmail = mailOptions.getAdminsContactEmail();
                 to.add(adminEmail);
-                final String adminEmailPrefix = plugin.getConfiguration().getMailOptions().getAdminsEmailPrefix();
+                final String adminEmailPrefix = mailOptions.getAdminsEmailPrefix();
                 body = Messages.OwnershipPlugin_FloatingBox_ContactAdmins_EmailBodyTemplate(
                        adminEmailPrefix, itemUrl, userName);
                 break;
@@ -143,12 +142,13 @@ public class OwnershipMailHelper {
         }
         
 
-        try {
-            final String formattedURL = MAIL_FORMATTER.createMailToString(
+        MailFormatter formatter = new MailFormatter(mailOptions.getEmailListSeparator());
+        try {         
+            final String formattedURL = formatter.createMailToString(
                 to, cc, null, subject, body);
             return formattedURL;
         } catch (UnsupportedEncodingException ex) {
-            throw new IllegalStateException("Unsupported encoding: "+MAIL_FORMATTER.getEncoding(), ex);
+            throw new IllegalStateException("Unsupported encoding: "+formatter.getEncoding(), ex);
         }    
     }
 }

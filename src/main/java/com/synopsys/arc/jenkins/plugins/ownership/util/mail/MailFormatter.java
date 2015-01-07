@@ -43,25 +43,28 @@ import org.apache.http.message.BasicNameValuePair;
 public class MailFormatter {
     
     private static final String DEFAULT_ENCODING = "UTF-8";
-    private static final String DEFAULT_SEPARATOR= ";";
     
-    private final String encoding;
-    private final String separator;
+    private final @Nonnull String encoding;
+    private final @Nonnull String separator;
 
     public MailFormatter() {
-        this (DEFAULT_ENCODING, DEFAULT_SEPARATOR);
+        this (DEFAULT_ENCODING, MailOptions.DEFAULT.getEmailListSeparator());
     }
   
-    public MailFormatter(String encoding, String separator) {
+    public MailFormatter(@Nonnull String separator) {
+        this (DEFAULT_ENCODING, separator);
+    }
+    
+    public MailFormatter(@Nonnull String encoding, @Nonnull String separator) {
         this.encoding = encoding;
         this.separator = separator;
     }
 
-    public String getEncoding() {
+    public @Nonnull String getEncoding() {
         return encoding;
     }
 
-    public String getSeparator() {
+    public @Nonnull String getSeparator() {
         return separator;
     }
        
@@ -106,7 +109,6 @@ public class MailFormatter {
             throws UnsupportedEncodingException {
         final String res = joinMailAddresses(items);
         if (res != null) {
-           // final String encodedValue = URLEncoder.encode(res, encoding);
            target.add(new BasicNameValuePair(paramName, res));
         }
     }

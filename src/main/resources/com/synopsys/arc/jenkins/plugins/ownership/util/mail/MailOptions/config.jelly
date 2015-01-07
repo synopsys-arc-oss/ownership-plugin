@@ -25,13 +25,19 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
     xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
     xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-    <f:entry title="${%Subject prefix}" field="emailSubjectPrefix">
-        <f:textbox/> 
-    </f:entry>
+    
     <f:entry title="${%Admins contact}" field="adminsContactEmail">
         <f:textbox/> 
-    </f:entry>
-    <f:entry title="${%Admins e-mail prefix}" field="adminsEmailPrefix">
-        <f:textbox/> 
-    </f:entry>
+    </f:entry>  
+    <f:advanced title="${%Advanced e-mail options}">
+        <f:entry title="${%Subject prefix}" field="emailSubjectPrefix">
+            <f:textbox/> 
+        </f:entry>
+        <f:entry title="${%Admins e-mail prefix}" field="adminsEmailPrefix">
+            <f:textbox/> 
+        </f:entry>
+        <f:entry title="${%Recipients separator}" field="emailListSeparator">
+            <f:textbox/> 
+        </f:entry>
+    </f:advanced>
 </j:jelly>

@@ -40,23 +40,32 @@ import org.kohsuke.stapler.DataBoundConstructor;
 public class MailOptions implements Describable<MailOptions> {
     
     private final @CheckForNull String emailSubjectPrefix;
+    private final @CheckForNull String emailListSeparator;
     private final @CheckForNull String adminsContactEmail;
     private final @CheckForNull String adminsEmailPrefix;
-
+    
     private static final String DEFAULT_SUBJECT_PREFIX = "[Jenkins] - ";
+    private static final String DEFAULT_LIST_SEPARATOR = ";";
     private static final String DEFAULT_ADMINS_EMAIL_PREFIX = "Dear Jenkins admins,";
+     
     public static final MailOptions DEFAULT = new MailOptions(DEFAULT_SUBJECT_PREFIX, null, 
-            DEFAULT_ADMINS_EMAIL_PREFIX);
+            DEFAULT_ADMINS_EMAIL_PREFIX, DEFAULT_LIST_SEPARATOR);
     
     @DataBoundConstructor
-    public MailOptions(String emailSubjectPrefix, String adminsContactEmail, String adminsEmailPrefix) {
+    public MailOptions(String emailSubjectPrefix, String adminsContactEmail, String adminsEmailPrefix, 
+            String emailListSeparator) {
         this.emailSubjectPrefix = hudson.Util.fixEmptyAndTrim(emailSubjectPrefix);
         this.adminsContactEmail = hudson.Util.fixEmptyAndTrim(adminsContactEmail);
         this.adminsEmailPrefix = hudson.Util.fixEmptyAndTrim(adminsEmailPrefix);
+        this.emailListSeparator=hudson.Util.fixEmptyAndTrim(emailListSeparator);
     }
 
     public @Nonnull String getEmailSubjectPrefix() {
         return emailSubjectPrefix != null ? emailSubjectPrefix : DEFAULT_SUBJECT_PREFIX;
+    }
+    
+    public @Nonnull String getEmailListSeparator() {
+        return emailListSeparator != null ? emailListSeparator : DEFAULT_LIST_SEPARATOR;
     }
 
     public @CheckForNull String getAdminsContactEmail() {
@@ -66,7 +75,7 @@ public class MailOptions implements Describable<MailOptions> {
     public @Nonnull String getAdminsEmailPrefix() {
         return adminsEmailPrefix != null ? adminsEmailPrefix : DEFAULT_ADMINS_EMAIL_PREFIX;
     }
-
+   
     @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
