@@ -72,19 +72,27 @@
         </table>
         
         <!-- Contact Owners link -->
-        <j:set var="ownersMailToLink" value="${layoutFormatter.formatContactOwnersLink(item,helper)}"/>
-        <j:if test="${ownersMailToLink != null}">
-            <div class="contact-owners-links"> 
-                <a href="${ownersMailToLink}">${%Contact owners}</a>
-            </div>
-        </j:if>
-        
-        <!-- Contact Admins link -->
-        <j:set var="adminsMailToLink" value="${layoutFormatter.formatContactAdminsLink(item,helper)}"/>
-        <j:if test="${adminsMailToLink != null}">
-            <div class="contact-admins-links"> 
-                <a href="${adminsMailToLink}">${%Contact service admins}</a>
-            </div>
-        </j:if>
+        <div class="ownership-contact-links"> 
+            <table>
+                <tr>  
+                    <j:set var="ownersMailToLink" value="${layoutFormatter.formatContactOwnersLink(item,helper)}"/>
+                    <j:if test="${ownersMailToLink != null}">   
+                        <td>    
+                            <img src="${imagesURL}/24x24/user.png"/>
+                            <a href="${ownersMailToLink}">${%E-mail to owners}</a>
+                        </td>
+                    </j:if>
+
+                    <!-- Contact Admins link -->
+                    <j:set var="adminsMailToLink" value="${layoutFormatter.formatContactAdminsLink(item,helper)}"/>
+                    <j:if test="${adminsMailToLink != null}">
+                        <td>
+                            <img src="${imagesURL}/24x24/setting.png"/>
+                            <a href="${adminsMailToLink}">${%E-mail to service admins}</a>
+                        </td>
+                    </j:if>
+                </tr>
+            </table>
+        </div>
     </div>
 </j:jelly>
