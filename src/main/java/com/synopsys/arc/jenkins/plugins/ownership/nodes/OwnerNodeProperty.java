@@ -139,7 +139,7 @@ public class OwnerNodeProperty extends NodeProperty<Node>
         
         @Override
         public String getDisplayName() {
-                return Messages.NodeOwnership_Config_SectionTitle()+". (just a stub, use \"Manage ownership\" page to configure)";
+                return null;
         }
 
         @Override
