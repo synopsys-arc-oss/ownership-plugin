@@ -80,12 +80,19 @@ public class NodeOwnerPropertyHelper extends AbstractOwnershipHelper<NodePropert
         }
         return null;
     }
+
+    @Override
+    public String getItemTypeName(NodeProperty item) {
+        return NodeOwnerHelper.ITEM_TYPE_NAME;
+    }
     
-    public String getItemSummary(NodeProperty item) { 
+    @Override
+    public String getItemDisplayName(NodeProperty item) { 
         Node node = getNode(item);
-        return node != null ? NodeOwnerHelper.Instance.getItemSummary(node) : "unknown node";
+        return node != null ? NodeOwnerHelper.Instance.getItemDisplayName(node) : "unknown node";
     }
 
+    @Override
     public String getItemURL(NodeProperty item) {
         Node node = getNode(item);
         return node != null ? NodeOwnerHelper.Instance.getItemURL(node) : null;

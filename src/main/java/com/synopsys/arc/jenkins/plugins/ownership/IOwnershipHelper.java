@@ -47,13 +47,20 @@ import javax.annotation.Nonnull;
 public interface IOwnershipHelper<TObjectType>  {
     
     /**
+     * Gets a type of the item to be displayed.
+     * @param item 
+     * @return Display name of the item type
+     */
+    public @Nonnull String getItemTypeName(@Nonnull TObjectType item);
+    
+    /**
      * Gets a short classifier.
      * Usage example: e-mail headers
      * @param item
      * @return Short description of the object
      * @since 0.6
      */
-    public @Nonnull String getItemSummary(@Nonnull TObjectType item);
+    public @Nonnull String getItemDisplayName(@Nonnull TObjectType item);
     
     /**
      * Gets a relative URL to the item.

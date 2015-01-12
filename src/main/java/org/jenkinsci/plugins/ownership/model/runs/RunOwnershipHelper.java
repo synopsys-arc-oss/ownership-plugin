@@ -41,10 +41,15 @@ public class RunOwnershipHelper extends AbstractOwnershipHelper<Run> {
     public static RunOwnershipHelper getInstance() {
         return instance;
     }
+
+    @Override
+    public String getItemTypeName(Run item) {
+        return "run";
+    }
     
     @Override
-    public String getItemSummary(Run item) {
-        return "run "+item.getFullDisplayName();
+    public String getItemDisplayName(Run item) {
+        return item.getFullDisplayName();
     }
 
     @Override

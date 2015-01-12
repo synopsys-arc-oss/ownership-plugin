@@ -48,6 +48,7 @@ import javax.annotation.Nonnull;
 public class NodeOwnerHelper extends AbstractOwnershipHelper<Node> {
 
     public static final NodeOwnerHelper Instance = new NodeOwnerHelper();
+    /**package*/ static final String ITEM_TYPE_NAME = "node";
 
     /**
      * Gets OwnerNodeProperty from job if possible.
@@ -97,10 +98,17 @@ public class NodeOwnerHelper extends AbstractOwnershipHelper<Node> {
         }
     }
 
-    public String getItemSummary(Node item) {
-        return "node "+item.getDisplayName();
+    @Override
+    public String getItemTypeName(Node item) {
+        return ITEM_TYPE_NAME;
+    }
+    
+    @Override
+    public String getItemDisplayName(Node item) {
+        return item.getDisplayName();
     }
 
+    @Override
     public String getItemURL(Node item) {
         Computer c = item.toComputer();
         return c != null ? ComputerOwnerHelper.Instance.getItemURL(c) : null;

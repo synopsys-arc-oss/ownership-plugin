@@ -128,9 +128,15 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
             return User.getAll();
         }
     }  
-
-    public String getItemSummary(Job<?, ?> item) {
-        return "job "+item.getFullDisplayName();
+   
+    @Override
+    public String getItemTypeName(Job<?, ?> item) {
+        return "job";
+    }
+    
+    @Override
+    public String getItemDisplayName(Job<?, ?> item) {
+        return item.getFullDisplayName();
     }
 
     public String getItemURL(Job<?, ?> item) {

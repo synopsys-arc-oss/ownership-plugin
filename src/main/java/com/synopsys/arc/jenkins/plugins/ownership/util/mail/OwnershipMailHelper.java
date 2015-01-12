@@ -25,15 +25,18 @@
 package com.synopsys.arc.jenkins.plugins.ownership.util.mail;
 
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
-import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserStringFormatter;
+import hudson.Util;
 import hudson.model.User;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
 
 /**
@@ -47,7 +50,9 @@ public class OwnershipMailHelper {
     /**
      * Generate a mailto URL, which allows to contact owners.
      * This URL should define default subject and body.
-     * @param item 
+     * @param <TObjectType> Item type
+     * @param item Item with ownership description's
+     * @param helper Variables resolution helper
      * @return MailTo URL or null if it is not available
      * @since 0.6
      */
@@ -82,8 +87,10 @@ public class OwnershipMailHelper {
             return null;
         }
 
-        List<String> to = new LinkedList<String>();
-        List<String> cc = new LinkedList<String>();
+        // Prepare the data        
+        final List<String> to = new LinkedList<String>();
+        final List<String> cc = new LinkedList<String>();
+        final Map<String, String> envVars = getSubstitutionVars(instance,item,helper);
         
         // to - job owner
         if (ownershipDescription.hasPrimaryOwner()) {
@@ -111,37 +118,23 @@ public class OwnershipMailHelper {
         }
 
         // Prepare subject and body using formatters
-        final User user = User.current();
-        final String userName = (user != null && user != User.getUnknown())
-                ? user.getFullName() : "TODO: user name";
-        final String relativeUrl = helper.getItemURL(item);
-        final String itemUrl = relativeUrl != null ? instance.getRootUrl()+relativeUrl : "unknown";
-        final String emailSubjectPrefix = mailOptions.getEmailSubjectPrefix();
-        
-        //TODO: make header configurable
-        String subject = Messages.OwnershipPlugin_FloatingBox_ContactOwners_EmailSubjectTemplate
-            (emailSubjectPrefix, helper.getItemSummary(item));
-        
-        
-        String body;
+        final String body, subject;       
         switch (mode) {
             case ContactOwners:
-                body = Messages.OwnershipPlugin_FloatingBox_ContactOwners_EmailBodyTemplate(
-                       helper.getItemSummary(item), itemUrl, userName);
+                subject = resolveVariablesFor(mailOptions.getContactOwnersSubjectTemplate(), envVars); 
+                body = resolveVariablesFor(mailOptions.getContactOwnersBodyTemplate(), envVars);
                 break;
             case ContactAdmins:
                 final String adminEmail = mailOptions.getAdminsContactEmail();
                 to.add(adminEmail);
-                final String adminEmailPrefix = mailOptions.getAdminsEmailPrefix();
-                body = Messages.OwnershipPlugin_FloatingBox_ContactAdmins_EmailBodyTemplate(
-                       adminEmailPrefix, itemUrl, userName);
+                subject = resolveVariablesFor(mailOptions.getContactAdminsSubjectTemplate(), envVars); 
+                body = resolveVariablesFor(mailOptions.getContactAdminsBodyTemplate(), envVars);
                 break;
             default:
                 assert false : "Unsupported mode " + mode;
                 throw new IllegalStateException("Mode "+mode+" is unsupported");
         }
         
-
         MailFormatter formatter = new MailFormatter(mailOptions.getEmailListSeparator());
         try {         
             final String formattedURL = formatter.createMailToString(
@@ -150,5 +143,31 @@ public class OwnershipMailHelper {
         } catch (UnsupportedEncodingException ex) {
             throw new IllegalStateException("Unsupported encoding: "+formatter.getEncoding(), ex);
         }    
+    }
+    
+    private static @Nonnull <TObjectType> Map<String,String> getSubstitutionVars(
+            @Nonnull Jenkins jenkins,
+            @Nonnull TObjectType item,
+            @Nonnull IOwnershipHelper<TObjectType> helper) {
+        Map<String,String> res = new TreeMap<String, String>();
+        
+        // User info
+        final User user = User.current();
+        if (user != null && user != User.getUnknown()) {
+            res.put("USER_ID", user.getId());
+            res.put("USER_FULL_NAME", user.getFullName());
+        }
+        
+        // Item info
+        res.put("ITEM_TYPE_NAME", helper.getItemTypeName(item));
+        res.put("ITEM_DISPLAY_NAME", helper.getItemDisplayName(item));
+        res.put("ITEM_URL", jenkins.getRootUrl()+helper.getItemURL(item));
+                
+        return res;
+    }
+    
+    private static @Nonnull String resolveVariablesFor
+        (@Nonnull String inputString, @Nonnull Map<String,String> vars) {
+        return Util.replaceMacro(inputString, vars);
     }
 }
