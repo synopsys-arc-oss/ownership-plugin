@@ -26,6 +26,7 @@ package com.synopsys.arc.jenkins.plugins.ownership;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.nodes.ComputerOwnerHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.nodes.NodeOwnerHelper;
+import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import hudson.model.User;
 import java.util.Collection;
 import javax.annotation.CheckForNull;
@@ -41,8 +42,34 @@ import javax.annotation.Nonnull;
  * @see JobOwnerHelper
  * @see ComputerOwnerHelper
  * @see NodeOwnerHelper
+ * @see AbstractOwnershipHelper
  */
 public interface IOwnershipHelper<TObjectType>  {
+    
+    /**
+     * Gets a type of the item to be displayed.
+     * @param item 
+     * @return Display name of the item type
+     */
+    public @Nonnull String getItemTypeName(@Nonnull TObjectType item);
+    
+    /**
+     * Gets a short classifier.
+     * Usage example: e-mail headers
+     * @param item
+     * @return Short description of the object
+     * @since 0.6
+     */
+    public @Nonnull String getItemDisplayName(@Nonnull TObjectType item);
+    
+    /**
+     * Gets a relative URL to the item.
+     * @param item
+     * @return Relative URL or null if it is not available
+     * @since 0.6
+     */
+    public @CheckForNull String getItemURL(@Nonnull TObjectType item);
+    
     /**
      * Get ID of the item's owner.
      * @param item Item to be describes
@@ -88,7 +115,8 @@ public interface IOwnershipHelper<TObjectType>  {
     /**
      * Get list of users, who can be item's owner.
      * @param item Item to be described
-     * @return List of users, who can be item's owner (always non-null)
+     * @return List of users, who can be item's owner (always non-null).
+     *    By default, the method returns an empty list in {@link AbstractOwnershipHelper}.
      * @since 0.0.3
      */
     @Nonnull

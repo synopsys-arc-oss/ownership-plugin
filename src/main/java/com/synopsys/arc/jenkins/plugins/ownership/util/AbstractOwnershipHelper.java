@@ -24,12 +24,20 @@
 package com.synopsys.arc.jenkins.plugins.ownership.util;
 
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
+import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
+import com.synopsys.arc.jenkins.plugins.ownership.util.mail.MailFormatter;
 import hudson.model.User;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import jenkins.model.Jenkins;
 
 /**
  * Provides basic operations for ownership helpers.
@@ -38,11 +46,12 @@ import javax.annotation.Nonnull;
  * @author Oleg Nenashev <nenashev@synopsys.com>
  */
 public abstract class AbstractOwnershipHelper<TObjectType>  
-    implements IOwnershipHelper<TObjectType>  
-{
+    implements IOwnershipHelper<TObjectType> {
+    
     /**An empty collection of users*/
     protected final static Collection<User> EMPTY_USERS_COLLECTION = new ArrayList<User>(0);
-            
+    
+    
     @Override
     public final @Nonnull String getDisplayName(@CheckForNull User usr) {
         return UserStringFormatter.format(usr);
@@ -74,5 +83,10 @@ public abstract class AbstractOwnershipHelper<TObjectType>
     public final boolean isOwnerExists(@Nonnull TObjectType item) {
         OwnershipDescription descr = getOwnershipDescription(item);
         return descr.isOwnershipEnabled() ? descr.hasPrimaryOwner() : false;
+    }
+
+    @Override
+    public Collection<User> getPossibleOwners(TObjectType item) {
+        return EMPTY_USERS_COLLECTION;
     }
 }

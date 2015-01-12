@@ -47,7 +47,7 @@ import javax.annotation.Nonnull;
 public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
     
     public final static JobOwnerHelper Instance = new JobOwnerHelper();
-    
+      
     /**
      * Gets JobOwnerProperty from job if possible.
      * The function also handles multi-configuration jobs, so it should be used 
@@ -128,4 +128,18 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
             return User.getAll();
         }
     }  
+   
+    @Override
+    public String getItemTypeName(Job<?, ?> item) {
+        return "job";
+    }
+    
+    @Override
+    public String getItemDisplayName(Job<?, ?> item) {
+        return item.getFullDisplayName();
+    }
+
+    public String getItemURL(Job<?, ?> item) {
+        return item.getUrl();
+    }
 }

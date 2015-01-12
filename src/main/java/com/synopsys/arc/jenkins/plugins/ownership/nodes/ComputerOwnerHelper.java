@@ -71,4 +71,18 @@ public class ComputerOwnerHelper extends AbstractOwnershipHelper<Computer> {
         
         NodeOwnerHelper.setOwnership(node, descr);
     }
+
+    @Override
+    public String getItemTypeName(Computer item) {
+        return "computer";
+    }
+
+    public String getItemDisplayName(Computer item) {
+        return item.getDisplayName();
+    }
+
+    public String getItemURL(Computer item) {
+        //TODO: Absolute URL
+        return item.getUrl();
+    }
 }

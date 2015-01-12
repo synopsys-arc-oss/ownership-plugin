@@ -65,5 +65,9 @@ public abstract class ItemOwnershipAction<TObjectType extends Actionable>
      */
     @Nonnull
     public abstract Permission getProjectSpecificPermission();
-    
+
+    @Override
+    public OwnershipDescription getOwnership() {
+        return helper().getOwnershipDescription(describedItem);
+    } 
 }

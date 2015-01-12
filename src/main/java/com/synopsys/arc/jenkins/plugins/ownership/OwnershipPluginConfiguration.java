@@ -25,9 +25,11 @@
 package com.synopsys.arc.jenkins.plugins.ownership;
 
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy;
+import com.synopsys.arc.jenkins.plugins.ownership.util.mail.MailOptions;
 import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -40,16 +42,28 @@ public class OwnershipPluginConfiguration
         implements Describable<OwnershipPluginConfiguration> {
 
     private final ItemOwnershipPolicy itemOwnershipPolicy;
+    private final @CheckForNull MailOptions mailOptions;
 
     @DataBoundConstructor
-    public OwnershipPluginConfiguration(@Nonnull ItemOwnershipPolicy itemOwnershipPolicy) {
+    public OwnershipPluginConfiguration(@Nonnull ItemOwnershipPolicy itemOwnershipPolicy, 
+            @Nonnull MailOptions mailOptions) {
         this.itemOwnershipPolicy = itemOwnershipPolicy;
+        this.mailOptions = mailOptions;
+    }
+    
+    @Deprecated
+    public OwnershipPluginConfiguration(@Nonnull ItemOwnershipPolicy itemOwnershipPolicy) {
+        this (itemOwnershipPolicy, MailOptions.DEFAULT);
     }
 
     public @Nonnull ItemOwnershipPolicy getItemOwnershipPolicy() {
         return itemOwnershipPolicy;
     }
-   
+
+    public @Nonnull MailOptions getMailOptions() {
+        return mailOptions != null ? mailOptions : MailOptions.DEFAULT;
+    }
+    
     @Override
     public Descriptor<OwnershipPluginConfiguration> getDescriptor() {
         return DESCRIPTOR;

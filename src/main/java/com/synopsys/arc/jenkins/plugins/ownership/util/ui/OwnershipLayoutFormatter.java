@@ -24,8 +24,11 @@
 
 package com.synopsys.arc.jenkins.plugins.ownership.util.ui;
 
+import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
+import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.util.HTMLFormatter;
+import com.synopsys.arc.jenkins.plugins.ownership.util.mail.OwnershipMailHelper;
 import javax.annotation.Nonnull;
 
 /**
@@ -47,7 +50,25 @@ public abstract class OwnershipLayoutFormatter<TObjectType> {
     public String formatCoOwner(@Nonnull TObjectType item, String userId) {
         return formatUser(item, userId);
     }
-      
+    
+    /**
+     * Formats URL, which allows to contact item owners
+     * @param item
+     * @param helper 
+     * @return HTML-formatted link or empty string
+     * @since 0.6
+     */
+    public abstract String formatContactOwnersLink(@Nonnull TObjectType item, IOwnershipHelper helper);
+    
+    /**
+     * Formats URL, which allows to contact Jenkins admins.
+     * @param item
+     * @param helper 
+     * @return HTML-formatted link or empty string
+     * @since 0.6
+     */
+    public abstract String formatContactAdminsLink(@Nonnull TObjectType item, IOwnershipHelper helper);
+    
     /**
      * Default user formatter for {@link OwnershipPlugin}.
      * @param <TObjectType> 
@@ -60,6 +81,16 @@ public abstract class OwnershipLayoutFormatter<TObjectType> {
             final String userEmail = HTMLFormatter.formatEmailURI(userId);
             final String userInfoHTML = userURI + (userEmail != null ? " " + userEmail : "");
             return userInfoHTML;
+        }
+
+        @Override
+        public String formatContactOwnersLink(TObjectType item, IOwnershipHelper helper) {
+            return OwnershipMailHelper.getContactOwnersMailToURL(item, helper);   
+        }
+        
+        @Override
+        public String formatContactAdminsLink(TObjectType item, IOwnershipHelper helper) {
+            return OwnershipMailHelper.getContactAdminsMailToURL(item, helper);
         }
     }
 }

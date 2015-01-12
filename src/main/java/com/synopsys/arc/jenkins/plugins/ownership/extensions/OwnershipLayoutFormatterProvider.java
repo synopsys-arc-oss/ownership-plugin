@@ -27,6 +27,7 @@ package com.synopsys.arc.jenkins.plugins.ownership.extensions;
 import com.synopsys.arc.jenkins.plugins.ownership.util.ui.OwnershipLayoutFormatter;
 import hudson.model.Job;
 import hudson.model.Node;
+import hudson.model.Run;
 import javax.annotation.Nonnull;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -42,6 +43,7 @@ public abstract class OwnershipLayoutFormatterProvider {
     public static final OwnershipLayoutFormatterProvider DEFAULT_PROVIDER = new DefaultProvider();
     private static final OwnershipLayoutFormatter<Job<?,?>> DEFAULT_JOB_FORMATTER = new OwnershipLayoutFormatter.DefaultJobFormatter<Job<?,?>>();
     private static final OwnershipLayoutFormatter<Node> DEFAULT_NODE_FORMATTER = new OwnershipLayoutFormatter.DefaultJobFormatter<Node>();
+    private static final OwnershipLayoutFormatter<Run> DEFAULT_RUN_FORMATTER = new OwnershipLayoutFormatter.DefaultJobFormatter<Run>();
     
     public @Nonnull OwnershipLayoutFormatter<Job<?,?>> getLayoutFormatter(@Nonnull Job<?,?> job) {
         return DEFAULT_JOB_FORMATTER;
@@ -50,6 +52,11 @@ public abstract class OwnershipLayoutFormatterProvider {
     public @Nonnull OwnershipLayoutFormatter<Node> getLayoutFormatter(@Nonnull Node node) {
         return DEFAULT_NODE_FORMATTER;
     }
+    
+    public @Nonnull OwnershipLayoutFormatter<Run> getLayoutFormatter(@Nonnull Run run) {
+        return DEFAULT_RUN_FORMATTER;
+    }
+    
     
     public static final class DefaultProvider extends OwnershipLayoutFormatterProvider {        
     }
