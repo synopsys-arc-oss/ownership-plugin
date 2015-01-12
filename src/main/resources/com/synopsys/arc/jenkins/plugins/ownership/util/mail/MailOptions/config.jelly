@@ -26,7 +26,7 @@
     xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
     xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
     
-    <f:entry title="${%Admins e-mail}" field="adminsContactEmail">
+    <f:entry title="${%Service owners e-mail}" field="adminsContactEmail">
         <f:textbox/> 
     </f:entry>  
     <f:advanced title="${%Advanced e-mail options}">
