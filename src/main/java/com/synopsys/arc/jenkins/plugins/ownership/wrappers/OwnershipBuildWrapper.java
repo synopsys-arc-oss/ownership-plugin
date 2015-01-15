@@ -25,23 +25,20 @@ package com.synopsys.arc.jenkins.plugins.ownership.wrappers;
 
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
-import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty;
 import com.synopsys.arc.jenkins.plugins.ownership.nodes.OwnerNodeProperty;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserStringFormatter;
 import hudson.Extension;
-import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.model.Node;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildWrapperDescriptor;
-import java.io.IOException;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -60,38 +57,35 @@ public class OwnershipBuildWrapper extends BuildWrapper {
         this.injectJobOwnership = injectJobOwnership;
     }
     
-    @Override
-    public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {         
-        final Map<String, String> vars = new TreeMap<String, String>();
+    /**
+     * Environment setup according to wrapper configurations.
+     * @param build Input build
+     * @param target Target destination (output)
+     * @param listener Build listener
+     * @since 0.6 Method is public
+     */
+    public void setUp (@Nonnull AbstractBuild build, @Nonnull Map<String, String> target, @CheckForNull BuildListener listener) {
         if (injectJobOwnership) {
             JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(build.getParent());  
             OwnershipDescription descr = prop != null ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
-            getVariables(descr, vars, "JOB");
+            getVariables(descr, target, "JOB");
         }
-        
-        
+             
         if (injectNodeOwnership) {
             Node node = build.getBuiltOn();
             if (node == null) {
-                throw new IOException("Cannot retrieve node of the build. Probably, it has been deleted");
+                assert false : "Cannot retrieve node of the build. Probably, it has been deleted";
+                if (listener != null) {
+                    listener.error("Cannot retrieve node of the build. "
+                            + "Probably, it has been deleted. Variables will be ignored.");
+                }
+                return; // Ignore the error
             }
             
             OwnerNodeProperty prop = node.getNodeProperties().get(OwnerNodeProperty.class);
             OwnershipDescription descr = prop!=null ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
-            getVariables(descr, vars, "NODE");
+            getVariables(descr, target, "NODE");
         }
-        
-        // Log items
-        for (Entry<String, String> entry : vars.entrySet()) {
-            listener.getLogger().println(OwnershipPlugin.LOG_PREFIX+"Setting "+entry.getKey()+"="+entry.getValue());
-        }
-        
-        return new Environment() { 
-            @Override
-            public void buildEnvVars(Map<String, String> env) {
-                env.putAll(vars);
-            }
-        };
     }
     
     //TODO: Replace by OwnershipDescriptionHelper
