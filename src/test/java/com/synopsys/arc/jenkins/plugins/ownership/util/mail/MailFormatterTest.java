@@ -24,6 +24,7 @@
 
 package com.synopsys.arc.jenkins.plugins.ownership.util.mail;
 
+import org.jenkinsci.plugins.ownership.util.mail.MailFormatter;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;

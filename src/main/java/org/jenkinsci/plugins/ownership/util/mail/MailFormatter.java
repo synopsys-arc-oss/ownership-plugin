@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.synopsys.arc.jenkins.plugins.ownership.util.mail;
+package org.jenkinsci.plugins.ownership.util.mail;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

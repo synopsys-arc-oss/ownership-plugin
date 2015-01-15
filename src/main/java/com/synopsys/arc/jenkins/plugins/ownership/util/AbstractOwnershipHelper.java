@@ -27,7 +27,7 @@ import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
-import com.synopsys.arc.jenkins.plugins.ownership.util.mail.MailFormatter;
+import org.jenkinsci.plugins.ownership.util.mail.MailFormatter;
 import hudson.model.User;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;

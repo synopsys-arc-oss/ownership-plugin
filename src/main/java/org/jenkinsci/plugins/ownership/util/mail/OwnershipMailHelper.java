@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.synopsys.arc.jenkins.plugins.ownership.util.mail;
+package org.jenkinsci.plugins.ownership.util.mail;
 
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
