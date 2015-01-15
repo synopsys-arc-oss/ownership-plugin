@@ -35,7 +35,7 @@ import hudson.model.listeners.RunListener;
  * @since 0.6
  */
 @Extension
-public class RunOwnershipListener extends RunListener<Run> {
+public class OwnershipRunListener extends RunListener<Run> {
  
     @Override
     public void onStarted(Run r, TaskListener listener) {

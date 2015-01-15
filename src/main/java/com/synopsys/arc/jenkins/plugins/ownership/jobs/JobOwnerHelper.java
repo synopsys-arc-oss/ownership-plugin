@@ -146,19 +146,4 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
     public String getItemURL(Job<?, ?> item) {
         return item.getUrl();
     }
-    
-   public void buildVariablesFor(@Nonnull AbstractBuild build, @Nonnull Map<String, String> target) {
-        final Job parent = build.getParent();
-        if (!(parent instanceof Project)) {
-            return; // TODO: do something?
-        }
-           
-        final Project prj = (Project) parent;
-        final OwnershipBuildWrapper wrapper = (OwnershipBuildWrapper) prj.getBuildWrappersList().
-                        get(OwnershipBuildWrapper.class);
-        if (wrapper == null) {
-            return; // disabled
-        } 
-        wrapper.setUp(build, target, null);
-    }
 }

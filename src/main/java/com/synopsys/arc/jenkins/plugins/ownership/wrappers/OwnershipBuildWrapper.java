@@ -30,12 +30,14 @@ import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty;
 import com.synopsys.arc.jenkins.plugins.ownership.nodes.OwnerNodeProperty;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserStringFormatter;
 import hudson.Extension;
+import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.model.Node;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildWrapperDescriptor;
+import java.io.IOException;
 import java.util.Map;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -48,14 +50,24 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @since 0.2
  */
 public class OwnershipBuildWrapper extends BuildWrapper {
-    private boolean injectNodeOwnership;
-    private boolean injectJobOwnership;
+    
+    private final boolean injectNodeOwnership;
+    private final boolean injectJobOwnership;
 
     @DataBoundConstructor
     public OwnershipBuildWrapper(boolean injectNodeOwnership, boolean injectJobOwnership) {
         this.injectNodeOwnership = injectNodeOwnership;
         this.injectJobOwnership = injectJobOwnership;
     }
+
+    @Override
+    public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+        return new Environment() {
+            // Empty instantination. The entire code has been moved to OwnershipRunListener
+        };
+    }
+    
+    
     
     /**
      * Environment setup according to wrapper configurations.
