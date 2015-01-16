@@ -31,6 +31,8 @@ import hudson.model.Describable;
 import hudson.model.Descriptor;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import org.jenkinsci.plugins.ownership.model.runs.OwnershipRunListener;
+import org.jenkinsci.plugins.ownership.util.environment.EnvSetupOptions;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -43,17 +45,24 @@ public class OwnershipPluginConfiguration
 
     private final ItemOwnershipPolicy itemOwnershipPolicy;
     private final @CheckForNull MailOptions mailOptions;
+    /**
+     * Enforces the injection of ownership variables in {@link OwnershipRunListener}.
+     * Null means the injection is disabled.
+     * @since 0.6
+     */
+    private final @CheckForNull EnvSetupOptions globalEnvSetupOptions;
 
     @DataBoundConstructor
     public OwnershipPluginConfiguration(@Nonnull ItemOwnershipPolicy itemOwnershipPolicy, 
-            @Nonnull MailOptions mailOptions) {
+            @Nonnull MailOptions mailOptions, EnvSetupOptions globalEnvSetupOptions) {
         this.itemOwnershipPolicy = itemOwnershipPolicy;
         this.mailOptions = mailOptions;
+        this.globalEnvSetupOptions = globalEnvSetupOptions;
     }
     
     @Deprecated
     public OwnershipPluginConfiguration(@Nonnull ItemOwnershipPolicy itemOwnershipPolicy) {
-        this (itemOwnershipPolicy, MailOptions.DEFAULT);
+        this (itemOwnershipPolicy, MailOptions.DEFAULT, null);
     }
 
     public @Nonnull ItemOwnershipPolicy getItemOwnershipPolicy() {
@@ -63,7 +72,15 @@ public class OwnershipPluginConfiguration
     public @Nonnull MailOptions getMailOptions() {
         return mailOptions != null ? mailOptions : MailOptions.DEFAULT;
     }
-    
+
+    /**
+     * @return Global environment inject options. Null - global setup is disabled
+     * @since 0.6
+     */
+    public @CheckForNull EnvSetupOptions getGlobalEnvSetupOptions() {
+        return globalEnvSetupOptions;
+    }
+
     @Override
     public Descriptor<OwnershipPluginConfiguration> getDescriptor() {
         return DESCRIPTOR;

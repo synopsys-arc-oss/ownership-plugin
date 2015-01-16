@@ -30,6 +30,7 @@ import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPluginConfiguration;
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy.AssignCreatorPolicy;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.nodes.NodeOwnerHelper;
+import com.synopsys.arc.jenkins.plugins.ownership.util.mail.MailOptions;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -46,6 +47,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Future;
 import static junit.framework.Assert.*;
+import org.jenkinsci.plugins.ownership.util.environment.EnvSetupOptions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.Bug;
@@ -91,18 +93,31 @@ public class OwnershipBuildWrapperTest {
     
     public @Test void testVarsPresenseOnSuccess() throws Exception {
         initJenkinsInstance();
+        final OwnershipBuildWrapper wrapper = new OwnershipBuildWrapper(true, true);
+        project.getBuildWrappersList().add(wrapper);
         testVarsPresense(false);
     }
     
     @Bug(23926)
     public @Test void testVarsPresenseOnSCMFailure() throws Exception {
         initJenkinsInstance();
+        final OwnershipBuildWrapper wrapper = new OwnershipBuildWrapper(true, true);
+        project.getBuildWrappersList().add(wrapper);
+
         testVarsPresense(true);
     }
     
-    private void testVarsPresense(boolean failSCM) throws Exception {       
-        final OwnershipBuildWrapper wrapper = new OwnershipBuildWrapper(true, true);
-        project.getBuildWrappersList().add(wrapper);
+    @Bug(23947)
+    public @Test void testVarsPresenseOnGlobalOptions() throws Exception {
+        initJenkinsInstance();
+        final OwnershipPluginConfiguration pluginConf = new OwnershipPluginConfiguration(
+                new AssignCreatorPolicy(),MailOptions.DEFAULT, 
+                new EnvSetupOptions(true, true));
+        r.jenkins.getPlugin(OwnershipPlugin.class).configure(true, null, null, pluginConf);
+        testVarsPresense(true);
+    }
+    
+    private void testVarsPresense(boolean failSCM) throws Exception {              
         project.setAssignedNode(node);
         if (failSCM) {
             project.setScm(new AlwaysFailNullSCM());
