@@ -31,5 +31,8 @@
     </f:entry>
     <f:entry title="${%itemOwnershipPolicy.title}">
         <f:hetero-radio field="itemOwnershipPolicy" descriptors="${itemOwnershipPolicies}"/>
+    </f:entry> 
+    <f:entry>
+        <f:optionalProperty field="globalEnvSetupOptions" title="${%globalEnvSetupOptions.title}"/>
     </f:entry>
 </j:jelly>

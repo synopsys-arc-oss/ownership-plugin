@@ -26,13 +26,18 @@ package org.jenkinsci.plugins.ownership.model.runs;
 
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.ItemOwnershipAction;
-import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.util.ui.OwnershipLayoutFormatter;
+import com.synopsys.arc.jenkins.plugins.ownership.wrappers.OwnershipBuildWrapper;;
+import hudson.EnvVars;
+import hudson.model.AbstractBuild;
+import hudson.model.EnvironmentContributingAction;
 import hudson.model.Job;
+import hudson.model.Project;
 import hudson.model.Run;
 import hudson.security.Permission;
 import javax.annotation.Nonnull;
+import org.jenkinsci.plugins.ownership.util.environment.EnvSetupOptions;
 
 /**
  * Displays ownership info for builds. 
@@ -41,7 +46,8 @@ import javax.annotation.Nonnull;
  * @author Oleg Nenashev <o.v.nenashev@gmail.com>
  * @since 0.6
  */
-public class RunOwnershipAction extends ItemOwnershipAction<Run>  {
+public class RunOwnershipAction extends ItemOwnershipAction<Run> 
+         implements EnvironmentContributingAction {
 
     public RunOwnershipAction(@Nonnull Run describedItem) {
         super(describedItem);
@@ -62,6 +68,7 @@ public class RunOwnershipAction extends ItemOwnershipAction<Run>  {
         return false; // We don't provide action links now
     }
 
+    @Override
     public IOwnershipHelper<Run> helper() {
         return RunOwnershipHelper.getInstance();
     }
@@ -70,4 +77,31 @@ public class RunOwnershipAction extends ItemOwnershipAction<Run>  {
         return OwnershipPlugin.getInstance().getOwnershipLayoutFormatterProvider().getLayoutFormatter(getDescribedItem());
     }   
     
+    @Override
+    public void buildEnvVars(AbstractBuild<?, ?> build, EnvVars env) {
+        boolean injectNodeOwnership = false;
+        boolean injectJobOwnership = false;
+        
+        // Handle global options
+        final EnvSetupOptions globalEnvSetupOptions = OwnershipPlugin.getInstance().
+                getConfiguration().getGlobalEnvSetupOptions();
+        if (globalEnvSetupOptions != null) {
+            injectNodeOwnership |= globalEnvSetupOptions.isInjectNodeOwnership();
+            injectJobOwnership |= globalEnvSetupOptions.isInjectJobOwnership();
+        }
+        
+        // Check BuildWrapper options id available
+        final Job parent = build.getParent();
+        if (parent instanceof Project) { 
+            final Project prj = (Project) parent;
+            final OwnershipBuildWrapper wrapper = (OwnershipBuildWrapper) 
+                    prj.getBuildWrappersList().get(OwnershipBuildWrapper.class);
+            if (wrapper != null) {
+                injectJobOwnership |= wrapper.isInjectJobOwnership();
+                injectNodeOwnership |= wrapper.isInjectNodeOwnership();             
+            }
+        } // TODO: else do something?
+        
+        RunOwnershipHelper.setUp(build, env, null, injectJobOwnership, injectNodeOwnership);
+    }
 }

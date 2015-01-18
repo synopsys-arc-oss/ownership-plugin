@@ -23,7 +23,14 @@
 -->
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" 
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <f:entry>
-        <f:property field="envSetupOptions"/>  
+    <f:entry title="" description="">
+        <table width="100%">
+            <f:entry title="${%Inject Job Ownership Vars}" field="injectJobOwnership">
+                <f:checkbox/>
+            </f:entry>
+            <f:entry title="${%Inject Node Ownership Vars}" field="injectNodeOwnership">
+                <f:checkbox/>
+            </f:entry>
+        </table>   
     </f:entry> 
 </j:jelly>

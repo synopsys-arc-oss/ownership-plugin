@@ -30,12 +30,16 @@ import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.AccessRightsFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.IUserFilter;
+import com.synopsys.arc.jenkins.plugins.ownership.wrappers.OwnershipBuildWrapper;
 import hudson.matrix.MatrixConfiguration;
+import hudson.model.AbstractBuild;
 import hudson.model.Job;
 import hudson.model.JobProperty;
+import hudson.model.Project;
 import hudson.model.User;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 

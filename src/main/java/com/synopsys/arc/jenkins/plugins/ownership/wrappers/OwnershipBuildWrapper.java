@@ -24,24 +24,16 @@
 package com.synopsys.arc.jenkins.plugins.ownership.wrappers;
 
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
-import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
-import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
-import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
-import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty;
-import com.synopsys.arc.jenkins.plugins.ownership.nodes.OwnerNodeProperty;
-import com.synopsys.arc.jenkins.plugins.ownership.util.UserStringFormatter;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.Node;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildWrapperDescriptor;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
+import javax.annotation.Nonnull;
+import org.jenkinsci.plugins.ownership.util.environment.EnvSetupOptions;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -51,82 +43,46 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @since 0.2
  */
 public class OwnershipBuildWrapper extends BuildWrapper {
-    private boolean injectNodeOwnership;
-    private boolean injectJobOwnership;
+    
+    private @Nonnull EnvSetupOptions envSetupOptions;
+    @Deprecated
+    private transient final boolean injectNodeOwnership = false;
+    @Deprecated
+    private transient final boolean injectJobOwnership = false;
 
     @DataBoundConstructor
-    public OwnershipBuildWrapper(boolean injectNodeOwnership, boolean injectJobOwnership) {
-        this.injectNodeOwnership = injectNodeOwnership;
-        this.injectJobOwnership = injectJobOwnership;
+    public OwnershipBuildWrapper(EnvSetupOptions envSetupOptions) {
+        this.envSetupOptions = envSetupOptions;
+    }
+
+    public OwnershipBuildWrapper(boolean injectJobOwnership, boolean injectNodeOwnership) {
+        this(new EnvSetupOptions(injectJobOwnership, injectNodeOwnership));
     }
     
+    public Object readResolve() {
+        if (envSetupOptions == null) {
+            envSetupOptions = new EnvSetupOptions(injectJobOwnership, injectNodeOwnership);
+        }
+        return this;
+    }
+
     @Override
-    public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {         
-        final Map<String, String> vars = new TreeMap<String, String>();
-        if (injectJobOwnership) {
-            JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(build.getParent());  
-            OwnershipDescription descr = prop != null ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
-            getVariables(descr, vars, "JOB");
-        }
-        
-        
-        if (injectNodeOwnership) {
-            Node node = build.getBuiltOn();
-            if (node == null) {
-                throw new IOException("Cannot retrieve node of the build. Probably, it has been deleted");
-            }
-            
-            OwnerNodeProperty prop = node.getNodeProperties().get(OwnerNodeProperty.class);
-            OwnershipDescription descr = prop!=null ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
-            getVariables(descr, vars, "NODE");
-        }
-        
-        // Log items
-        for (Entry<String, String> entry : vars.entrySet()) {
-            listener.getLogger().println(OwnershipPlugin.LOG_PREFIX+"Setting "+entry.getKey()+"="+entry.getValue());
-        }
-        
-        return new Environment() { 
-            @Override
-            public void buildEnvVars(Map<String, String> env) {
-                env.putAll(vars);
-            }
+    public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+        return new Environment() {
+            // Empty instantination. The entire code has been moved to OwnershipRunListener
         };
     }
-    
-    //TODO: Replace by OwnershipDescriptionHelper
-    private static void getVariables(OwnershipDescription descr, Map<String, String> target, String prefix) {      
-        target.put(prefix+"_OWNER", descr.hasPrimaryOwner() ? descr.getPrimaryOwnerId() : "");
-        String ownerEmail = UserStringFormatter.formatEmail(descr.getPrimaryOwnerId());  
-        target.put(prefix+"_OWNER_EMAIL", ownerEmail != null ? ownerEmail : "");
-        
-        StringBuilder coowners=new StringBuilder(prefix+"_OWNER");   
-        StringBuilder coownerEmails= new StringBuilder(target.get(prefix+"_OWNER_EMAIL"));
-        for (String userId : descr.getCoownersIds()) {
-            if (coowners.length() != 0) {
-                coowners.append(",");
-            }
-            coowners.append(userId);
-            
-            String coownerEmail = UserStringFormatter.formatEmail(userId);
-            if (coownerEmail != null) {
-                //TODO: may corrupt logic on empty owner
-                if (coownerEmails.length() != 0) {
-                    coownerEmails.append(",");
-                }
-                coownerEmails.append(coownerEmail);
-            }       
-        }
-        target.put(prefix+"_COOWNERS", coowners.toString());
-        target.put(prefix+"_COOWNERS_EMAILS", coownerEmails.toString());     
+
+    public @Nonnull EnvSetupOptions getEnvSetupOptions() {
+        return envSetupOptions;
     }
     
     public boolean isInjectJobOwnership() {
-        return injectJobOwnership;
+        return envSetupOptions.isInjectJobOwnership();
     }
 
     public boolean isInjectNodeOwnership() {
-        return injectNodeOwnership;
+        return envSetupOptions.isInjectNodeOwnership();
     }
         
     @Extension
