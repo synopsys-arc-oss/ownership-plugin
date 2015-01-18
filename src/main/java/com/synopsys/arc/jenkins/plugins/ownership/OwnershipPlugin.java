@@ -149,7 +149,28 @@ public class OwnershipPlugin extends Plugin {
     public ItemSpecificSecurity.ItemSpecificDescriptor getItemSpecificDescriptor() {
         return ItemSpecificSecurity.DESCRIPTOR;
     }
-    
+
+    /**
+     * {@link OwnershipPlugin} initialization for test suites.
+     * @param requiresConfigureRights
+     * @param mailResolverClassName
+     * @param defaultJobsSecurity
+     * @param configuration
+     * @throws IOException 
+     */
+    public void configure(boolean requiresConfigureRights, String mailResolverClassName, 
+            ItemSpecificSecurity defaultJobsSecurity, 
+            OwnershipPluginConfiguration configuration) throws IOException {
+        this.requiresConfigureRights = requiresConfigureRights;
+        this.mailResolverClassName = mailResolverClassName;
+        this.defaultJobsSecurity = defaultJobsSecurity;
+        this.configuration = configuration;
+        
+        reinitActionsList();
+	save();
+        Hudson.getInstance().getActions().addAll(pluginActions);
+    }
+
     @Override 
     public void configure(StaplerRequest req, JSONObject formData)
 	    throws IOException, ServletException, Descriptor.FormException {
