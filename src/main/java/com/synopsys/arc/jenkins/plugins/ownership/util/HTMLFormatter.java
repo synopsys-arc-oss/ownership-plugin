@@ -23,10 +23,14 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.util;
 
+import hudson.Functions;
 import hudson.model.User;
+
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+
 import jenkins.model.Jenkins;
+
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
@@ -44,7 +48,7 @@ public class HTMLFormatter {
      * @return User e-mail in the following format: &lt;user@doma.in&gt;
      */
     public static @CheckForNull String formatEmailURI(@Nonnull String userId) {
-        String email = UserStringFormatter.formatEmail(userId);
+        String email = Functions.escape(UserStringFormatter.formatEmail(userId));
         if (email != null) {
             return "<a href=\"mailto://"+email+"\">&lt;"+email+"&gt;</a>";
         } else {
@@ -66,7 +70,7 @@ public class HTMLFormatter {
             String userStr = useLongFormat 
                 ? usr.getDisplayName()
                 : UserStringFormatter.formatShort(usr.getId());
-            return "<a href=\""+Jenkins.getInstance().getRootUrl()+"user/"+userId+"\">"+userStr+"</a>";
+            return "<a href=\""+Jenkins.getInstance().getRootUrl()+"user/"+Functions.escape(userId)+"\">"+Functions.escape(userStr)+"</a>";
         } else { // just return name w/o hyperlink
             return userId + " (unregistered)";
         }
