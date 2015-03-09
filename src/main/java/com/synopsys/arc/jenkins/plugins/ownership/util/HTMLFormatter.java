@@ -50,7 +50,7 @@ public class HTMLFormatter {
     public static @CheckForNull String formatEmailURI(@Nonnull String userId) {
         String email = Functions.escape(UserStringFormatter.formatEmail(userId));
         if (email != null) {
-            return "<a href=\"mailto://"+email+"\">&lt;"+email+"&gt;</a>";
+            return "<a href=\"mailto:"+email+"\">&lt;"+email+"&gt;</a>";
         } else {
             return null;
         }          
