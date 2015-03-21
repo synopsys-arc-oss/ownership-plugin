@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,7 +50,7 @@ import org.kohsuke.stapler.StaplerResponse;
  * Ownership action for jobs.
  * The action displays "Manage Ownership" action on the left panel.
  * Actually, this action injects {@link JobOwnerJobProperty} into the project.
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @author Oleg Nenashev
  */
 public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
      

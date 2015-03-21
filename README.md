@@ -17,7 +17,7 @@ License
 --------
 [MIT License][1]
 
-Mantainers
+Maintainers
 --------
 1. [Oleg Nenashev][2] (maintainer)
  * First plugin versions have been sponsored by [Synopsys Inc.][5] 

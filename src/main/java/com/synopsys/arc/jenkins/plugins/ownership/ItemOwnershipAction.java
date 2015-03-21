@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 
 /**
  * Abstract class for ownership actions, which describes item at the floating box.
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @author Oleg Nenashev
  * @param <TObjectType> A class, for which action is being created
  * @since 0.0.2
  */

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,7 @@ import javax.annotation.Nonnull;
 /**
  * Helper for Jobs Ownership.
  * @since 0.0.3
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @author Oleg Nenashev
  */
 public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
     
