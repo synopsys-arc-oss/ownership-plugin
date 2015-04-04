@@ -117,7 +117,20 @@ public class OwnershipBuildWrapperTest {
         testVarsPresense(true);
     }
     
-    private void testVarsPresense(boolean failSCM) throws Exception {              
+    @Bug(27715)
+    public @Test void testCoOwnersVarsInjection() throws Exception {
+        initJenkinsInstance();
+        final OwnershipPluginConfiguration pluginConf = new OwnershipPluginConfiguration(
+                new AssignCreatorPolicy(),MailOptions.DEFAULT, 
+                new EnvSetupOptions(true, true));
+        r.jenkins.getPlugin(OwnershipPlugin.class).configure(true, null, null, pluginConf);
+        
+        FreeStyleBuild build = testVarsPresense(false);
+        r.assertLogContains("NODE_COOWNERS="+NODE_OWNER_ID, build);
+        r.assertLogContains("JOB_COOWNERS="+PROJECT_OWNER_ID, build);
+    }
+    
+    private FreeStyleBuild testVarsPresense(boolean failSCM) throws Exception {              
         project.setAssignedNode(node);
         if (failSCM) {
             project.setScm(new AlwaysFailNullSCM());
@@ -135,7 +148,8 @@ public class OwnershipBuildWrapperTest {
             r.assertLogContains("JOB_OWNER="+PROJECT_OWNER_ID, build);
         }
         assertTrue(env.containsKey("NODE_OWNER"));
-        assertTrue(env.containsKey("JOB_OWNER"));       
+        assertTrue(env.containsKey("JOB_OWNER"));  
+        return build;
     }
     
     private static class AlwaysFailNullSCM extends NullSCM {
