@@ -112,7 +112,7 @@ public class RunOwnershipHelper extends AbstractOwnershipHelper<Run> {
         String ownerEmail = UserStringFormatter.formatEmail(descr.getPrimaryOwnerId());  
         target.put(prefix+"_OWNER_EMAIL", ownerEmail != null ? ownerEmail : "");
         
-        StringBuilder coowners=new StringBuilder(prefix+"_OWNER");   
+        StringBuilder coowners=new StringBuilder(target.get(prefix+"_OWNER"));   
         StringBuilder coownerEmails= new StringBuilder(target.get(prefix+"_OWNER_EMAIL"));
         for (String userId : descr.getCoownersIds()) {
             if (coowners.length() != 0) {
