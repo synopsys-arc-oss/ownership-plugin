@@ -81,10 +81,25 @@ public class OwnershipMailHelper {
             return null;
         }
         final MailOptions mailOptions = plugin.getConfiguration().getMailOptions();
+        final OwnershipDescription ownershipDescription = helper.getOwnershipDescription(item);
         
-        OwnershipDescription ownershipDescription = helper.getOwnershipDescription(item);
+        // Handle enablers
         if (!ownershipDescription.isOwnershipEnabled()) {
             return null;
+        }
+        switch (mode) {
+            case ContactOwners:
+                if (mailOptions.isContactOwnersLinkDisabled()) {
+                    return null;
+                }
+                break;
+            case ContactAdmins:
+                if (mailOptions.isContactAdminsLinkDisabled()) {
+                    return null;
+                }
+                break;
+            default:
+                // Do nothing
         }
 
         // Prepare the data        

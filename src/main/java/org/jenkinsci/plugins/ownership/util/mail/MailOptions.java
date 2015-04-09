@@ -41,9 +41,12 @@ public class MailOptions implements Describable<MailOptions> {
     
     private final @CheckForNull String contactOwnersSubjectTemplate;
     private final @CheckForNull String contactOwnersBodyTemplate;
+    private final boolean contactOwnersLinkDisabled;
+    
     private final @CheckForNull String contactAdminsSubjectTemplate;
     private final @CheckForNull String contactAdminsBodyTemplate;
-       
+    private final boolean contactAdminsLinkDisabled;   
+    
     private final @CheckForNull String emailListSeparator;
     private final @CheckForNull String adminsContactEmail;
     
@@ -58,16 +61,32 @@ public class MailOptions implements Describable<MailOptions> {
     @DataBoundConstructor
     public MailOptions(
             String contactOwnersSubjectTemplate, String contactOwnersBodyTemplate, 
+            boolean contactOwnersLinkDisabled, 
             String contactAdminsSubjectTemplate, String contactAdminsBodyTemplate, 
-             String adminsContactEmail, String emailListSeparator) {
+            boolean contactAdminsLinkDisabled,
+            String adminsContactEmail, String emailListSeparator) {
         this.contactOwnersSubjectTemplate = contactOwnersSubjectTemplate;
         this.contactOwnersBodyTemplate = contactOwnersBodyTemplate;
+        this.contactOwnersLinkDisabled = contactOwnersLinkDisabled;
+        
         this.contactAdminsSubjectTemplate = contactAdminsSubjectTemplate;
         this.contactAdminsBodyTemplate = contactAdminsBodyTemplate;
+        this.contactAdminsLinkDisabled = contactAdminsLinkDisabled;
+        
         this.emailListSeparator = emailListSeparator;
-        this.adminsContactEmail = adminsContactEmail;
+        this.adminsContactEmail = adminsContactEmail;        
     }
   
+    @Deprecated
+    public MailOptions(
+            String contactOwnersSubjectTemplate, String contactOwnersBodyTemplate, 
+            String contactAdminsSubjectTemplate, String contactAdminsBodyTemplate, 
+             String adminsContactEmail, String emailListSeparator) {
+        this(contactOwnersSubjectTemplate, contactOwnersBodyTemplate, false, 
+             contactAdminsSubjectTemplate, contactAdminsBodyTemplate, false, 
+             adminsContactEmail, emailListSeparator);
+    }
+    
     public @Nonnull String getContactOwnersSubjectTemplate() {
         return contactOwnersSubjectTemplate != null 
                 ? contactOwnersSubjectTemplate 
@@ -98,6 +117,22 @@ public class MailOptions implements Describable<MailOptions> {
 
     public @CheckForNull String getAdminsContactEmail() {
         return adminsContactEmail;
+    }
+
+    /**
+     * @return Indicates that contact admins link should not be displayed
+     * @since 0.7 
+     */
+    public boolean isContactAdminsLinkDisabled() {
+        return contactAdminsLinkDisabled;
+    }
+
+    /**
+     * @return Indicates that contact owners link should not be displayed
+     * @since 0.7 
+     */
+    public boolean isContactOwnersLinkDisabled() {
+        return contactOwnersLinkDisabled;
     }
    
     @Extension
