@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Synopsys Inc., Oleg Nenashev <nenashev@synopsys.com>
+ * Copyright 2013 Synopsys Inc., Oleg Nenashev
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,7 @@ import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
  * This macro allows to extract information about ownership.
  * An information type can be specified by additional var parameter
  * (see {@link OwnershipFunction} to get a list of supported operations).
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.4
  */
 @Extension(optional = true)

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2014 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * This strategy authenticates as a job's owner if it is specified.
  * Otherwise, the anonymous user will be used.
  * @since 0.5
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @author Oleg Nenashev
  */
 public class OwnershipAuthorizeProjectStrategy extends AuthorizeProjectStrategy {
 

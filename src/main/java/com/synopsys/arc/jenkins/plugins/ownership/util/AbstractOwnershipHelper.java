@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,7 @@ import jenkins.model.Jenkins;
  * Provides basic operations for ownership helpers.
  * @param <TObjectType> An item type, which is supported by the class.
  * @since 0.0.4
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @author Oleg Nenashev
  */
 public abstract class AbstractOwnershipHelper<TObjectType>  
     implements IOwnershipHelper<TObjectType> {

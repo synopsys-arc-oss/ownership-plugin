@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Oleg Nenashev <o.v.nenashev@gmail.com>.
+ * Copyright 2014 Oleg Nenashev
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 /**
  * The extension creates {@link OwnershipLayoutFormatter}s for various object types.
  * @since 0.5
- * @author Oleg Nenashev <o.v.nenashev@gmail.com>
+ * @author Oleg Nenashev
  */
 @Restricted(NoExternalUse.class)
 public abstract class OwnershipLayoutFormatterProvider {
