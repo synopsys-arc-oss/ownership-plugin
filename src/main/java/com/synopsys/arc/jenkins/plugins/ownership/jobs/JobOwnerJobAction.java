@@ -126,9 +126,9 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     }
     
     public HttpResponse doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
-        getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
+        getDescribedItem().checkPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
         
-        JSONObject jsonOwnership = (JSONObject) req.getSubmittedForm().getJSONObject("owners");
+        JSONObject jsonOwnership = req.getSubmittedForm().getJSONObject("owners");
         OwnershipDescription descr = OwnershipDescription.parseJSON(jsonOwnership);
         JobOwnerHelper.setOwnership(getDescribedItem(), descr);
         
@@ -136,11 +136,11 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     }
     
     public HttpResponse doProjectSpecificSecuritySubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, Descriptor.FormException {
-        getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
+        getDescribedItem().checkPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
         JSONObject form = req.getSubmittedForm();
         
         if (form.containsKey("itemSpecificSecurity")) {
-            JSONObject jsonSpecificSecurity = (JSONObject) req.getSubmittedForm().getJSONObject("itemSpecificSecurity");
+            JSONObject jsonSpecificSecurity = req.getSubmittedForm().getJSONObject("itemSpecificSecurity");
             ItemSpecificSecurity specific = ItemSpecificSecurity.DESCRIPTOR.newInstance(req, jsonSpecificSecurity);
             JobOwnerHelper.setProjectSpecificSecurity(getDescribedItem(), specific);
         } else { // drop security
@@ -151,7 +151,7 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     }
     
     public HttpResponse doRestoreDefaultSpecificSecuritySubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, Descriptor.FormException {
-        getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
+        getDescribedItem().checkPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
         // Get default security
         ItemSpecificSecurity defaultJobsSecurity = OwnershipPlugin.getInstance().getDefaultJobsSecurity();
         ItemSpecificSecurity val = defaultJobsSecurity != null ? defaultJobsSecurity.clone() : null;

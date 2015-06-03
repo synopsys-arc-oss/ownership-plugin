@@ -98,9 +98,9 @@ public class NodeOwnershipAction extends ItemOwnershipAction<Computer> {
     }
     
     public HttpResponse doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
-        getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_SLAVES_OWNERSHIP);
+        getDescribedItem().checkPermission(OwnershipPlugin.MANAGE_SLAVES_OWNERSHIP);
         
-        JSONObject jsonOwnership = (JSONObject) req.getSubmittedForm().getJSONObject("owners");
+        JSONObject jsonOwnership = req.getSubmittedForm().getJSONObject("owners");
         OwnershipDescription descr = OwnershipDescription.parseJSON(jsonOwnership);
         ComputerOwnerHelper.setOwnership(getDescribedItem(), descr);
         
