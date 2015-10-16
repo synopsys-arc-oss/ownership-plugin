@@ -39,7 +39,8 @@
     <j:set var="layoutFormatter" value="${it.layoutFormatter}"/>
     
     <!-- Layout -->
-    <div class="ownership-summary-box">   
+    <j:if test="${helper.isDisplayOwnershipSummaryBox(item)}">
+      <div class="ownership-summary-box">   
         <div class="ownership-header">${itemType} ${%Ownership}</div>            
         <table>
             <tr>
@@ -94,5 +95,6 @@
                 </tr>
             </table>
         </div>
-    </div>
+      </div>
+    </j:if>
 </j:jelly>

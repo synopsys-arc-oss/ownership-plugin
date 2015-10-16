@@ -89,4 +89,15 @@ public abstract class AbstractOwnershipHelper<TObjectType>
     public Collection<User> getPossibleOwners(TObjectType item) {
         return EMPTY_USERS_COLLECTION;
     }
+    
+    //TODO: promote to interface
+    /**
+     * Checks if the summary box should be displayed.
+     * @param item Current item
+     * @return {@code true} if the summary box should be displayed (even if there is no data); 
+     * @since 0.8
+     */
+    public boolean isDisplayOwnershipSummaryBox(@Nonnull TObjectType item) {
+        return true;
+    }
 }

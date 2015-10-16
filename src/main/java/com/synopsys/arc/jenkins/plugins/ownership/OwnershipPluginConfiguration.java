@@ -31,6 +31,7 @@ import hudson.model.Describable;
 import hudson.model.Descriptor;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import org.jenkinsci.plugins.ownership.config.DisplayOptions;
 import org.jenkinsci.plugins.ownership.model.runs.OwnershipRunListener;
 import org.jenkinsci.plugins.ownership.util.environment.EnvSetupOptions;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -45,6 +46,8 @@ public class OwnershipPluginConfiguration
 
     private final ItemOwnershipPolicy itemOwnershipPolicy;
     private final @CheckForNull MailOptions mailOptions;
+    private final @CheckForNull DisplayOptions displayOptions;
+    
     /**
      * Enforces the injection of ownership variables in {@link OwnershipRunListener}.
      * Null means the injection is disabled.
@@ -54,15 +57,23 @@ public class OwnershipPluginConfiguration
 
     @DataBoundConstructor
     public OwnershipPluginConfiguration(@Nonnull ItemOwnershipPolicy itemOwnershipPolicy, 
-            @Nonnull MailOptions mailOptions, EnvSetupOptions globalEnvSetupOptions) {
+            @Nonnull MailOptions mailOptions, EnvSetupOptions globalEnvSetupOptions, 
+            @Nonnull DisplayOptions displayOptions) {
         this.itemOwnershipPolicy = itemOwnershipPolicy;
         this.mailOptions = mailOptions;
         this.globalEnvSetupOptions = globalEnvSetupOptions;
+        this.displayOptions = displayOptions;
     }
     
     @Deprecated
     public OwnershipPluginConfiguration(@Nonnull ItemOwnershipPolicy itemOwnershipPolicy) {
         this (itemOwnershipPolicy, MailOptions.DEFAULT, null);
+    }
+    
+    @Deprecated
+    public OwnershipPluginConfiguration(@Nonnull ItemOwnershipPolicy itemOwnershipPolicy, 
+            @Nonnull MailOptions mailOptions, EnvSetupOptions globalEnvSetupOptions) {
+        this(itemOwnershipPolicy, mailOptions, globalEnvSetupOptions, DisplayOptions.DEFAULT);
     }
 
     public @Nonnull ItemOwnershipPolicy getItemOwnershipPolicy() {
@@ -73,6 +84,16 @@ public class OwnershipPluginConfiguration
         return mailOptions != null ? mailOptions : MailOptions.DEFAULT;
     }
 
+    /**
+     * Gets {@link OwnershipPlugin}'s display options.
+     * @return Display options. If the configuration has not been specified after the plugin update,
+     *      {@link DisplayOptions#DEFAULT} will be returned.
+     * @since 0.8
+     */
+    public @Nonnull DisplayOptions getDisplayOptions() {
+        return displayOptions != null ? displayOptions : DisplayOptions.DEFAULT;
+    }
+    
     /**
      * @return Global environment inject options. Null - global setup is disabled
      * @since 0.6

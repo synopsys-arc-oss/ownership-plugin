@@ -25,6 +25,8 @@
 package org.jenkinsci.plugins.ownership.model.runs;
 
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPluginConfiguration;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty;
 import com.synopsys.arc.jenkins.plugins.ownership.nodes.OwnerNodeProperty;
@@ -131,5 +133,10 @@ public class RunOwnershipHelper extends AbstractOwnershipHelper<Run> {
         }
         target.put(prefix+"_COOWNERS", coowners.toString());
         target.put(prefix+"_COOWNERS_EMAILS", coownerEmails.toString());     
+    }
+
+    @Override
+    public boolean isDisplayOwnershipSummaryBox(Run item) {
+        return !OwnershipPlugin.getInstance().getConfiguration().getDisplayOptions().isHideRunOwnership();
     }
 }
