@@ -61,9 +61,13 @@ import org.kohsuke.stapler.StaplerResponse;
 public class JobOwnerJobProperty extends JobProperty<Job<?, ?>> 
     implements IOwnershipItem<Job<?, ?>>
 {
+    @CheckForNull
     OwnershipDescription ownership;
 
-    /**Additional matrix with project security*/
+    /**
+     * Additional matrix with project security
+     */
+    @CheckForNull
     ItemSpecificSecurity itemSpecificSecurity;
         
     @DataBoundConstructor
@@ -147,7 +151,11 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
 
     @Override
     public String toString() {
-            return ownership.toString();
+        StringBuilder bldr = new StringBuilder();
+        bldr.append(ownership != null ? ownership.toString() : "ownership not set");
+        bldr.append(" ");
+        bldr.append(itemSpecificSecurity != null ? "with specific permissions" : "without specific permissions");
+        return bldr.toString();
     }
     
     public void doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
