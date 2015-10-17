@@ -37,9 +37,11 @@
     <!--Stuff-->
     <link rel="stylesheet" href="${rootURL}/plugin/ownership/css/ownership.css" type="text/css" />
     <j:set var="layoutFormatter" value="${it.layoutFormatter}"/>
-    
-    <!-- Layout -->
-    <div class="ownership-summary-box">   
+    <j:set var="ownershipDescription" value="${helper.getOwnershipDescription(item)}"/>
+   
+    <!-- Layout for ownership with available data -->
+    <j:if test="${helper.isDisplayOwnershipSummaryBox(item) and ownershipDescription.ownershipEnabled}">
+      <div class="ownership-summary-box">   
         <div class="ownership-header">${itemType} ${%Ownership}</div>            
         <table>
             <tr>
@@ -94,5 +96,14 @@
                 </tr>
             </table>
         </div>
-    </div>
+      </div>
+    </j:if>
+    
+    <!-- Layout for ownership with missing data -->
+    <j:if test="${helper.isDisplayOwnershipSummaryBox(item) and !ownershipDescription.ownershipEnabled}">
+      <div class="ownership-summary-box">   
+        <div class="ownership-header">${itemType} ${%Ownership}</div>
+        ${%noOwnership.info.text(itemType)}                
+      </div>
+    </j:if>
 </j:jelly>

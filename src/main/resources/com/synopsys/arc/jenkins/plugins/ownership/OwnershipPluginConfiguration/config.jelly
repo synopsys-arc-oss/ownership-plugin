@@ -35,4 +35,7 @@
     <f:entry>
         <f:optionalProperty field="globalEnvSetupOptions" title="${%globalEnvSetupOptions.title}"/>
     </f:entry>
+    <f:entry>
+        <f:property field="displayOptions"/>
+    </f:entry>
 </j:jelly>
