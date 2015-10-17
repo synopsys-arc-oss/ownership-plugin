@@ -31,6 +31,7 @@ import hudson.model.Describable;
 import hudson.model.Descriptor;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import org.jenkinsci.plugins.ownership.model.runs.RunOwnershipAction;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -41,17 +42,31 @@ import org.kohsuke.stapler.DataBoundConstructor;
  */
 public class DisplayOptions implements Describable<DisplayOptions> {
        
-    public static final DisplayOptions DEFAULT = new DisplayOptions(false);
+    public static final DisplayOptions DEFAULT = new DisplayOptions(false, false);
     
     private final boolean hideRunOwnership;
+    private final boolean hideOwnershipIfNoData;
 
     @DataBoundConstructor
-    public DisplayOptions(boolean hideRunOwnership) {
+    public DisplayOptions(boolean hideRunOwnership, boolean hideOwnershipIfNoData) {
         this.hideRunOwnership = hideRunOwnership;
+        this.hideOwnershipIfNoData = hideOwnershipIfNoData;
     }
 
+    /**
+     * Disables Run summary boxes in {@link RunOwnershipAction}.
+     * @return {@code true} if {@link RunOwnershipAction}'s summary box should not be displayed.
+     */
     public boolean isHideRunOwnership() {
         return hideRunOwnership;
+    }
+
+    /**
+     * Does not display Ownership summary boxes if Ownership is not configured.
+     * @return {@code true} to hide empty Ownership summary boxes.
+     */
+    public boolean isHideOwnershipIfNoData() {
+        return hideOwnershipIfNoData;
     }
     
     @Extension

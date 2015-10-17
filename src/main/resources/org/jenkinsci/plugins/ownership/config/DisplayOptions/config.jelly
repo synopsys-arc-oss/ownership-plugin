@@ -26,6 +26,9 @@
   <f:advanced title="${%Ownership Display Options}">
     <f:entry title="" description="">
         <table width="100%">
+          <f:entry field="hideOwnershipIfNoData">
+            <f:checkbox title="${%Hide ownership info if there is no data}"/>
+          </f:entry>
           <f:entry field="hideRunOwnership">
             <f:checkbox title="${%Hide ownership info on Run pages}"/>
           </f:entry>

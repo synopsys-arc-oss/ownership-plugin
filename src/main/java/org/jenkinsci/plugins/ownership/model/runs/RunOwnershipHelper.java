@@ -137,6 +137,7 @@ public class RunOwnershipHelper extends AbstractOwnershipHelper<Run> {
 
     @Override
     public boolean isDisplayOwnershipSummaryBox(Run item) {
-        return !OwnershipPlugin.getInstance().getConfiguration().getDisplayOptions().isHideRunOwnership();
+        return super.isDisplayOwnershipSummaryBox(item) &&
+               !OwnershipPlugin.getInstance().getConfiguration().getDisplayOptions().isHideRunOwnership();
     }
 }

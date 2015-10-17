@@ -98,6 +98,11 @@ public abstract class AbstractOwnershipHelper<TObjectType>
      * @since 0.8
      */
     public boolean isDisplayOwnershipSummaryBox(@Nonnull TObjectType item) {
+        // If there is no data, check global options
+        if (!getOwnershipDescription(item).isOwnershipEnabled()) {
+            return !OwnershipPlugin.getInstance().getConfiguration().getDisplayOptions().isHideOwnershipIfNoData();
+        }
+        
         return true;
     }
 }
