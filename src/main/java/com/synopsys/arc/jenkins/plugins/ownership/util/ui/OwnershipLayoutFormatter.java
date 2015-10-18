@@ -27,6 +27,7 @@ package com.synopsys.arc.jenkins.plugins.ownership.util.ui;
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPluginConfiguration;
 import com.synopsys.arc.jenkins.plugins.ownership.util.HTMLFormatter;
 import org.jenkinsci.plugins.ownership.util.mail.OwnershipMailHelper;
 import javax.annotation.Nonnull;
@@ -77,10 +78,19 @@ public abstract class OwnershipLayoutFormatter<TObjectType> {
 
         @Override
         public String formatUser(TObjectType item, String userId) {
-            final String userURI = HTMLFormatter.formatUserURI(userId, true);
-            final String userEmail = HTMLFormatter.formatEmailURI(userId);
-            final String userInfoHTML = userURI + (userEmail != null ? " " + userEmail : "");
-            return userInfoHTML;
+            StringBuilder rawHtmlBuilder = new StringBuilder();
+            rawHtmlBuilder.append(HTMLFormatter.formatUserURI(userId, true));
+            
+            // Append e-mail to the output if it is not prohibited.
+            if (!OwnershipPluginConfiguration.get().getMailOptions().isHideOwnerAndCoOwnerEmails()) {
+                final String userEmail = HTMLFormatter.formatEmailURI(userId);
+                if (userEmail != null) {
+                    rawHtmlBuilder.append(' ');
+                    rawHtmlBuilder.append(userEmail);
+                }
+            }
+            
+            return rawHtmlBuilder.toString();
         }
 
         @Override
