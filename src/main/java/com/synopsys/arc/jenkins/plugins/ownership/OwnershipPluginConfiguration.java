@@ -118,4 +118,14 @@ public class OwnershipPluginConfiguration
         }
     }
     
+    
+    /**
+     * Gets the {@link OwnershipPlugin} configuration.
+     * @return The plugin configuration if available.
+     * @throws IllegalStateException Jenkins instance is not ready
+     * @since 0.8
+     */
+    public static OwnershipPluginConfiguration get() {
+        return OwnershipPlugin.getInstance().getConfiguration();
+    }
 }
