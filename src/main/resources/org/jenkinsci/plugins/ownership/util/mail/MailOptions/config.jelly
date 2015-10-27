@@ -30,6 +30,10 @@
         <f:textbox/> 
     </f:entry>  
     <f:advanced title="${%Advanced e-mail options}">
+        <f:entry  field="hideOwnerAndCoOwnerEmails">
+            <f:checkbox title="${%hideOwnerAndCoOwnerEmails.title}"/>
+        </f:entry>
+      
         <!-- Contact item owners -->
         <f:entry title="${%contactOwnersSubjectTemplate.title}" field="contactOwnersSubjectTemplate">
             <f:textbox default="${%contactOwnersSubjectTemplate.default}"/> 

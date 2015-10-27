@@ -49,7 +49,8 @@ public class MailOptions implements Describable<MailOptions> {
     
     private final @CheckForNull String emailListSeparator;
     private final @CheckForNull String adminsContactEmail;
-    
+    private final boolean hideOwnerAndCoOwnerEmails;
+
     private static final String DEFAULT_LIST_SEPARATOR = ";";
      
     public static final MailOptions DEFAULT = new MailOptions();
@@ -64,7 +65,8 @@ public class MailOptions implements Describable<MailOptions> {
             boolean contactOwnersLinkDisabled, 
             String contactAdminsSubjectTemplate, String contactAdminsBodyTemplate, 
             boolean contactAdminsLinkDisabled,
-            String adminsContactEmail, String emailListSeparator) {
+            String adminsContactEmail, String emailListSeparator,
+            boolean hideOwnerAndCoOwnerEmails) {
         this.contactOwnersSubjectTemplate = contactOwnersSubjectTemplate;
         this.contactOwnersBodyTemplate = contactOwnersBodyTemplate;
         this.contactOwnersLinkDisabled = contactOwnersLinkDisabled;
@@ -74,7 +76,20 @@ public class MailOptions implements Describable<MailOptions> {
         this.contactAdminsLinkDisabled = contactAdminsLinkDisabled;
         
         this.emailListSeparator = emailListSeparator;
-        this.adminsContactEmail = adminsContactEmail;        
+        this.adminsContactEmail = adminsContactEmail;   
+        this.hideOwnerAndCoOwnerEmails = hideOwnerAndCoOwnerEmails;
+    }
+    
+    @Deprecated
+    public MailOptions(
+            String contactOwnersSubjectTemplate, String contactOwnersBodyTemplate, 
+            boolean contactOwnersLinkDisabled, 
+            String contactAdminsSubjectTemplate, String contactAdminsBodyTemplate, 
+            boolean contactAdminsLinkDisabled,
+            String adminsContactEmail, String emailListSeparator) {
+        this(contactOwnersSubjectTemplate, contactOwnersBodyTemplate, contactOwnersLinkDisabled, 
+             contactAdminsSubjectTemplate, contactAdminsBodyTemplate, contactAdminsLinkDisabled, 
+             adminsContactEmail, emailListSeparator, false);
     }
   
     @Deprecated
@@ -133,6 +148,15 @@ public class MailOptions implements Describable<MailOptions> {
      */
     public boolean isContactOwnersLinkDisabled() {
         return contactOwnersLinkDisabled;
+    }
+
+    /**
+     * Check if displaying e-mails of item owners and co-owners is disabled.
+     * @return {@code} true if the links should not be visualized.
+     * @since 0.8
+     */
+    public boolean isHideOwnerAndCoOwnerEmails() {
+        return hideOwnerAndCoOwnerEmails;
     }
    
     @Extension
