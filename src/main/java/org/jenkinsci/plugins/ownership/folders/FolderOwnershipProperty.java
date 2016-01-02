@@ -32,8 +32,11 @@ import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipItem;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import hudson.Extension;
+import hudson.model.Descriptor;
 import java.io.IOException;
 import javax.annotation.CheckForNull;
+import net.sf.json.JSONObject;
+import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * Ownership property for {@link Folder}s.
@@ -75,6 +78,12 @@ public class FolderOwnershipProperty
         ownership = description;
         owner.save();
     }    
+
+    @Override
+    public AbstractFolderProperty<?> reconfigure(StaplerRequest req, JSONObject form) throws Descriptor.FormException {
+        // Retain the current configuration in order to prevent changes by form submissions
+        return new FolderOwnershipProperty(ownership);
+    }
     
     @Extension(optional = true)
     public static class DescriptorImpl extends AbstractFolderPropertyDescriptor {
