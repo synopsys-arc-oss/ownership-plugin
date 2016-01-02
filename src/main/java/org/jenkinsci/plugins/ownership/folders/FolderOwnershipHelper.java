@@ -1,0 +1,121 @@
+/*
+ * The MIT License
+ *
+ * Copyright (c) 2015 Oleg Nenashev.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+package org.jenkinsci.plugins.ownership.folders;
+
+import com.cloudbees.hudson.plugins.folder.AbstractFolder;
+import com.cloudbees.hudson.plugins.folder.AbstractFolderProperty;
+import com.cloudbees.hudson.plugins.folder.Folder;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
+import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
+import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty;
+import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
+import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
+import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.AccessRightsFilter;
+import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.IUserFilter;
+import hudson.model.Computer;
+import hudson.model.Job;
+import hudson.model.User;
+import java.io.IOException;
+import java.util.Collection;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+
+/**
+ * Integration with Folders plugin.
+ * @author Oleg Nenashev
+ * @since TODO
+ */
+public class FolderOwnershipHelper extends AbstractOwnershipHelper<AbstractFolder<?>> {
+    
+    static final FolderOwnershipHelper INSTANCE = new FolderOwnershipHelper();
+
+    @Nonnull
+    public static FolderOwnershipHelper getInstance() {
+        return INSTANCE;
+    }
+    
+    /**
+     * Gets OwnerNodeProperty from job if possible.
+     * @param folder Folder
+     * @return OwnerNodeProperty or null
+     */
+    @CheckForNull
+    public static FolderOwnershipProperty getOwnerProperty(@Nonnull AbstractFolder<?> folder) {
+        FolderOwnershipProperty prop = folder.getProperties().get(FolderOwnershipProperty.class);
+        return prop != null ? prop : null;
+    }
+    
+    @Override
+    public String getItemTypeName(AbstractFolder<?> item) {
+        return "folder";
+    }
+
+    @Override
+    public String getItemDisplayName(AbstractFolder<?> item) {
+        return item.getDisplayName();
+    }
+
+    @Override
+    public String getItemURL(AbstractFolder<?> item) {
+        return item.getUrl();
+    }
+    
+    @Override
+    public OwnershipDescription getOwnershipDescription(AbstractFolder<?> item) {
+        if (item == null) { // Handle renames, etc.
+            return OwnershipDescription.DISABLED_DESCR;
+        }
+        
+        FolderOwnershipProperty prop = getOwnerProperty(item);
+        return prop != null ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
+    }
+
+    @Override
+    public Collection<User> getPossibleOwners(AbstractFolder<?> item) {
+        if (OwnershipPlugin.getInstance().isRequiresConfigureRights()) {
+            IUserFilter filter = new AccessRightsFilter(item, Folder.CONFIGURE);
+            return UserCollectionFilter.filterUsers(User.getAll(), true, filter);
+        } else {
+            return User.getAll();
+        }
+    }
+    
+    /**
+     * Sets the ownership information.
+     * @param folder Folder to be modified
+     * @param descr A description to be set. Use null to drop settings.
+     * @throws IOException 
+     */
+    public static void setOwnership(@Nonnull AbstractFolder<?> folder, 
+            @CheckForNull OwnershipDescription descr) throws IOException {
+        FolderOwnershipProperty prop = getOwnerProperty(folder);
+        if (prop == null) {
+            prop = new FolderOwnershipProperty(descr);
+            folder.addProperty(prop);
+        } else {
+            prop.setOwnershipDescription(descr);
+        }
+    }
+}

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev, Synopsys Inc.
+ * Copyright (c) 2015 Oleg Nenashev.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,32 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.synopsys.arc.jenkins.plugins.ownership.jobs;
+package org.jenkinsci.plugins.ownership.folders;
 
+import com.cloudbees.hudson.plugins.folder.Folder;
+import com.cloudbees.hudson.plugins.folder.TransientFolderActionFactory;
 import hudson.Extension;
-import hudson.matrix.MatrixConfiguration;
-import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.TransientProjectActionFactory;
 import java.util.Collection;
-import static java.util.Collections.singleton;
-import java.util.LinkedList;
+import java.util.Collections;
 
 /**
- * Creates a "Manage Ownership" action for jobs.
- * Action will be available for all top-level job items. 
- * Matrix configurations will be ignored.
- * @author Oleg Nenashev, Synopsys Inc.
+ * Injects {@link FolderOwnershipAction}s.
+ * @author Oleg Nenashev
  */
-@Extension
-public class OwnershipActionFactory extends TransientProjectActionFactory { 
-    /**Empty actions collection for invalid project type*/
-    private static final Collection<? extends Action> EMPTY_ACTIONS 
-            = new LinkedList<Action>();
-    
+@Extension(optional = true)
+public class FolderOwnershipActionFactory extends TransientFolderActionFactory {
+
     @Override
-    public Collection<? extends Action> createFor(AbstractProject target) {
-        return (target instanceof MatrixConfiguration) 
-                ? EMPTY_ACTIONS : singleton(new JobOwnerJobAction(target));
-    }    
+    public Collection<? extends Action> createFor(Folder target) {
+        return Collections.singleton(new FolderOwnershipAction(target));
+    }
 }
