@@ -48,7 +48,7 @@ public class AssignCreatorPolicy extends ItemOwnershipPolicy {
     @Override
     public OwnershipDescription onCreated(Item item) {
         User creator = User.current();
-        if (creator != null && creator != User.getUnknown() && item instanceof Job) {
+        if (creator != null && creator != User.getUnknown()) {
             return new OwnershipDescription(true, creator.getId(), null);
         }
         

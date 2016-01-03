@@ -66,7 +66,7 @@ public class FolderOwnershipProperty
 
     @Override
     public OwnershipDescription getOwnership() {
-        return ownership;
+        return ownership != null ? ownership : OwnershipDescription.DISABLED_DESCR;
     }
 
     /**

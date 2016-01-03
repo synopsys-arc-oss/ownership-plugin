@@ -26,8 +26,15 @@ package org.jenkinsci.plugins.ownership.folders;
 import com.cloudbees.hudson.plugins.folder.AbstractFolder;
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy.AssignCreatorPolicy;
+import hudson.model.User;
+import hudson.remoting.Callable;
+import hudson.security.ACL;
+import hudson.security.SecurityRealm;
 import java.util.Arrays;
 import static org.hamcrest.Matchers.*;
+import org.jenkinsci.plugins.ownership.test.util.OwnershipPluginConfigurer;
+import org.jenkinsci.remoting.RoleChecker;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Rule;
@@ -48,8 +55,10 @@ public class FolderOwnershipTest {
     @Test
     public void ownershipInfoShouldBeEmptyByDefault() throws Exception {
         Folder folder = j.jenkins.createProject(Folder.class, "myFolder");
-        assertThat("Property should not be injected by default", 
-                FolderOwnershipHelper.getOwnerProperty(folder), nullValue());
+        assertThat("Property should be injected by default", 
+                FolderOwnershipHelper.getOwnerProperty(folder), notNullValue());
+        assertThat("Property should be disabled by default", 
+                FolderOwnershipHelper.getOwnerProperty(folder).getOwnership().isOwnershipEnabled(), equalTo(false));
         
         assertThat("Folder ownership helper should return the \"disabled\" description",
                 ownershipHelper.getOwnershipDescription(folder), 
@@ -74,5 +83,49 @@ public class FolderOwnershipTest {
         assertThat("Folder ownership helper should return the configured value after the reload",
                 ownershipHelper.getOwnershipDescription(folder), 
                 equalTo(original));
+    }
+    
+    @Test
+    public void shouldSupportAssignCreatorPolicy() throws Exception {
+        
+        // Init security
+        j.jenkins.setSecurityRealm(j.createDummySecurityRealm());
+        User myUser = User.get("testUser");
+        
+        // Configure the policy
+        OwnershipPluginConfigurer.forJenkinsRule(j)
+                .withItemOwnershipPolicy(new AssignCreatorPolicy())
+                .configure();
+        
+        // Create Item from the user account
+        ACL.impersonate(myUser.impersonate(), new Callable<Void, Exception>() {
+            @Override
+            public Void call() throws Exception {
+                j.jenkins.createProject(Folder.class, "myFolder");
+                return null;
+            }
+
+            @Override
+            public void checkRoles(RoleChecker checker) throws SecurityException {
+                // do nothing
+            }
+        });
+        
+        // Retrieve item and verify it's status
+        Folder folder = j.jenkins.getItemByFullName("myFolder", Folder.class);
+        assertThat("Cannot locate folder 'myFolder'", folder, notNullValue());
+        FolderOwnershipProperty ownerProperty = FolderOwnershipHelper.getOwnerProperty(folder);
+        assertThat("Property should be injected by AssignCreatorPolicy",  ownerProperty, notNullValue());
+        assertThat("Ownership should be enabled according to AssignCreatorPolicy", 
+                ownerProperty.getOwnership().isOwnershipEnabled(), equalTo(true));
+        assertThat("testUser should be automatically assigned as a Folder owner", 
+                ownerProperty.getOwnership().getPrimaryOwnerId(), equalTo("testUser"));
+        
+        // Reload configs in order to verify the persistence
+        j.jenkins.reload();
+        Folder folderReloaded = j.jenkins.getItemByFullName("myFolder", Folder.class);
+        FolderOwnershipProperty ownerPropertyReloaded = FolderOwnershipHelper.getOwnerProperty(folderReloaded);
+        assertThat("testUser should be retained after the restart", 
+                ownerPropertyReloaded.getOwnership().getPrimaryOwnerId(), equalTo("testUser"));
     }
 }
