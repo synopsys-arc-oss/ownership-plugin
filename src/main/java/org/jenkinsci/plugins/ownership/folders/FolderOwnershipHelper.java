@@ -26,6 +26,7 @@ package org.jenkinsci.plugins.ownership.folders;
 import com.cloudbees.hudson.plugins.folder.AbstractFolder;
 import com.cloudbees.hudson.plugins.folder.AbstractFolderProperty;
 import com.cloudbees.hudson.plugins.folder.Folder;
+import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
@@ -34,13 +35,17 @@ import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.AccessRightsFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.IUserFilter;
+import hudson.Extension;
 import hudson.model.Computer;
+import hudson.model.Item;
+import hudson.model.ItemGroup;
 import hudson.model.Job;
 import hudson.model.User;
 import java.io.IOException;
 import java.util.Collection;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
 
 /**
  * Integration with Folders plugin.
@@ -88,8 +93,33 @@ public class FolderOwnershipHelper extends AbstractOwnershipHelper<AbstractFolde
             return OwnershipDescription.DISABLED_DESCR;
         }
         
+        // Retrieve Ownership from the Folder property
         FolderOwnershipProperty prop = getOwnerProperty(item);
-        return prop != null ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
+        if (prop != null) {
+            OwnershipDescription d = prop.getOwnership();
+            if (d.isOwnershipEnabled()) {
+                return prop.getOwnership();
+            }
+        }
+        
+        // We go to upper items in order to get the ownership description
+        ItemGroup parent = item.getParent();
+        IOwnershipHelper<ItemGroup> located = OwnershipHelperLocator.locate(parent);
+        while (located != null) {
+            OwnershipDescription fromParent = located.getOwnershipDescription(parent);
+            if (fromParent.isOwnershipEnabled()) {
+                return fromParent;
+            }
+            if (parent instanceof Item) {
+                Item parentItem = (Item)parent;
+                parent = parentItem.getParent();
+                located = OwnershipHelperLocator.locate(parent);
+            } else {
+                located = null;
+            }
+        }
+        
+        return OwnershipDescription.DISABLED_DESCR;
     }
 
     @Override
@@ -117,5 +147,17 @@ public class FolderOwnershipHelper extends AbstractOwnershipHelper<AbstractFolde
         } else {
             prop.setOwnershipDescription(descr);
         }
+    }
+    
+    @Extension(optional = true)
+    public static class LocatorImpl extends OwnershipHelperLocator<AbstractFolder<?>> {
+        
+        @Override
+        public IOwnershipHelper<AbstractFolder<?>> findHelper(Object item) {
+            if (item instanceof AbstractFolder<?>) {
+                return INSTANCE;
+            }
+            return null;
+        }      
     }
 }

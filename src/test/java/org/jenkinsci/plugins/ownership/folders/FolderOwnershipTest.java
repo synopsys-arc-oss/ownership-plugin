@@ -27,6 +27,8 @@ import com.cloudbees.hudson.plugins.folder.AbstractFolder;
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy.AssignCreatorPolicy;
+import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
+import hudson.model.FreeStyleProject;
 import hudson.model.User;
 import hudson.remoting.Callable;
 import hudson.security.ACL;
@@ -127,5 +129,52 @@ public class FolderOwnershipTest {
         FolderOwnershipProperty ownerPropertyReloaded = FolderOwnershipHelper.getOwnerProperty(folderReloaded);
         assertThat("testUser should be retained after the restart", 
                 ownerPropertyReloaded.getOwnership().getPrimaryOwnerId(), equalTo("testUser"));
+    }
+    
+    @Test
+    public void ownershipShouldBeInheritedFromFolderByDefault() throws Exception {
+        Folder folder = j.jenkins.createProject(Folder.class, "myFolder");
+        FreeStyleProject project = folder.createProject(FreeStyleProject.class, "projectInFolder");
+        
+        // Set ownership via API
+        OwnershipDescription original = new OwnershipDescription(true, "ownerId", 
+            Arrays.asList("coowner1, coowner2"));
+        FolderOwnershipHelper.setOwnership(folder, original);
+        
+        assertThat("Folder ownership helper should return the inherited value",
+                JobOwnerHelper.Instance.getOwnershipDescription(project), 
+                equalTo(original));
+        
+        
+        // Reload folder from disk and check the state
+        j.jenkins.reload();
+        assertThat("Folder ownership helper should return the inherited value after the reload",
+                JobOwnerHelper.Instance.getOwnershipDescription(
+                        j.jenkins.getItemByFullName("myFolder/projectInFolder", FreeStyleProject.class)), 
+                equalTo(original));
+    }
+    
+    @Test
+    public void ownershipShouldBeInheritedFromTopLevelFolderByDefault() throws Exception {
+        Folder folder1 = j.jenkins.createProject(Folder.class, "folder1");
+        Folder folder2 = folder1.createProject(Folder.class, "folder2");
+        FreeStyleProject project = folder2.createProject(FreeStyleProject.class, "projectInFolder");
+        
+        // Set ownership via API
+        OwnershipDescription original = new OwnershipDescription(true, "ownerId", 
+            Arrays.asList("coowner1, coowner2"));
+        FolderOwnershipHelper.setOwnership(folder1, original);
+        
+        assertThat("Folder ownership helper should return the inherited value",
+                JobOwnerHelper.Instance.getOwnershipDescription(project), 
+                equalTo(original));
+        
+        
+        // Reload folder from disk and check the state
+        j.jenkins.reload();
+        assertThat("Folder ownership helper should return the inherited value after the reload",
+                JobOwnerHelper.Instance.getOwnershipDescription(
+                        j.jenkins.getItemByFullName("folder1/folder2/projectInFolder", FreeStyleProject.class)), 
+                equalTo(original));
     }
 }
