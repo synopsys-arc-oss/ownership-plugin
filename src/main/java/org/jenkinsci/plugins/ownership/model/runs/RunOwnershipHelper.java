@@ -85,9 +85,8 @@ public class RunOwnershipHelper extends AbstractOwnershipHelper<Run> {
     public static void setUp (@Nonnull AbstractBuild build, @Nonnull Map<String, String> target, 
             @CheckForNull BuildListener listener, 
             boolean injectJobOwnership, boolean injectNodeOwnership) {
-        if (injectJobOwnership) {
-            JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(build.getParent());  
-            OwnershipDescription descr = prop != null ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
+        if (injectJobOwnership) { 
+            OwnershipDescription descr = JobOwnerHelper.Instance.getOwnershipDescription(build.getParent());
             getVariables(descr, target, "JOB");
         }
              
