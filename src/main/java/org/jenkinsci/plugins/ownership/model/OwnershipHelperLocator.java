@@ -24,6 +24,7 @@
 package org.jenkinsci.plugins.ownership.model;
 
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
+import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import javax.annotation.CheckForNull;
@@ -44,7 +45,7 @@ public abstract class OwnershipHelperLocator <T extends Object> implements Exten
      * @return Helper. Returns null if there is no applicable helper provided by this extension.
      */
     @CheckForNull
-    public abstract IOwnershipHelper<T> findHelper(Object item);
+    public abstract AbstractOwnershipHelper<T> findHelper(Object item);
     
     /**
      * Returns all the registered {@link OwnershipHelperLocator}s.
@@ -63,8 +64,8 @@ public abstract class OwnershipHelperLocator <T extends Object> implements Exten
      */
     @CheckForNull
     @SuppressWarnings("unchecked")
-    public static <T> IOwnershipHelper<T> locate(T item) {
-        return (IOwnershipHelper<T>)locate(item, item.getClass());
+    public static <T> AbstractOwnershipHelper<T> locate(T item) {
+        return (AbstractOwnershipHelper<T>)locate(item, item.getClass());
     }
     
     /**
@@ -76,12 +77,12 @@ public abstract class OwnershipHelperLocator <T extends Object> implements Exten
      */
     @CheckForNull
     @SuppressWarnings("unchecked")
-    public static <T> IOwnershipHelper<T> locate(Object item, Class<T> requiredClass) {
+    public static <T> AbstractOwnershipHelper<T> locate(Object item, Class<T> requiredClass) {
         for (OwnershipHelperLocator<?> helper : all()) {
-            IOwnershipHelper<?> located = helper.findHelper(item);
+            AbstractOwnershipHelper<?> located = helper.findHelper(item);
             //TODO: Helper verification would be useful
             if (located != null) {
-                return (IOwnershipHelper<T>) located;
+                return (AbstractOwnershipHelper<T>) located;
             }
         }
         return null;

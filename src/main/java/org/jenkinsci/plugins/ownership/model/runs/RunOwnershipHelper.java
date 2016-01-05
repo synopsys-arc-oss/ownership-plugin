@@ -39,6 +39,7 @@ import hudson.model.Run;
 import java.util.Map;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
 
 /**
  * Helper for {@link Run} ownership management.
@@ -72,7 +73,12 @@ public class RunOwnershipHelper extends AbstractOwnershipHelper<Run> {
     public OwnershipDescription getOwnershipDescription(Run item) {
         return JobOwnerHelper.Instance.getOwnershipDescription(item.getParent());
     }    
-     
+
+    @Override
+    public OwnershipInfo getOwnershipInfo(Run item) {
+        return JobOwnerHelper.Instance.getOwnershipInfo(item.getParent());
+    }
+    
     /**
      * Environment setup according to wrapper configurations.
      * @param build Input build

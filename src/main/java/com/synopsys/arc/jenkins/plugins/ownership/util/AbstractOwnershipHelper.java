@@ -38,6 +38,8 @@ import java.util.Set;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
+import org.jenkinsci.plugins.ownership.model.OwnershipDescriptionSource;
+import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
 
 /**
  * Provides basic operations for ownership helpers.
@@ -105,4 +107,14 @@ public abstract class AbstractOwnershipHelper<TObjectType>
         
         return true;
     }
+ 
+    /**
+     * Gets ownership info of the requested item.
+     * @param item Item to be described
+     * @return Ownership description. The method returns a 
+     * {@link OwnershipDescription.DISABLED}
+     * @since TODO
+     */
+    @Nonnull
+    public abstract OwnershipInfo getOwnershipInfo(@Nonnull TObjectType item);
 }

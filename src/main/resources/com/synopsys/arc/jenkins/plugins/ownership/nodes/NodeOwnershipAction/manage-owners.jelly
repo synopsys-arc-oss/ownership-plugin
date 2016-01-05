@@ -32,6 +32,7 @@
                     ${%Manage Owners}
                 </h1>
                 <p style="color:red"><b>Warning! You may lose access rights to this page if you change ownership</b></p>
+                <st:include page="ownershipSource.jelly" optional="false" it="${instance}"/>
                 <f:section title="${%Edit owners}">
                     <f:rowSet name="owners">
                         <f:block>

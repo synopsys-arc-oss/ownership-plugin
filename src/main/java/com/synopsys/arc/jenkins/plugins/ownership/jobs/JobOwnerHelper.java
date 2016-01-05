@@ -47,6 +47,8 @@ import java.util.Map;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
+import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
+import org.jenkinsci.plugins.ownership.model.jobs.JobOwnershipDescriptionSource;
 
 /**
  * Helper for Jobs Ownership.
@@ -94,21 +96,27 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
      
     @Override
     public @Nonnull OwnershipDescription getOwnershipDescription(@Nonnull Job<?, ?> job) {
+        // TODO: Maybe makes sense to unwrap the method to get a better performance (esp. for Security)
+        return getOwnershipInfo(job).getDescription();
+    }
+
+    @Override
+    public OwnershipInfo getOwnershipInfo(Job<?, ?> job) {
         JobOwnerJobProperty prop = getOwnerProperty(job);     
         if (prop != null) {
             OwnershipDescription d = prop.getOwnership();
             if (d.isOwnershipEnabled()) {
                 // If Ownership on this level is enabled, we return it
-                return d;
+                return new OwnershipInfo(d, new JobOwnershipDescriptionSource(job));
             }
         }
         
         // We go to upper items in order to get the ownership description
         ItemGroup parent = job.getParent();
-        IOwnershipHelper<ItemGroup> located = OwnershipHelperLocator.locate(parent);
+        AbstractOwnershipHelper<ItemGroup> located = OwnershipHelperLocator.locate(parent);
         while (located != null) {
-            OwnershipDescription fromParent = located.getOwnershipDescription(parent);
-            if (fromParent.isOwnershipEnabled()) {
+            OwnershipInfo fromParent = located.getOwnershipInfo(parent);
+            if (fromParent.getDescription().isOwnershipEnabled()) {
                 return fromParent;
             }
             if (parent instanceof Item) {
@@ -121,9 +129,9 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
         }
         
         // Fallback: we have not found the Ownership using known approaches
-        return OwnershipDescription.DISABLED_DESCR;
+        return OwnershipInfo.DISABLED_INFO;
     }
-
+    
     /**
      * Sets the ownership information.
      * @param job A job to be modified
@@ -185,7 +193,7 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
     public static class LocatorImpl extends OwnershipHelperLocator<Job<?,?>> {
         
         @Override
-        public IOwnershipHelper<Job<?,?>> findHelper(Object item) {
+        public AbstractOwnershipHelper<Job<?,?>> findHelper(Object item) {
             if (item instanceof Job<?,?>) {
                 return Instance;
             }

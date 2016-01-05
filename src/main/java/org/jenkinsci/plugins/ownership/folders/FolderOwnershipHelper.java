@@ -46,6 +46,7 @@ import java.util.Collection;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
+import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
 
 /**
  * Integration with Folders plugin.
@@ -89,8 +90,14 @@ public class FolderOwnershipHelper extends AbstractOwnershipHelper<AbstractFolde
     
     @Override
     public OwnershipDescription getOwnershipDescription(AbstractFolder<?> item) {
+        // TODO: Maybe makes sense to unwrap the method to get a better performance (esp. for Security)
+        return getOwnershipInfo(item).getDescription();
+    }
+
+    @Override
+    public OwnershipInfo getOwnershipInfo(AbstractFolder<?> item) {
         if (item == null) { // Handle renames, etc.
-            return OwnershipDescription.DISABLED_DESCR;
+            return OwnershipInfo.DISABLED_INFO;
         }
         
         // Retrieve Ownership from the Folder property
@@ -98,16 +105,16 @@ public class FolderOwnershipHelper extends AbstractOwnershipHelper<AbstractFolde
         if (prop != null) {
             OwnershipDescription d = prop.getOwnership();
             if (d.isOwnershipEnabled()) {
-                return prop.getOwnership();
+                return new OwnershipInfo(prop.getOwnership(), new FolderOwnershipDescriptionSource(item));
             }
         }
         
         // We go to upper items in order to get the ownership description
         ItemGroup parent = item.getParent();
-        IOwnershipHelper<ItemGroup> located = OwnershipHelperLocator.locate(parent);
+        AbstractOwnershipHelper<ItemGroup> located = OwnershipHelperLocator.locate(parent);
         while (located != null) {
-            OwnershipDescription fromParent = located.getOwnershipDescription(parent);
-            if (fromParent.isOwnershipEnabled()) {
+            OwnershipInfo fromParent = located.getOwnershipInfo(parent);
+            if (fromParent.getDescription().isOwnershipEnabled()) {
                 return fromParent;
             }
             if (parent instanceof Item) {
@@ -119,9 +126,9 @@ public class FolderOwnershipHelper extends AbstractOwnershipHelper<AbstractFolde
             }
         }
         
-        return OwnershipDescription.DISABLED_DESCR;
+        return OwnershipInfo.DISABLED_INFO;
     }
-
+    
     @Override
     public Collection<User> getPossibleOwners(AbstractFolder<?> item) {
         if (OwnershipPlugin.getInstance().isRequiresConfigureRights()) {
@@ -153,7 +160,7 @@ public class FolderOwnershipHelper extends AbstractOwnershipHelper<AbstractFolde
     public static class LocatorImpl extends OwnershipHelperLocator<AbstractFolder<?>> {
         
         @Override
-        public IOwnershipHelper<AbstractFolder<?>> findHelper(Object item) {
+        public AbstractOwnershipHelper<AbstractFolder<?>> findHelper(Object item) {
             if (item instanceof AbstractFolder<?>) {
                 return INSTANCE;
             }

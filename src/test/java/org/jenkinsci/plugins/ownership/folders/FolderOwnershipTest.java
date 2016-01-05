@@ -35,6 +35,7 @@ import hudson.security.ACL;
 import hudson.security.SecurityRealm;
 import java.util.Arrays;
 import static org.hamcrest.Matchers.*;
+import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
 import org.jenkinsci.plugins.ownership.test.util.OwnershipPluginConfigurer;
 import org.jenkinsci.remoting.RoleChecker;
 import static org.junit.Assert.assertThat;
@@ -172,9 +173,11 @@ public class FolderOwnershipTest {
         
         // Reload folder from disk and check the state
         j.jenkins.reload();
+        OwnershipInfo ownershipInfo = JobOwnerHelper.Instance.getOwnershipInfo(
+                j.jenkins.getItemByFullName("folder1/folder2/projectInFolder", FreeStyleProject.class));
         assertThat("Folder ownership helper should return the inherited value after the reload",
-                JobOwnerHelper.Instance.getOwnershipDescription(
-                        j.jenkins.getItemByFullName("folder1/folder2/projectInFolder", FreeStyleProject.class)), 
-                equalTo(original));
+                ownershipInfo.getDescription(), equalTo(original));
+        assertThat("OwnershipInfo should return the right reference", 
+                (Object)ownershipInfo.getSource().getItem(), equalTo((Object)j.jenkins.getItemByFullName("folder1")));
     }
 }
