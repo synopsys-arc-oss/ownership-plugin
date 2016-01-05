@@ -30,7 +30,9 @@ import com.synopsys.arc.jenkins.plugins.ownership.ItemOwnershipAction;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
+import com.synopsys.arc.jenkins.plugins.ownership.util.ui.OwnershipLayoutFormatter;
 import hudson.model.Descriptor;
+import hudson.model.Job;
 import hudson.security.Permission;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -49,6 +51,10 @@ import org.kohsuke.stapler.StaplerResponse;
  */
 public class FolderOwnershipAction extends ItemOwnershipAction<AbstractFolder<?>> {
 
+    //TODO: May become a problem once we need to make it flexible (not implemented). Move to helper?
+    private static final OwnershipLayoutFormatter<AbstractFolder<?>> DEFAULT_FOLDER_FORMATTER 
+            = new OwnershipLayoutFormatter.DefaultJobFormatter<AbstractFolder<?>>();
+    
     public FolderOwnershipAction(@Nonnull Folder folder) {
         super(folder);
     }
@@ -71,6 +77,10 @@ public class FolderOwnershipAction extends ItemOwnershipAction<AbstractFolder<?>
     @Override
     public IOwnershipHelper<AbstractFolder<?>> helper() {
         return FolderOwnershipHelper.getInstance();
+    }
+    
+    public OwnershipLayoutFormatter<AbstractFolder<?>> getLayoutFormatter() {
+        return DEFAULT_FOLDER_FORMATTER;
     }
     
     public HttpResponse doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
