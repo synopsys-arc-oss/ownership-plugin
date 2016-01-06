@@ -39,7 +39,7 @@ import java.util.LinkedList;
  * @author Oleg Nenashev, Synopsys Inc.
  */
 @Extension
-public class OwnershipActionFactory extends TransientProjectActionFactory { 
+public class OwnershipActionFactory extends TransientProjectActionFactory {
     /**Empty actions collection for invalid project type*/
     private static final Collection<? extends Action> EMPTY_ACTIONS 
             = new LinkedList<Action>();

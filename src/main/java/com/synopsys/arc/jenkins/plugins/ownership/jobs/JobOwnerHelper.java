@@ -131,7 +131,7 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
         // Fallback: we have not found the Ownership using known approaches
         return OwnershipInfo.DISABLED_INFO;
     }
-    
+
     /**
      * Sets the ownership information.
      * @param job A job to be modified
