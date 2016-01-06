@@ -23,6 +23,7 @@
  */
 package org.jenkinsci.plugins.ownership.model.runs;
 
+import com.cloudbees.hudson.plugins.folder.Folder;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
@@ -39,6 +40,9 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.*;
+import org.jenkinsci.plugins.ownership.folders.FolderOwnershipHelper;
+import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
+import static org.junit.Assert.assertThat;
 import org.jvnet.hudson.test.Bug;
 
 /**
@@ -49,6 +53,27 @@ public class RunOwnershipActionTest {
     
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule();
+    
+    @Test
+    @Bug(28881)
+    public void shouldInheritOwnershipInfoFromFolders() throws Exception {
+        Folder folder = jenkinsRule.jenkins.createProject(Folder.class, "folder");
+        FreeStyleProject project = folder.createProject(FreeStyleProject.class, "projectInFolder");
+        
+        // Set ownership via API
+        OwnershipDescription original = new OwnershipDescription(true, "ownerId", 
+            Arrays.asList("coowner1, coowner2"));
+        FolderOwnershipHelper.setOwnership(folder, original);
+        
+        // Run project
+        FreeStyleBuild build = jenkinsRule.buildAndAssertSuccess(project);
+        
+        OwnershipInfo ownershipInfo = RunOwnershipHelper.getInstance().getOwnershipInfo(build);
+        assertThat("Folder ownership helper should return the inherited value after the reload",
+                ownershipInfo.getDescription(), equalTo(original));
+        assertThat("OwnershipInfo should return the right reference", 
+                ownershipInfo.getSource().getItem(), equalTo((Object)jenkinsRule.jenkins.getItemByFullName("folder")));
+    }
     
     @Test
     public void shouldDisplayStubSummaryBoxIfNoOwnership() throws Exception {
