@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2015 Oleg Nenashev.
+ * Copyright (c) 2016 Oleg Nenashev.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,24 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jenkinsci.plugins.ownership.folders;
+package org.jenkinsci.plugins.ownership.model.folders;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
-import com.cloudbees.hudson.plugins.folder.TransientFolderActionFactory;
-import hudson.Extension;
-import hudson.model.Action;
-import java.util.Collection;
-import java.util.Collections;
+import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
+import org.junit.Rule;
+import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
+
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 
 /**
- * Injects {@link FolderOwnershipAction}s.
+ * Tests of {@link FolderOwnershipHelper}.
  * @author Oleg Nenashev
  */
-@Extension(optional = true)
-public class FolderOwnershipActionFactory extends TransientFolderActionFactory {
-
-    @Override
-    public Collection<? extends Action> createFor(Folder target) {
-        return Collections.singleton(new FolderOwnershipAction(target));
+public class FolderOwnershipHelperTest {
+    
+    @Rule
+    public JenkinsRule j = new JenkinsRule();
+    
+    @Test
+    public void locatorShouldReturnRightHelperForFolder() throws Exception {
+        Folder folder = j.jenkins.createProject(Folder.class, "myFolder");
+        
+        assertEquals("OwnershipHelperLocator should return the FolderOwnershipHelper instance",
+                OwnershipHelperLocator.locate(folder), FolderOwnershipHelper.getInstance());
     }
 }

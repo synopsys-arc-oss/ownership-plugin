@@ -48,7 +48,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.Future;
 import static junit.framework.Assert.*;
-import org.jenkinsci.plugins.ownership.folders.FolderOwnershipHelper;
+import org.jenkinsci.plugins.ownership.model.folders.FolderOwnershipHelper;
 import org.jenkinsci.plugins.ownership.test.util.OwnershipPluginConfigurer;
 import org.jenkinsci.plugins.ownership.util.environment.EnvSetupOptions;
 import org.jenkinsci.plugins.ownership.util.mail.MailOptions;

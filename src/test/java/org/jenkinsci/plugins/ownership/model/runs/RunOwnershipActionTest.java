@@ -40,7 +40,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.*;
-import org.jenkinsci.plugins.ownership.folders.FolderOwnershipHelper;
+import org.jenkinsci.plugins.ownership.model.folders.FolderOwnershipHelper;
 import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
 import static org.junit.Assert.assertThat;
 import org.jvnet.hudson.test.Bug;

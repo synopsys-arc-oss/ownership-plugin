@@ -21,32 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jenkinsci.plugins.ownership.folders;
+package org.jenkinsci.plugins.ownership.model.folders;
 
-import com.cloudbees.hudson.plugins.folder.Folder;
-import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
-import org.junit.Rule;
-import org.junit.Test;
-import org.jvnet.hudson.test.JenkinsRule;
-
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
+import com.cloudbees.hudson.plugins.folder.AbstractFolder;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import javax.annotation.CheckForNull;
+import org.jenkinsci.plugins.ownership.model.OwnershipDescriptionSource;
 
 /**
- * Tests of {@link FolderOwnershipHelper}.
+ * References {@link OwnershipDescription}s provided by various {@link AbstractFolder}s.
  * @author Oleg Nenashev
+ * @since TODO
  */
-public class FolderOwnershipHelperTest {
+public class FolderOwnershipDescriptionSource extends OwnershipDescriptionSource<AbstractFolder<?>> {
     
-    @Rule
-    public JenkinsRule j = new JenkinsRule();
-    
-    @Test
-    public void locatorShouldReturnRightHelperForFolder() throws Exception {
-        Folder folder = j.jenkins.createProject(Folder.class, "myFolder");
-        
-        assertEquals("OwnershipHelperLocator should return the FolderOwnershipHelper instance",
-                OwnershipHelperLocator.locate(folder), FolderOwnershipHelper.getInstance());
+    public FolderOwnershipDescriptionSource(@CheckForNull AbstractFolder<?> item) {
+        super(item);
     }
+    
 }

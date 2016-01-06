@@ -36,7 +36,7 @@ import hudson.security.Permission;
 import java.util.Arrays;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import org.jenkinsci.plugins.ownership.folders.FolderOwnershipHelper;
+import org.jenkinsci.plugins.ownership.model.folders.FolderOwnershipHelper;
 import org.jenkinsci.remoting.RoleChecker;
 import org.junit.Rule;
 import org.junit.Test;

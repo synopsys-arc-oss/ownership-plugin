@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2016 Oleg Nenashev.
+ * Copyright (c) 2015 Oleg Nenashev.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,22 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jenkinsci.plugins.ownership.folders;
+package org.jenkinsci.plugins.ownership.model.folders;
 
-import com.cloudbees.hudson.plugins.folder.AbstractFolder;
-import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
-import javax.annotation.CheckForNull;
-import org.jenkinsci.plugins.ownership.model.OwnershipDescriptionSource;
+import com.cloudbees.hudson.plugins.folder.Folder;
+import com.cloudbees.hudson.plugins.folder.TransientFolderActionFactory;
+import hudson.Extension;
+import hudson.model.Action;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
- * References {@link OwnershipDescription}s provided by various {@link AbstractFolder}s.
+ * Injects {@link FolderOwnershipAction}s.
  * @author Oleg Nenashev
- * @since TODO
  */
-public class FolderOwnershipDescriptionSource extends OwnershipDescriptionSource<AbstractFolder<?>> {
-    
-    public FolderOwnershipDescriptionSource(@CheckForNull AbstractFolder<?> item) {
-        super(item);
+@Extension(optional = true)
+public class FolderOwnershipActionFactory extends TransientFolderActionFactory {
+
+    @Override
+    public Collection<? extends Action> createFor(Folder target) {
+        return Collections.singleton(new FolderOwnershipAction(target));
     }
-    
 }
