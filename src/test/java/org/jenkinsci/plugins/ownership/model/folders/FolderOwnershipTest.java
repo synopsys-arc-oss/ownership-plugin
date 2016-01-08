@@ -43,6 +43,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
 
 /**
@@ -83,9 +84,37 @@ public class FolderOwnershipTest {
                 equalTo(original));
         
         // Reload folder from disk and check the state
-        j.jenkins.reload();
+        folder.doReload();
         assertThat("Folder ownership helper should return the configured value after the reload",
+                ownershipHelper.getOwnershipDescription(j.jenkins.getItemByFullName("myFolder", Folder.class)), 
+                equalTo(original));
+    }
+    
+    @Test
+    @Issue("JENKINS-32359")
+    public void ownershipFromLoadedFolderShouldSurviveRoundtrip() throws Exception {
+        Folder folder = j.jenkins.createProject(Folder.class, "myFolder");
+        
+        // Drop the Ownership property injected by ItemListener.
+        // We emulate the folder loaded from the instance with folders.
+        // After that we save and reload the config in order to drop PersistedListOwner according to JENKINS-32359
+        folder.getProperties().remove(FolderOwnershipProperty.class);
+        folder.save();
+        folder.doReload();
+        
+        // Set ownership via API
+        // It should invoke save via the persisted list if JENKINS-32359 does not block it
+        OwnershipDescription original = new OwnershipDescription(true, "ownerId", 
+            Arrays.asList("coowner1, coowner2"));
+        FolderOwnershipHelper.setOwnership(folder, original);
+        assertThat("Folder ownership helper should return the configured value",
                 ownershipHelper.getOwnershipDescription(folder), 
+                equalTo(original));
+        
+        // Reload folder from disk and check the state
+        folder.doReload();
+        assertThat("Folder ownership helper should return the configured value after the reload",
+                ownershipHelper.getOwnershipDescription(j.jenkins.getItemByFullName("myFolder", Folder.class)), 
                 equalTo(original));
     }
     
@@ -210,4 +239,6 @@ public class FolderOwnershipTest {
         assertThat("Project should not inherit the ownerhip info when inheritance is disabled",
                 projectOwnershipInfo.getDescription(), equalTo(OwnershipDescription.DISABLED_DESCR));
     }
+    
+    
 }
