@@ -26,6 +26,7 @@ package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPluginConfiguration;
 import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurity;
 import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
@@ -112,19 +113,21 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
         }
         
         // We go to upper items in order to get the ownership description
-        ItemGroup parent = job.getParent();
-        AbstractOwnershipHelper<ItemGroup> located = OwnershipHelperLocator.locate(parent);
-        while (located != null) {
-            OwnershipInfo fromParent = located.getOwnershipInfo(parent);
-            if (fromParent.getDescription().isOwnershipEnabled()) {
-                return fromParent;
-            }
-            if (parent instanceof Item) {
-                Item parentItem = (Item)parent;
-                parent = parentItem.getParent();
-                located = OwnershipHelperLocator.locate(parent);
-            } else {
-                located = null;
+        if (!OwnershipPluginConfiguration.get().getInheritanceOptions().isBlockInheritanceFromItemGroups()) {
+            ItemGroup parent = job.getParent();
+            AbstractOwnershipHelper<ItemGroup> located = OwnershipHelperLocator.locate(parent);
+            while (located != null) {
+                OwnershipInfo fromParent = located.getOwnershipInfo(parent);
+                if (fromParent.getDescription().isOwnershipEnabled()) {
+                    return fromParent;
+                }
+                if (parent instanceof Item) {
+                    Item parentItem = (Item)parent;
+                    parent = parentItem.getParent();
+                    located = OwnershipHelperLocator.locate(parent);
+                } else {
+                    located = null;
+                }
             }
         }
         

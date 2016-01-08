@@ -35,6 +35,7 @@ import hudson.security.ACL;
 import hudson.security.SecurityRealm;
 import java.util.Arrays;
 import static org.hamcrest.Matchers.*;
+import org.jenkinsci.plugins.ownership.config.InheritanceOptions;
 import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
 import org.jenkinsci.plugins.ownership.test.util.OwnershipPluginConfigurer;
 import org.jenkinsci.remoting.RoleChecker;
@@ -179,5 +180,34 @@ public class FolderOwnershipTest {
                 ownershipInfo.getDescription(), equalTo(original));
         assertThat("OwnershipInfo should return the right reference", 
                 (Object)ownershipInfo.getSource().getItem(), equalTo((Object)j.jenkins.getItemByFullName("folder1")));
+    }
+    
+    @Test
+    public void ownershipShouldNotBeInheritedFromTopLevelFolderIfDisabled() throws Exception {
+        Folder folder1 = j.jenkins.createProject(Folder.class, "folder1");
+        Folder folder2 = folder1.createProject(Folder.class, "folder2");
+        FreeStyleProject project = folder2.createProject(FreeStyleProject.class, "projectInFolder");
+        
+        // Set ownership via API
+        OwnershipDescription original = new OwnershipDescription(true, "ownerId", Arrays.asList("coowner1, coowner2"));
+        FolderOwnershipHelper.setOwnership(folder1, original); 
+        assertThat("Folder ownership helper should return the inherited value",
+                JobOwnerHelper.Instance.getOwnershipDescription(project), 
+                equalTo(original));
+          
+        // Disable the inheritance
+        OwnershipPluginConfigurer.forJenkinsRule(j)
+                .withInheritanceOptions(new InheritanceOptions(true))
+                .configure();
+        
+        // Ensure that Ownership is disabled for both nested job and folder
+        OwnershipInfo projectOwnershipInfo = JobOwnerHelper.Instance.getOwnershipInfo(
+                j.jenkins.getItemByFullName("folder1/folder2/projectInFolder", FreeStyleProject.class));
+        OwnershipInfo folderOwnershipInfo = FolderOwnershipHelper.getInstance().getOwnershipInfo(
+                j.jenkins.getItemByFullName("folder1/folder2", Folder.class));
+        assertThat("Folder should not inherit the ownership info when inheritance is disabled",
+                folderOwnershipInfo.getDescription(), equalTo(OwnershipDescription.DISABLED_DESCR));
+        assertThat("Project should not inherit the ownerhip info when inheritance is disabled",
+                projectOwnershipInfo.getDescription(), equalTo(OwnershipDescription.DISABLED_DESCR));
     }
 }

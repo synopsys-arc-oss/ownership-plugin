@@ -38,4 +38,7 @@
     <f:entry>
         <f:property field="displayOptions"/>
     </f:entry>
+    <f:entry>
+        <f:property field="inheritanceOptions"/>
+    </f:entry>
 </j:jelly>
