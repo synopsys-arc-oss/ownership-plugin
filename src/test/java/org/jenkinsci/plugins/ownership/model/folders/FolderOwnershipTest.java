@@ -40,6 +40,7 @@ import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
 import org.jenkinsci.plugins.ownership.test.util.OwnershipPluginConfigurer;
 import org.jenkinsci.remoting.RoleChecker;
 import static org.junit.Assert.assertThat;
+import org.junit.Ignore;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -91,6 +92,8 @@ public class FolderOwnershipTest {
     }
     
     @Test
+    @Ignore("The issue fix requires the new CloudBees Folders Release. "
+            + "It has been decided to go forward in order to integrate other changes before the release.")
     @Issue("JENKINS-32359")
     public void ownershipFromLoadedFolderShouldSurviveRoundtrip() throws Exception {
         Folder folder = j.jenkins.createProject(Folder.class, "myFolder");
@@ -238,7 +241,5 @@ public class FolderOwnershipTest {
                 folderOwnershipInfo.getDescription(), equalTo(OwnershipDescription.DISABLED_DESCR));
         assertThat("Project should not inherit the ownerhip info when inheritance is disabled",
                 projectOwnershipInfo.getDescription(), equalTo(OwnershipDescription.DISABLED_DESCR));
-    }
-    
-    
+    }  
 }
