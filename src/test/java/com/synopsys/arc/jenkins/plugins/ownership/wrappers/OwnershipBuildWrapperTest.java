@@ -24,6 +24,7 @@
 
 package com.synopsys.arc.jenkins.plugins.ownership.wrappers;
 
+import com.cloudbees.hudson.plugins.folder.Folder;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPluginConfiguration;
@@ -44,8 +45,11 @@ import hudson.scm.NullSCM;
 import hudson.tasks.Shell;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.concurrent.Future;
 import static junit.framework.Assert.*;
+import org.jenkinsci.plugins.ownership.model.folders.FolderOwnershipHelper;
+import org.jenkinsci.plugins.ownership.test.util.OwnershipPluginConfigurer;
 import org.jenkinsci.plugins.ownership.util.environment.EnvSetupOptions;
 import org.jenkinsci.plugins.ownership.util.mail.MailOptions;
 import org.junit.Rule;
@@ -125,6 +129,26 @@ public class OwnershipBuildWrapperTest {
                 new EnvSetupOptions(true, true));
         r.jenkins.getPlugin(OwnershipPlugin.class).configure(true, null, null, pluginConf);
         
+        FreeStyleBuild build = testVarsPresense(false);
+        r.assertLogContains("NODE_COOWNERS="+NODE_OWNER_ID, build);
+        r.assertLogContains("JOB_COOWNERS="+PROJECT_OWNER_ID, build);
+    }
+    
+    @Test
+    @Bug(28881)
+    public void shouldInjectInheritedOwnershipInfo() throws Exception {
+        initJenkinsInstance();
+        OwnershipPluginConfigurer.forJenkinsRule(r)
+                .withGlobalEnvSetupOptions(new EnvSetupOptions(true, true))
+                .configure();
+        
+        // Init folder with a nested job
+        Folder folder = r.jenkins.createProject(Folder.class, "folder");
+        FolderOwnershipHelper.setOwnership(folder, new OwnershipDescription(true, PROJECT_OWNER_ID, Collections.<String>emptyList()));
+        FreeStyleProject prj = folder.createProject(FreeStyleProject.class, "projectInsideFolder");
+        prj.getBuildersList().add(new Shell("env"));
+        
+        // Run test. We expect Ownership info to be inherited for the project
         FreeStyleBuild build = testVarsPresense(false);
         r.assertLogContains("NODE_COOWNERS="+NODE_OWNER_ID, build);
         r.assertLogContains("JOB_COOWNERS="+PROJECT_OWNER_ID, build);

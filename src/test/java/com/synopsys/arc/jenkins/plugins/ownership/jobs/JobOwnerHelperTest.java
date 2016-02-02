@@ -1,7 +1,7 @@
-<!--
+/*
  * The MIT License
  *
- * Copyright 2014 Oleg Nenashev, Synopsys Inc.
+ * Copyright (c) 2016 Oleg Nenashev.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,25 +20,30 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- -->
-<?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:sl="/hudson/plugins/sidebar_link">
-     <j:invokeStatic var="itemOwnershipPolicies" 
-                    className="com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy"
-                    method="allDescriptors"/>
-    <f:entry>
-        <f:property field="mailOptions"/>
-    </f:entry>
-    <f:entry title="${%itemOwnershipPolicy.title}">
-        <f:hetero-radio field="itemOwnershipPolicy" descriptors="${itemOwnershipPolicies}"/>
-    </f:entry> 
-    <f:entry>
-        <f:optionalProperty field="globalEnvSetupOptions" title="${%globalEnvSetupOptions.title}"/>
-    </f:entry>
-    <f:entry>
-        <f:property field="displayOptions"/>
-    </f:entry>
-    <f:entry>
-        <f:property field="inheritanceOptions"/>
-    </f:entry>
-</j:jelly>
+ */
+package com.synopsys.arc.jenkins.plugins.ownership.jobs;
+
+import hudson.model.FreeStyleProject;
+import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
+import static org.junit.Assert.assertEquals;
+import org.junit.Rule;
+import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
+
+/**
+ * Tests for {@link JobOwnerHelper}.
+ * @author Oleg Nenashev
+ */
+public class JobOwnerHelperTest {
+    
+    @Rule
+    public JenkinsRule j = new JenkinsRule();
+    
+    @Test
+    public void locatorShouldReturnRightHelperForFolder() throws Exception {
+        FreeStyleProject folder = j.jenkins.createProject(FreeStyleProject.class, "myFolder");
+        
+        assertEquals("OwnershipHelperLocator should return the FolderOwnershipHelper instance",
+                OwnershipHelperLocator.locate(folder), JobOwnerHelper.Instance);
+    }
+}

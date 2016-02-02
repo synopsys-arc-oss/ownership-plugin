@@ -32,6 +32,7 @@ import hudson.model.Descriptor;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import org.jenkinsci.plugins.ownership.config.DisplayOptions;
+import org.jenkinsci.plugins.ownership.config.InheritanceOptions;
 import org.jenkinsci.plugins.ownership.model.runs.OwnershipRunListener;
 import org.jenkinsci.plugins.ownership.util.environment.EnvSetupOptions;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -47,6 +48,7 @@ public class OwnershipPluginConfiguration
     private final ItemOwnershipPolicy itemOwnershipPolicy;
     private final @CheckForNull MailOptions mailOptions;
     private final @CheckForNull DisplayOptions displayOptions;
+    private final @CheckForNull InheritanceOptions inheritanceOptions;
     
     /**
      * Enforces the injection of ownership variables in {@link OwnershipRunListener}.
@@ -55,14 +57,22 @@ public class OwnershipPluginConfiguration
      */
     private final @CheckForNull EnvSetupOptions globalEnvSetupOptions;
 
-    @DataBoundConstructor
+    @Deprecated
     public OwnershipPluginConfiguration(@Nonnull ItemOwnershipPolicy itemOwnershipPolicy, 
             @Nonnull MailOptions mailOptions, EnvSetupOptions globalEnvSetupOptions, 
             @Nonnull DisplayOptions displayOptions) {
+        this(itemOwnershipPolicy, mailOptions, globalEnvSetupOptions, displayOptions, InheritanceOptions.DEFAULT);
+    }
+    
+    @DataBoundConstructor
+    public OwnershipPluginConfiguration(@Nonnull ItemOwnershipPolicy itemOwnershipPolicy, 
+            @Nonnull MailOptions mailOptions, EnvSetupOptions globalEnvSetupOptions, 
+            @Nonnull DisplayOptions displayOptions, @Nonnull InheritanceOptions inheritanceOptions) {
         this.itemOwnershipPolicy = itemOwnershipPolicy;
         this.mailOptions = mailOptions;
         this.globalEnvSetupOptions = globalEnvSetupOptions;
         this.displayOptions = displayOptions;
+        this.inheritanceOptions = inheritanceOptions;
     }
     
     @Deprecated
@@ -92,6 +102,10 @@ public class OwnershipPluginConfiguration
      */
     public @Nonnull DisplayOptions getDisplayOptions() {
         return displayOptions != null ? displayOptions : DisplayOptions.DEFAULT;
+    }
+
+    public InheritanceOptions getInheritanceOptions() {
+        return inheritanceOptions != null ? inheritanceOptions : InheritanceOptions.DEFAULT;
     }
     
     /**

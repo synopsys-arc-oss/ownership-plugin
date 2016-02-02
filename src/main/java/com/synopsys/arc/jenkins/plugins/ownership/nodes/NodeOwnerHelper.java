@@ -37,6 +37,9 @@ import java.io.IOException;
 import java.util.Collection;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import org.jenkinsci.plugins.ownership.model.OwnershipDescriptionSource;
+import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
+import org.jenkinsci.plugins.ownership.model.nodes.NodeOwnershipDescriptionSource;
 
 /**
  * Provides helper for Node owner.
@@ -63,12 +66,24 @@ public class NodeOwnerHelper extends AbstractOwnershipHelper<Node> {
         
     @Override
     public OwnershipDescription getOwnershipDescription(Node item) {
+        // TODO: This method impl is a performance hack. May be replaced by getOwnershipInfo() in 1.0
         if (item == null) { // Handle renames, etc.
             return OwnershipDescription.DISABLED_DESCR;
         }
         
         OwnerNodeProperty prop = getOwnerProperty(item);
         return prop != null ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
+    }
+
+    @Override
+    public OwnershipInfo getOwnershipInfo(Node item) {
+        if (item == null) { // Handle renames, etc.
+            return OwnershipInfo.DISABLED_INFO;
+        }
+        
+        OwnerNodeProperty prop = getOwnerProperty(item);
+        return prop != null ? new OwnershipInfo(OwnershipDescription.DISABLED_DESCR, 
+                new NodeOwnershipDescriptionSource(item)) : OwnershipInfo.DISABLED_INFO;
     }
     
     @Override

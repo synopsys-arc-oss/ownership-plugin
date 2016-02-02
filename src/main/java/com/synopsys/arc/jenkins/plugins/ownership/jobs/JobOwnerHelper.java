@@ -23,16 +23,21 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
+import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPluginConfiguration;
 import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurity;
 import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.AccessRightsFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.IUserFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.wrappers.OwnershipBuildWrapper;
+import hudson.Extension;
 import hudson.matrix.MatrixConfiguration;
 import hudson.model.AbstractBuild;
+import hudson.model.Item;
+import hudson.model.ItemGroup;
 import hudson.model.Job;
 import hudson.model.JobProperty;
 import hudson.model.Project;
@@ -42,6 +47,9 @@ import java.util.Collection;
 import java.util.Map;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
+import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
+import org.jenkinsci.plugins.ownership.model.jobs.JobOwnershipDescriptionSource;
 
 /**
  * Helper for Jobs Ownership.
@@ -53,9 +61,12 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
     public final static JobOwnerHelper Instance = new JobOwnerHelper();
       
     /**
-     * Gets JobOwnerProperty from job if possible.
+     * Gets {@link JobOwnerJobProperty} from the job if possible.
      * The function also handles multi-configuration jobs, so it should be used 
      * wherever it is possible.
+     * <p/>
+     * This method should not be used to retrieve Ownership descriptions, 
+     * because it does not take inheritance into account.
      * @param job Job
      * @return JobOwnerJobProperty or null if it is not configured
      */
@@ -86,8 +97,42 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
      
     @Override
     public @Nonnull OwnershipDescription getOwnershipDescription(@Nonnull Job<?, ?> job) {
+        // TODO: Maybe makes sense to unwrap the method to get a better performance (esp. for Security)
+        return getOwnershipInfo(job).getDescription();
+    }
+
+    @Override
+    public OwnershipInfo getOwnershipInfo(Job<?, ?> job) {
         JobOwnerJobProperty prop = getOwnerProperty(job);     
-        return (prop != null) ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
+        if (prop != null) {
+            OwnershipDescription d = prop.getOwnership();
+            if (d.isOwnershipEnabled()) {
+                // If Ownership on this level is enabled, we return it
+                return new OwnershipInfo(d, new JobOwnershipDescriptionSource(job));
+            }
+        }
+        
+        // We go to upper items in order to get the ownership description
+        if (!OwnershipPluginConfiguration.get().getInheritanceOptions().isBlockInheritanceFromItemGroups()) {
+            ItemGroup parent = job.getParent();
+            AbstractOwnershipHelper<ItemGroup> located = OwnershipHelperLocator.locate(parent);
+            while (located != null) {
+                OwnershipInfo fromParent = located.getOwnershipInfo(parent);
+                if (fromParent.getDescription().isOwnershipEnabled()) {
+                    return fromParent;
+                }
+                if (parent instanceof Item) {
+                    Item parentItem = (Item)parent;
+                    parent = parentItem.getParent();
+                    located = OwnershipHelperLocator.locate(parent);
+                } else {
+                    located = null;
+                }
+            }
+        }
+        
+        // Fallback: we have not found the Ownership using known approaches
+        return OwnershipInfo.DISABLED_INFO;
     }
 
     /**
@@ -145,5 +190,17 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
 
     public String getItemURL(Job<?, ?> item) {
         return item.getUrl();
+    }
+    
+    @Extension
+    public static class LocatorImpl extends OwnershipHelperLocator<Job<?,?>> {
+        
+        @Override
+        public AbstractOwnershipHelper<Job<?,?>> findHelper(Object item) {
+            if (item instanceof Job<?,?>) {
+                return Instance;
+            }
+            return null;
+        }      
     }
 }

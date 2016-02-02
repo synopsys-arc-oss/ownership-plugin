@@ -35,6 +35,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ownership.config.DisplayOptions;
+import org.jenkinsci.plugins.ownership.config.InheritanceOptions;
 import org.jenkinsci.plugins.ownership.util.environment.EnvSetupOptions;
 import org.jenkinsci.plugins.ownership.util.mail.MailOptions;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -54,6 +55,7 @@ public class OwnershipPluginConfigurer {
     private MailOptions mailOptions;
     private DisplayOptions displayOptions;
     private EnvSetupOptions globalEnvSetupOptions;
+    private InheritanceOptions inheritanceOptions;
       
     private OwnershipPluginConfigurer(Jenkins jenkins) {
         this.jenkins = jenkins;
@@ -104,9 +106,14 @@ public class OwnershipPluginConfigurer {
         return this;
     }
     
+    public OwnershipPluginConfigurer withInheritanceOptions(InheritanceOptions inheritanceOptions) {
+        this.inheritanceOptions = inheritanceOptions;
+        return this;
+    }
+    
     public void configure() throws IOException {
         OwnershipPluginConfiguration conf = new OwnershipPluginConfiguration
-                (itemOwnershipPolicy, mailOptions, globalEnvSetupOptions, displayOptions);
+                (itemOwnershipPolicy, mailOptions, globalEnvSetupOptions, displayOptions, inheritanceOptions);
         jenkins.getPlugin(OwnershipPlugin.class).configure
                 (requiresConfigurePermissions, mailResolverClassName, defaultJobsSecurity, conf);
     }

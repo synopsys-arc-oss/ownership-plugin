@@ -1,7 +1,7 @@
-<!--
+/*
  * The MIT License
  *
- * Copyright 2014 Oleg Nenashev, Synopsys Inc.
+ * Copyright (c) 2016 Oleg Nenashev.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,25 +20,22 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- -->
-<?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:sl="/hudson/plugins/sidebar_link">
-     <j:invokeStatic var="itemOwnershipPolicies" 
-                    className="com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy"
-                    method="allDescriptors"/>
-    <f:entry>
-        <f:property field="mailOptions"/>
-    </f:entry>
-    <f:entry title="${%itemOwnershipPolicy.title}">
-        <f:hetero-radio field="itemOwnershipPolicy" descriptors="${itemOwnershipPolicies}"/>
-    </f:entry> 
-    <f:entry>
-        <f:optionalProperty field="globalEnvSetupOptions" title="${%globalEnvSetupOptions.title}"/>
-    </f:entry>
-    <f:entry>
-        <f:property field="displayOptions"/>
-    </f:entry>
-    <f:entry>
-        <f:property field="inheritanceOptions"/>
-    </f:entry>
-</j:jelly>
+ */
+package org.jenkinsci.plugins.ownership.model.nodes;
+
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import hudson.model.Node;
+import org.jenkinsci.plugins.ownership.model.OwnershipDescriptionSource;
+
+/**
+ * References {@link OwnershipDescription}s provided by various {@link Node}s.
+ * @author Oleg Nenashev
+ * @since TODO
+ */
+public class NodeOwnershipDescriptionSource extends OwnershipDescriptionSource<Node> {
+    
+    public NodeOwnershipDescriptionSource(Node node) {
+        super(node);
+    }
+    
+}

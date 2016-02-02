@@ -33,6 +33,8 @@ import hudson.slaves.NodeProperty;
 import java.util.Collection;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
+import org.jenkinsci.plugins.ownership.model.nodes.NodeOwnershipDescriptionSource;
 
 /**
  * Provides helper for Node owner
@@ -57,9 +59,19 @@ public class NodeOwnerPropertyHelper extends AbstractOwnershipHelper<NodePropert
     @Nonnull
     @Override
     public OwnershipDescription getOwnershipDescription(@CheckForNull NodeProperty item) {
+        // TODO: This method impl is a performance hack. May be replaced by getOwnershipInfo() in 1.0
         OwnerNodeProperty prop = getOwnerProperty(item);
         OwnershipDescription descr = (prop != null) ? prop.getOwnership() : null;
         return descr != null ? descr : OwnershipDescription.DISABLED_DESCR;
+    }
+
+    @Override
+    public OwnershipInfo getOwnershipInfo(NodeProperty item) {
+        OwnerNodeProperty prop = getOwnerProperty(item);
+        OwnershipDescription descr = (prop != null) ? prop.getOwnership() : null;
+        return descr != null 
+                ? new OwnershipInfo(descr, new NodeOwnershipDescriptionSource(getNode(item)))
+                : OwnershipInfo.DISABLED_INFO;
     }
     
     @Nonnull

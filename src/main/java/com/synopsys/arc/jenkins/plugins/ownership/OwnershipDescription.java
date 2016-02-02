@@ -219,6 +219,43 @@ public class OwnershipDescription implements Serializable {
     public boolean isPrimaryOwner(User user) {
         return user != null && user == getPrimaryOwner();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + (this.ownershipEnabled ? 1 : 0);
+        hash = 41 * hash + (this.primaryOwnerId != null ? this.primaryOwnerId.hashCode() : 0);
+        hash = 41 * hash + (this.coownersIds != null ? this.coownersIds.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final OwnershipDescription other = (OwnershipDescription) obj;
+        if (this.ownershipEnabled != other.ownershipEnabled) {
+            return false;
+        } else if (!this.ownershipEnabled) {
+            // Treat disabled ownership configurations as equal ones
+            return true;
+        }
+        
+        if ((this.primaryOwnerId == null) ? (other.primaryOwnerId != null) : !this.primaryOwnerId.equals(other.primaryOwnerId)) {
+            return false;
+        }
+        if (this.coownersIds != other.coownersIds && (this.coownersIds == null || !this.coownersIds.equals(other.coownersIds))) {
+            return false;
+        }
+        return true;
+    }
     
     /**
      * Check if ownership is enabled.

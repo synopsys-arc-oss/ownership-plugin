@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.Collection;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
 
 /**
  * Provides ownership helper for {@link Computer}.
@@ -48,12 +49,21 @@ public class ComputerOwnerHelper extends AbstractOwnershipHelper<Computer> {
         
     @Override
     public OwnershipDescription getOwnershipDescription(@Nonnull Computer item) {
+        // TODO: This method impl is a performance hack. May be replaced by getOwnershipInfo() in 1.0
         Node node = item.getNode();      
         return node != null 
                 ? NodeOwnerHelper.Instance.getOwnershipDescription(node)
                 : OwnershipDescription.DISABLED_DESCR; // No node - no ownership
     }
-    
+
+    @Override
+    public OwnershipInfo getOwnershipInfo(Computer item) {
+        Node node = item.getNode();      
+        return node != null 
+                ? NodeOwnerHelper.Instance.getOwnershipInfo(node)
+                : OwnershipInfo.DISABLED_INFO;
+    }
+
     @Override
     public Collection<User> getPossibleOwners(@Nonnull Computer computer) {
         Node node = computer.getNode();
