@@ -23,6 +23,7 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership;
 
+import com.synopsys.arc.jenkins.plugins.ownership.util.OwnershipDescriptionHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.nodes.OwnerNodeProperty;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Util;
@@ -32,12 +33,14 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.sf.json.JSONObject;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 
 /**
  * Contains description of item's ownership. 
@@ -54,6 +57,7 @@ public class OwnershipDescription implements Serializable {
     /**
      * Indicates if ownership is enabled
      */
+    @Whitelisted
     boolean ownershipEnabled;
     
     /**
@@ -65,6 +69,7 @@ public class OwnershipDescription implements Serializable {
      * Sids of the co-Owners.
      * Sids can include users and groups.  
      */
+    @Whitelisted
     Set<String> coownersIds;
 
     /**
@@ -120,6 +125,7 @@ public class OwnershipDescription implements Serializable {
      * Check if ownership is enabled.
      * @return true if ownership is enabled
      */
+    @Whitelisted
     public boolean isOwnershipEnabled() {
         return ownershipEnabled;
     }
@@ -148,6 +154,7 @@ public class OwnershipDescription implements Serializable {
      * @return Collection of co-owners
      */
     @Nonnull
+    @Whitelisted
     public Set<String> getCoownersIds() {
         return coownersIds;
     }
@@ -216,12 +223,57 @@ public class OwnershipDescription implements Serializable {
         return acceptCoowners ? coownersIds.contains(user.getId()) : false;
     }
     
+    @Whitelisted
     public boolean hasPrimaryOwner() {
         return ownershipEnabled && getPrimaryOwner() != null;
     }
     
     public boolean isPrimaryOwner(User user) {
         return user != null && user == getPrimaryOwner();
+    }
+    
+    /**
+     * Gets id of the owner.
+     * @return userId of the primary owner. The result will be "unknown" if the
+     * user is not specified.
+     * @since TODO
+     */
+    @Whitelisted
+    public @Nonnull String getOwnerId() {
+        return getPrimaryOwnerId();
+    }
+    
+    /**
+     * Gets owner's e-mail.
+     * This method utilizes {@link OwnershipPlugin} global configuration to resolve emails.
+     * @return Owner's e-mail or empty string if it is not available
+     * @since TODO
+     */
+    @Nonnull
+    @Whitelisted
+    public String getOwnerEmail() {
+        return OwnershipDescriptionHelper.getOwnerEmail(this);
+    }
+    
+    /**
+     * Gets a comma-separated list of co-owners.
+     * @return List of co-owner user IDs
+     * @since TODO
+     */
+    @Whitelisted
+    public @Nonnull Set<String> getCoOwnerIds() {
+        return coownersIds;
+    }
+    
+    /**
+     * Gets e-mails of co-owners.
+     * This method utilizes {@link OwnershipPlugin} global configuration to resolve emails.
+     * @return List of co-owner e-mails (may be empty)
+     * @since TODO
+     */
+    @Whitelisted
+    public @Nonnull Set<String> getCoOwnerEmails() {
+        return OwnershipDescriptionHelper.getCoOwnerEmailList(this, false);
     }
 
     @Override
