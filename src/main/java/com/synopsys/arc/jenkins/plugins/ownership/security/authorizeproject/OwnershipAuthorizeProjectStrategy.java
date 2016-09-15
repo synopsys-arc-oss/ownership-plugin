@@ -29,6 +29,7 @@ import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
 import hudson.Extension;
 import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.model.Queue;
 import hudson.model.User;
 import java.util.Collections;
@@ -53,8 +54,8 @@ public class OwnershipAuthorizeProjectStrategy extends AuthorizeProjectStrategy 
     }
 
     @Override
-    public Authentication authenticate(AbstractProject<?, ?> ap, Queue.Item item) {    
-        OwnershipDescription d = JobOwnerHelper.Instance.getOwnershipDescription(ap);
+    public Authentication authenticate(Job<?, ?> job, Queue.Item item) {    
+        OwnershipDescription d = JobOwnerHelper.Instance.getOwnershipDescription(job);
         if (!d.hasPrimaryOwner()) { // fallback to anonymous
             return Jenkins.ANONYMOUS;
         }    
