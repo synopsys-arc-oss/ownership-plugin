@@ -25,6 +25,7 @@
 package com.synopsys.arc.jenkins.plugins.ownership.extensions;
 
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy.DropOwnershipPolicy;
 import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.Describable;
@@ -33,6 +34,8 @@ import java.util.List;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Implements an ownership changes policy for {@link Item}s. 
@@ -41,6 +44,18 @@ import jenkins.model.Jenkins;
  */
 public abstract class ItemOwnershipPolicy 
         implements ExtensionPoint, Describable<ItemOwnershipPolicy> {
+    
+    private static final ItemOwnershipPolicy DEFAULT = new DropOwnershipPolicy();
+    
+    /**
+     * Returns default Item Ownership Policy, which should be assigned on first startup.
+     * @return Ownership policy
+     */
+    @Nonnull
+    @Restricted(NoExternalUse.class)
+    public static ItemOwnershipPolicy getDefault() {
+        return DEFAULT;
+    }
     
     /**
      * A handler for newly created items.

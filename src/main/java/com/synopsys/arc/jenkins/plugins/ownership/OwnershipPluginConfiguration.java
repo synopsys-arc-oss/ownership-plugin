@@ -25,6 +25,7 @@
 package com.synopsys.arc.jenkins.plugins.ownership;
 
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy;
+import com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy.DropOwnershipPolicy;
 import org.jenkinsci.plugins.ownership.util.mail.MailOptions;
 import hudson.Extension;
 import hudson.model.Describable;
@@ -87,7 +88,7 @@ public class OwnershipPluginConfiguration
     }
 
     public @Nonnull ItemOwnershipPolicy getItemOwnershipPolicy() {
-        return itemOwnershipPolicy;
+        return itemOwnershipPolicy != null ? itemOwnershipPolicy : ItemOwnershipPolicy.getDefault();
     }
 
     public @Nonnull MailOptions getMailOptions() {
