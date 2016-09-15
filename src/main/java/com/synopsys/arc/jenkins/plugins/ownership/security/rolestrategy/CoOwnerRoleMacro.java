@@ -33,11 +33,11 @@ import hudson.security.AccessControlled;
 import hudson.security.Permission;
 
 /**
- * Checks if the user belongs to owners or co-owners of the item.
+ * Checks if the user belongs to primary or secondary owners of the item.
  * @author Oleg Nenashev
  * @since 0.2
  */
-@Extension(optional = true)
+@Extension(optional = true, ordinal = -1000)
 public class CoOwnerRoleMacro extends AbstractOwnershipRoleMacro {
     
     @Override

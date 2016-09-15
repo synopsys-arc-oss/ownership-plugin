@@ -40,13 +40,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import javax.annotation.Nonnull;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
- * Filters owner's and co-owners.
+ * Filters jobs by primary and secondary owners.
  * @author Oleg Nenashev
  * @since 0.1
  */
@@ -64,7 +65,20 @@ public class OwnershipJobFilter extends ViewJobFilter {
         return ownerId;
     }
 
+    /**
+     * @deprecated use {@link #isAcceptSecondaryOwners()}
+     */
+    @Deprecated
     public boolean isAcceptsCoowners() {
+        return acceptsCoowners;
+    }
+    
+    /**
+     * Enables checking of secondary owners
+     * @return 
+     * @since TODO
+     */
+    public boolean isAcceptSecondaryOwners() {
         return acceptsCoowners;
     }
 
@@ -99,8 +113,8 @@ public class OwnershipJobFilter extends ViewJobFilter {
             if (userWrapper.meetsMacro(ownership.getPrimaryOwnerId())) {
                 matches = true;
             }
-            if (acceptsCoowners && !matches) { // Check co-owners
-                for (String coOwnerId : ownership.getCoownersIds()) {
+            if (acceptsCoowners && !matches) { // Check secondary owners
+                for (String coOwnerId : ownership.getSecondaryOwnerIds()) {
                     if (userWrapper.meetsMacro(coOwnerId)) {
                         matches = true;
                         break;
@@ -137,6 +151,7 @@ public class OwnershipJobFilter extends ViewJobFilter {
      *
      * @return Collection of all registered users
      */
+    @Nonnull
     public static Collection<UserWrapper> getAvailableUsers() {
         // Sort users
         UserComparator comparator = new UserComparator();

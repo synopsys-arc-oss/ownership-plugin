@@ -66,7 +66,7 @@ public class OwnershipDescription implements Serializable {
     String primaryOwnerId;
     
     /**
-     * Sids of the co-Owners.
+     * Sids of the secondary owners (fka co-owners).
      * Sids can include users and groups.  
      */
     @Whitelisted
@@ -76,7 +76,7 @@ public class OwnershipDescription implements Serializable {
      * Constructor.
      * @param ownershipEnabled indicates that the ownership is enabled
      * @param primaryOwnerId userId of primary owner
-     * @deprecated Use constructor with co-owners specification
+     * @deprecated Use constructor with secondary owners specification
      */
     public OwnershipDescription(boolean ownershipEnabled, @Nonnull String primaryOwnerId) {
         this(ownershipEnabled, primaryOwnerId, null);
@@ -87,12 +87,12 @@ public class OwnershipDescription implements Serializable {
      * Class is being used as DataBound in {@link OwnerNodeProperty}.
      * @param ownershipEnabled Indicates that the ownership is enabled.
      * @param primaryOwnerId userId of primary owner. Use null if there is no owner 
-     * @param coownersIds userIds of secondary owners. Use null if there is no co-owners.
+     * @param secondaryOwnerIds userIds of secondary owners. Use {@code null} if there is no secondary owners.
      */
-    public OwnershipDescription(boolean ownershipEnabled, @Nullable String primaryOwnerId, @Nullable Collection<String> coownersIds) {
+    public OwnershipDescription(boolean ownershipEnabled, @Nullable String primaryOwnerId, @Nullable Collection<String> secondaryOwnerIds) {
         this.ownershipEnabled = ownershipEnabled;
         this.primaryOwnerId = primaryOwnerId;
-        this.coownersIds =  coownersIds != null ? new TreeSet<String>(coownersIds) : new TreeSet<String>();
+        this.coownersIds =  secondaryOwnerIds != null ? new TreeSet<String>(secondaryOwnerIds) : new TreeSet<String>();
     }
     
     public void assign(@Nonnull OwnershipDescription descr) {
@@ -108,10 +108,10 @@ public class OwnershipDescription implements Serializable {
         }
            
         StringBuilder builder = new StringBuilder();
-        builder.append("owner=");
+        builder.append("primary owner=");
         builder.append(primaryOwnerId);
         if (!coownersIds.isEmpty()) {
-            builder.append(" co-owners:[");
+            builder.append(" secondary owners:[");
             for (String coownerId : coownersIds) {
                 builder.append(coownerId);
                 builder.append(' ');
@@ -135,6 +135,7 @@ public class OwnershipDescription implements Serializable {
      * @return userId of the primary owner. The result will be "unknown" if the
      * user is not specified.
      */
+    @Whitelisted
     public @Nonnull String getPrimaryOwnerId() {        
         return ownershipEnabled ? primaryOwnerId :  User.getUnknown().getId();
     }
@@ -150,12 +151,24 @@ public class OwnershipDescription implements Serializable {
     }
 
     /**
-     * Gets list of co-owners.
-     * @return Collection of co-owners
+     * Gets list of secondary owners (fka co-owners).
+     * @return Collection of secondary owners
+     * @deprecated use {@link #getSecondaryOwnerIds()}
+     */
+    @Nonnull
+    @Deprecated
+    public Set<String> getCoownersIds() {
+        return getSecondaryOwnerIds();
+    }
+    
+    /**
+     * Gets list of secondary owners.
+     * @return Collection of secondary owners
+     * @since 0.9
      */
     @Nonnull
     @Whitelisted
-    public Set<String> getCoownersIds() {
+    public Set<String> getSecondaryOwnerIds() {
         return coownersIds;
     }
     
@@ -181,21 +194,21 @@ public class OwnershipDescription implements Serializable {
             throws Descriptor.FormException
     {
         // Read primary owner
-        String primaryOwner = formData.getString( "primaryOwner" );
+        String primaryOwnerId = formData.getString( "primaryOwner" );
 
         // Read coowners
-        Set<String> coOwnersSet = new TreeSet<String>();
+        Set<String> secondaryOwnerIds = new TreeSet<String>();
         if (formData.has("coOwners")) {
             JSONObject coOwners = formData.optJSONObject("coOwners");
             if (coOwners == null) {         
                 for (Object obj : formData.getJSONArray("coOwners")) {
-                   addUser(coOwnersSet, (JSONObject)obj);
+                   addUser(secondaryOwnerIds, (JSONObject)obj);
                 }
             } else {
-                addUser(coOwnersSet, coOwners);
+                addUser(secondaryOwnerIds, coOwners);
             }
         }   
-        return new OwnershipDescription(true, primaryOwner, coOwnersSet);
+        return new OwnershipDescription(true, primaryOwnerId, secondaryOwnerIds);
     }
     
     private static void addUser(Set<String> target, JSONObject userObj) throws Descriptor.FormException {
@@ -210,70 +223,99 @@ public class OwnershipDescription implements Serializable {
     /**
      * Check if User is an owner.
      * @param user User to be checked
-     * @param acceptCoowners Check if user belongs to co-owners
-     * @return true if User belongs to primary owners (and/or co-owners)
+     * @param includeSecondaryOwners Check if user belongs to secondary owners
+     * @return {@code true} if the user belongs to primary owners (and/or secondary owners)
      */
-    public boolean isOwner(User user, boolean acceptCoowners) {
+    public boolean isOwner(User user, boolean includeSecondaryOwners) {
         if (user == null) {
             return false;
         }
         if (isPrimaryOwner(user)) {
             return true;
         }
-        return acceptCoowners ? coownersIds.contains(user.getId()) : false;
+        return includeSecondaryOwners ? coownersIds.contains(user.getId()) : false;
     }
     
     @Whitelisted
     public boolean hasPrimaryOwner() {
         return ownershipEnabled && getPrimaryOwner() != null;
     }
-    
-    public boolean isPrimaryOwner(User user) {
+    /**
+     * Checks if the specified user is a primary owner.
+     * @param user User to be checked
+     * @return {@code true} if the user is a primary owner
+     */
+    public boolean isPrimaryOwner(@CheckForNull User user) {
         return user != null && user == getPrimaryOwner();
     }
     
     /**
-     * Gets id of the owner.
+     * Gets ID of the primary owner.
      * @return userId of the primary owner. The result will be "unknown" if the
      * user is not specified.
-     * @since TODO
+     * @since 0.9
+     * @deprecated Use {@link #getPrimaryOwnerId()}
      */
-    @Whitelisted
+    @Deprecated
     public @Nonnull String getOwnerId() {
         return getPrimaryOwnerId();
     }
     
     /**
-     * Gets owner's e-mail.
+     * Gets primary owner's e-mail.
      * This method utilizes {@link OwnershipPlugin} global configuration to resolve emails.
-     * @return Owner's e-mail or empty string if it is not available
-     * @since TODO
+     * @return Primary owner's e-mail or empty string if it is not available
+     * @since 0.9
+     * @deprecated Use {@link #getPrimaryOwnerEmail()} 
+     */
+    @Nonnull
+    @Deprecated
+    public String getOwnerEmail() {
+        return getPrimaryOwnerEmail();
+    }
+    
+    /**
+     * Gets primary owner's e-mail.
+     * This method utilizes {@link OwnershipPlugin} global configuration to resolve emails.
+     * @return Primary owner's e-mail or empty string if it is not available
+     * @since 0.9
      */
     @Nonnull
     @Whitelisted
-    public String getOwnerEmail() {
+    public String getPrimaryOwnerEmail() {
         return OwnershipDescriptionHelper.getOwnerEmail(this);
     }
     
     /**
      * Gets a comma-separated list of co-owners.
      * @return List of co-owner user IDs
-     * @since TODO
+     * @deprecated use {@link #getSecondaryOwnerIds()}
      */
-    @Whitelisted
+    @Deprecated
     public @Nonnull Set<String> getCoOwnerIds() {
         return coownersIds;
     }
     
     /**
-     * Gets e-mails of co-owners.
+     * Gets e-mails of secondary owners.
      * This method utilizes {@link OwnershipPlugin} global configuration to resolve emails.
-     * @return List of co-owner e-mails (may be empty)
-     * @since TODO
+     * @return List of secondary owner e-mails (may be empty)
+     * @deprecated use {@link #getSecondaryOwnerEmails()}
+     */
+    @Deprecated
+    public @Nonnull Set<String> getCoOwnerEmails() {
+        return OwnershipDescriptionHelper.getSecondaryOwnerEmails(this, false);
+    }
+    
+    /**
+     * Gets e-mails of secondary owners.
+     * This method utilizes {@link OwnershipPlugin} global configuration to resolve emails.
+     * @return List of secondary owner e-mails (may be empty)
+     * @since 0.9
      */
     @Whitelisted
-    public @Nonnull Set<String> getCoOwnerEmails() {
-        return OwnershipDescriptionHelper.getCoOwnerEmailList(this, false);
+    public @Nonnull Set<String> getSecondaryOwnerEmails() {
+        return OwnershipDescriptionHelper.getSecondaryOwnerEmails(this, false);
     }
 
     @Override
@@ -315,7 +357,7 @@ public class OwnershipDescription implements Serializable {
     
     /**
      * Check if ownership is enabled.
-     * @param descr Ownership description (can be null)
+     * @param descr Ownership description (can be {@code null})
      * @return True if the ownership is enabled
      * @since 0.1
      */

@@ -77,7 +77,20 @@ public class OwnersListJobRestriction extends JobRestriction {
         return usersList;
     }
 
+    /**
+     * @deprecated use {@link #isAcceptSecondaryOwners() } 
+     */
+    @Deprecated
     public boolean isAcceptsCoOwners() {
+        return acceptsCoOwners;
+    }
+    
+    /**
+     * Checks if the filter accepts secondary owners.
+     * @return {@code true} if secondary owners should be accepted
+     * @since 0.9
+     */
+    public boolean isAcceptSecondaryOwners() {
         return acceptsCoOwners;
     }
     
@@ -110,8 +123,8 @@ public class OwnersListJobRestriction extends JobRestriction {
                 return true;
             }
 
-            // Handle co-owners if required
-            Set<String> itemCoOwners = descr.getCoownersIds();
+            // Handle secondary owners if required
+            Set<String> itemCoOwners = descr.getSecondaryOwnerIds();
             if (acceptsCoOwners && !itemCoOwners.isEmpty()) {
                 for (String userID : usersMap) {
                     if (itemCoOwners.contains(userID)) {
@@ -121,7 +134,7 @@ public class OwnersListJobRestriction extends JobRestriction {
             }
         }
         
-        // Default fallback - user is not owner or co-owner
+        // Default fallback - user is not a primary or secondary owner
         return false;
     }
 

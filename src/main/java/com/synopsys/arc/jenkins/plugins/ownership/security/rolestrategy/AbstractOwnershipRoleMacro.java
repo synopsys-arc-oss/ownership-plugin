@@ -49,7 +49,7 @@ import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
  * @author Oleg Nenashev
  * @since 0.1
  */
-abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
+public abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
     
     public static final String NO_SID_SUFFIX="NoSid";
     protected static final String AUTHENTICATED_SID = "authenticated";
@@ -93,11 +93,21 @@ abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
         return OwnershipDescription.DISABLED_DESCR;
     }
     
-    public static boolean hasPermission(User user, RoleType type, AccessControlled item, Macro macro, boolean acceptCoowners) {
+    /**
+     * Checks if a user has the permission defined for this macro.
+     * @param user User
+     * @param type Role type
+     * @param item Item, for which permissions are being checked
+     * @param macro Macro expression
+     * @param acceptSecondaryOwners {@code true} if secondary owners should be considered
+     * @return {@code true} if the macro provides a permission.
+     */
+    public static boolean hasPermission(User user, RoleType type, AccessControlled item, 
+            Macro macro, boolean acceptSecondaryOwners) {
         //TODO: implement
         if (user == null) {
             return false;
         }       
-        return getOwnership(type, item).isOwner(user, acceptCoowners);
+        return getOwnership(type, item).isOwner(user, acceptSecondaryOwners);
     }
 }
