@@ -33,6 +33,7 @@ import hudson.model.listeners.ItemListener;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jenkins.model.Jenkins;
 
 /**
  * Locates changes in {@link AbstractFolder}s and assigns ownership accordingly.
@@ -44,19 +45,29 @@ public class FolderItemListener extends ItemListener {
     private static final Logger LOGGER = Logger.getLogger(FolderItemListener.class.getName());
     
     @Override
-    public void onCopied(Item src, Item item) {      
+    public void onCopied(Item src, Item item) {     
+        if (!isFoldersPluginEnabled()) {
+            return;
+        }
         OwnershipDescription d = getPolicy().onCopied(src, item);
         modifyOwnership(item, d);
     }
 
     @Override
     public void onCreated(Item item) {
+        if (!isFoldersPluginEnabled()) {
+            return;
+        }
         OwnershipDescription d = getPolicy().onCreated(item);
         modifyOwnership(item, d);
     }
     
     private ItemOwnershipPolicy getPolicy() {
         return OwnershipPlugin.getInstance().getConfiguration().getItemOwnershipPolicy();
+    }
+    
+    private boolean isFoldersPluginEnabled() {
+        return Jenkins.getActiveInstance().getPlugin("cloudbees-folder") != null;
     }
     
     private void modifyOwnership(Item item, OwnershipDescription ownership) {
