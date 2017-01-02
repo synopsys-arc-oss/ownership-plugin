@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2015 Oleg Nenashev.
+ * Copyright (c) 2015-2017 Oleg Nenashev.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,6 @@
 package org.jenkinsci.plugins.ownership.model.folders;
 
 import com.cloudbees.hudson.plugins.folder.AbstractFolder;
-import com.cloudbees.hudson.plugins.folder.Folder;
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.ItemOwnershipAction;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
@@ -45,7 +44,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 /**
- * Allows managing actions for {@link Folder}s.
+ * Allows managing actions for {@link AbstractFolder}s.
  * @author Oleg Nenashev
  * @since 0.9
  */
@@ -55,7 +54,7 @@ public class FolderOwnershipAction extends ItemOwnershipAction<AbstractFolder<?>
     private static final OwnershipLayoutFormatter<AbstractFolder<?>> DEFAULT_FOLDER_FORMATTER 
             = new OwnershipLayoutFormatter.DefaultJobFormatter<AbstractFolder<?>>();
     
-    public FolderOwnershipAction(@Nonnull Folder folder) {
+    public FolderOwnershipAction(@Nonnull AbstractFolder<?> folder) {
         super(folder);
     }
 

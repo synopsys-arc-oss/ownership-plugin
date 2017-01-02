@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2015 Oleg Nenashev.
+ * Copyright (c) 2015-2017 Oleg Nenashev.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,14 +24,9 @@
 package org.jenkinsci.plugins.ownership.model.folders;
 
 import com.cloudbees.hudson.plugins.folder.AbstractFolder;
-import com.cloudbees.hudson.plugins.folder.AbstractFolderProperty;
-import com.cloudbees.hudson.plugins.folder.Folder;
-import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPluginConfiguration;
-import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
-import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty;
 import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.AccessRightsFilter;
@@ -135,7 +130,7 @@ public class FolderOwnershipHelper extends AbstractOwnershipHelper<AbstractFolde
     @Override
     public Collection<User> getPossibleOwners(AbstractFolder<?> item) {
         if (OwnershipPlugin.getInstance().isRequiresConfigureRights()) {
-            IUserFilter filter = new AccessRightsFilter(item, Folder.CONFIGURE);
+            IUserFilter filter = new AccessRightsFilter(item, AbstractFolder.CONFIGURE);
             return UserCollectionFilter.filterUsers(User.getAll(), true, filter);
         } else {
             return User.getAll();

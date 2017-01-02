@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2016 Oleg Nenashev.
+ * Copyright (c) 2016-2017 Oleg Nenashev.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,6 @@
 package org.jenkinsci.plugins.ownership.model.folders;
 
 import com.cloudbees.hudson.plugins.folder.AbstractFolder;
-import com.cloudbees.hudson.plugins.folder.Folder;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy;
@@ -36,7 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Locates changes in {@link Folder}s and assigns ownership accordingly.
+ * Locates changes in {@link AbstractFolder}s and assigns ownership accordingly.
  * @author Oleg Nenashev
  */
 @Extension(optional = true)
