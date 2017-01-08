@@ -28,6 +28,7 @@ import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy;
 import hudson.Extension;
+import hudson.Plugin;
 import hudson.model.Item;
 import hudson.model.listeners.ItemListener;
 import java.io.IOException;
@@ -67,7 +68,8 @@ public class FolderItemListener extends ItemListener {
     }
     
     private boolean isFoldersPluginEnabled() {
-        return Jenkins.getActiveInstance().getPlugin("cloudbees-folder") != null;
+        final Plugin plugin = Jenkins.getActiveInstance().getPlugin("cloudbees-folder");
+        return plugin != null && plugin.getWrapper().isActive();
     }
     
     private void modifyOwnership(Item item, OwnershipDescription ownership) {
