@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2015 Oleg Nenashev.
+ * Copyright (c) 2015-2017 Oleg Nenashev.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,8 +26,6 @@ package org.jenkinsci.plugins.ownership.model.folders;
 import com.cloudbees.hudson.plugins.folder.AbstractFolder;
 import com.cloudbees.hudson.plugins.folder.AbstractFolderProperty;
 import com.cloudbees.hudson.plugins.folder.AbstractFolderPropertyDescriptor;
-import com.cloudbees.hudson.plugins.folder.Folder;
-import com.cloudbees.hudson.plugins.folder.FolderProperty;
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipItem;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
@@ -39,7 +37,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
- * Ownership property for {@link Folder}s.
+ * Ownership property for {@link AbstractFolder}s.
  * @author Oleg Nenashev
  * @since 0.9
  */

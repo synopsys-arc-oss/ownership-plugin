@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2016 Oleg Nenashev.
+ * Copyright (c) 2016-2017 Oleg Nenashev.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,19 +24,20 @@
 package org.jenkinsci.plugins.ownership.model.folders;
 
 import com.cloudbees.hudson.plugins.folder.AbstractFolder;
-import com.cloudbees.hudson.plugins.folder.Folder;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy;
 import hudson.Extension;
+import hudson.Plugin;
 import hudson.model.Item;
 import hudson.model.listeners.ItemListener;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jenkins.model.Jenkins;
 
 /**
- * Locates changes in {@link Folder}s and assigns ownership accordingly.
+ * Locates changes in {@link AbstractFolder}s and assigns ownership accordingly.
  * @author Oleg Nenashev
  */
 @Extension(optional = true)
@@ -45,19 +46,30 @@ public class FolderItemListener extends ItemListener {
     private static final Logger LOGGER = Logger.getLogger(FolderItemListener.class.getName());
     
     @Override
-    public void onCopied(Item src, Item item) {      
+    public void onCopied(Item src, Item item) {     
+        if (!isFoldersPluginEnabled()) {
+            return;
+        }
         OwnershipDescription d = getPolicy().onCopied(src, item);
         modifyOwnership(item, d);
     }
 
     @Override
     public void onCreated(Item item) {
+        if (!isFoldersPluginEnabled()) {
+            return;
+        }
         OwnershipDescription d = getPolicy().onCreated(item);
         modifyOwnership(item, d);
     }
     
     private ItemOwnershipPolicy getPolicy() {
         return OwnershipPlugin.getInstance().getConfiguration().getItemOwnershipPolicy();
+    }
+    
+    private boolean isFoldersPluginEnabled() {
+        final Plugin plugin = Jenkins.getActiveInstance().getPlugin("cloudbees-folder");
+        return plugin != null && plugin.getWrapper().isActive();
     }
     
     private void modifyOwnership(Item item, OwnershipDescription ownership) {

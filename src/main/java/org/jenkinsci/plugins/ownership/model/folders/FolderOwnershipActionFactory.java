@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2015 Oleg Nenashev.
+ * Copyright (c) 2015-2017 Oleg Nenashev.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,12 +23,12 @@
  */
 package org.jenkinsci.plugins.ownership.model.folders;
 
-import com.cloudbees.hudson.plugins.folder.Folder;
-import com.cloudbees.hudson.plugins.folder.TransientFolderActionFactory;
+import com.cloudbees.hudson.plugins.folder.AbstractFolder;
 import hudson.Extension;
 import hudson.model.Action;
 import java.util.Collection;
 import java.util.Collections;
+import jenkins.model.TransientActionFactory;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
@@ -38,10 +38,15 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
  */
 @Extension(optional = true)
 @Restricted(NoExternalUse.class)
-public class FolderOwnershipActionFactory extends TransientFolderActionFactory {
+public class FolderOwnershipActionFactory extends TransientActionFactory<AbstractFolder> {
 
     @Override
-    public Collection<? extends Action> createFor(Folder target) {
+    public Collection<? extends Action> createFor(AbstractFolder target) {
         return Collections.singleton(new FolderOwnershipAction(target));
+    }
+
+    @Override
+    public Class<AbstractFolder> type() {
+        return AbstractFolder.class;
     }
 }
