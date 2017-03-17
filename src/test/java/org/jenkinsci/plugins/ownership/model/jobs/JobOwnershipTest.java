@@ -1,12 +1,12 @@
 package org.jenkinsci.plugins.ownership.model.jobs;
 
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy.DropOwnershipPolicy;
-import com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy.PreserveOwnershipPolicy;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty;
 import hudson.model.Job;
 import hudson.model.User;
 import org.apache.commons.io.IOUtils;
+import org.jenkinsci.plugins.ownership.config.PreserveOwnershipPolicy;
 import org.jenkinsci.plugins.ownership.test.util.OwnershipPluginConfigurer;
 import org.junit.Rule;
 import org.junit.Test;
