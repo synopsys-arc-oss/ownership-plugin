@@ -94,6 +94,7 @@ public class RunOwnershipAction extends ItemOwnershipAction<Run>
         final Job parent = build.getParent();
         if (parent instanceof Project) { 
             final Project prj = (Project) parent;
+            //TODO: Should use BuildableItemWithBuildWrappers (bug)
             final OwnershipBuildWrapper wrapper = (OwnershipBuildWrapper) 
                     prj.getBuildWrappersList().get(OwnershipBuildWrapper.class);
             if (wrapper != null) {

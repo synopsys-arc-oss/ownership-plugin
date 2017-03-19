@@ -74,6 +74,7 @@ public class OwnershipPlugin extends Plugin {
     /**
      * @deprecated Replaced by {@link ItemOwnershipPolicy}
      */
+    @Deprecated
     private transient boolean assignOnCreate;
     private final List<OwnershipAction> pluginActions = new ArrayList<OwnershipAction>();
     public String mailResolverClassName;
@@ -264,6 +265,8 @@ public class OwnershipPlugin extends Plugin {
         } catch (ClassNotFoundException ex) {
             // Do nothing - fallback do default handler
         }
+        //TODO: ClassCastException (bug)
+        //TODO: methods above should log errors
         
         return MailAddressResolver.resolve(user);
     }
