@@ -1,19 +1,13 @@
 package org.jenkinsci.plugins.ownership.config;
 
-import com.cloudbees.hudson.plugins.folder.Folder;
-import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipItem;
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy;
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicyDescriptor;
-import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
-import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty;
 import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import hudson.Extension;
 import hudson.model.Item;
-import hudson.model.Job;
-import org.jenkinsci.plugins.ownership.model.folders.FolderOwnershipHelper;
-import org.jenkinsci.plugins.ownership.model.folders.FolderOwnershipProperty;
+import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
@@ -31,18 +25,9 @@ public class PreserveOwnershipPolicy extends ItemOwnershipPolicy {
 
     @Override
     public OwnershipDescription onCreated(@Nonnull Item item) {
-        IOwnershipItem<?> ownershipProperty = extractOwnershipProperty(item);
-        if (ownershipProperty != null) {
-            return ownershipProperty.getOwnership();
-        }
-        return null;
-    }
-
-    private IOwnershipItem<?> extractOwnershipProperty(Item item) {
-        if (item instanceof Job) {
-            return JobOwnerHelper.getOwnerProperty((Job<?, ?>) item);
-        } else if (item instanceof Folder) {
-            return FolderOwnershipHelper.getOwnerProperty((Folder) item);
+        AbstractOwnershipHelper<Item> helper = OwnershipHelperLocator.locate(item);
+        if (helper != null) {
+            return helper.getOwnershipDescription(item);
         }
         return null;
     }
