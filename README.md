@@ -21,7 +21,7 @@ This plugin provides an ownership engine for [Jenkins](https://jenkins.io/) auto
 * [AbstractProject Integration](doc/AbstractProjectSupport.md)
 * [Pipeline Integration](doc/PipelineIntegration.md)
 * [Contributing](CONTRIBUTING.md)
-* [Changelog](https://wiki.jenkins-ci.org/display/JENKINS/Ownership+Plugin#OwnershipPlugin-Versionhistory)
+* [Changelog](CHANGELOG.md)
 
 # Examples
 
@@ -53,4 +53,4 @@ The plugin also contributes extension points, which can be used by other plugins
 
 # Changelog
 
-See [the plugin's Wiki](https://wiki.jenkins-ci.org/display/JENKINS/Ownership+Plugin#OwnershipPlugin-Versionhistory).
+See [this page](CHANGELOG.md).
