@@ -18,12 +18,15 @@ If [Ownership-Based Security](OwnershipBasedSecurity.md) is enabled, this contro
 * `Service Owners e-mail` - Email of the service owners. 
 It will be used for generation of _Contact service owners_ control in the Ownership Summary Box.
 * `Ownership Management policy` - This option can be used to automatically set up ownership for newly created and copied items.
+ * By default, the ownership won't be set up
+ * `Assign job creators as owners` automatically assigns owners (useful for Ownership-Based security)
 * `Globally Inject ownership variables` - If enabled, 
 ownership variables will be automatically injected to all classic job types (Freestyle, Matrix, etc.).
 For Jenkins Pipeline the [`ownership` global variable](PipelineIntegration.md) will be always enabled independently of this setting.
 * `Use a specific e-mail address resolver` - If enabled,
 the plugin will be using only a limited set of email resolvers to determine the user email.
-It may be used to optimize the resolution when plugins with heavy email resolvers are installed (e.g. Subversion or Perforce plugins).
+ * The option may be used to optimize the resolution when plugins with heavy email resolvers are installed (e.g. Subversion or Perforce plugins).
+ * `Fast UI resolver` uses built-in routines of the [Mailer plugin](https://plugins.jenkins.io/mailer) => user e-mails will be resolved by user properties and e-mail suffixes
 * `Setup default permissions for item-specific security` - If enabled, 
  [Ownership-Based Security](OwnershipBasedSecurity.md) will have a custom default settings when the job owner specifies or resets _Item-specific security_ .
 
