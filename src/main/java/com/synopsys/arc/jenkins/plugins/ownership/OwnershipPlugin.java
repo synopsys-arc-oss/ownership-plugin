@@ -258,7 +258,9 @@ public class OwnershipPlugin extends Plugin {
                 } else {
                     Class<MailAddressResolver> resolverClass = (Class<MailAddressResolver>)Class.forName(mailResolverClassName);
                     MailAddressResolver res = MailAddressResolver.all().get(resolverClass);
-                    return res.findMailAddressFor(user);
+                    if (res != null) {
+                        return res.findMailAddressFor(user);
+                    }
                 }
             } 
         } catch (ClassNotFoundException ex) {
