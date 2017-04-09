@@ -78,6 +78,7 @@ public class OwnershipDescription implements Serializable {
      * @param primaryOwnerId userId of primary owner
      * @deprecated Use constructor with secondary owners specification
      */
+    @Deprecated
     public OwnershipDescription(boolean ownershipEnabled, @Nonnull String primaryOwnerId) {
         this(ownershipEnabled, primaryOwnerId, null);
     }
