@@ -1,6 +1,29 @@
 Changelog
 -----
 
+### 0.10.0
+
+Release date: May 07, 2017
+
+Improvements:
+
+* [PR #56](https://github.com/jenkinsci/ownership-plugin/pull/56) -
+Add new Preserve Ownership Item Policy.
+It allows retaining ownership in plugins like JobDSL.
+* [PR #58](https://github.com/jenkinsci/ownership-plugin/pull/58) - 
+Add permissions report for items being owned by the specified user. Powered by the [Security Inspector Plugin](https://plugins.jenkins.io/security-inspector).
+* [PR #57](https://github.com/jenkinsci/ownership-plugin/pull/57),
+[PR #60](https://github.com/jenkinsci/ownership-plugin/pull/60) - 
+Extend plugin documentation and move it to GitHub.
+* Update Jenkins core minimal version requirement to `1.651.3`.
+
+
+Fixed issues:
+
+* [JENKINS-42908](https://issues.jenkins-ci.org/browse/JENKINS-42908) -
+When contributing ownership environment variables, check jobs by the generic `BuildableItemWithBuildWrappers` interface.
+
+
 ### 0.9.1
 
 Release date: Jan 08, 2017
