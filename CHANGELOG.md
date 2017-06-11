@@ -43,13 +43,13 @@ Improvements:
 
 * [JENKINS-28881](https://issues.jenkins-ci.org/browse/JENKINS-28881) -
 Integration with Folders Plugin.
- * Ownership info can be defined for folders
- * Ownership info can be inherited by jobs and folders from upper folder levels
- * All Ownership-Based security features got integration with folders
+  * Ownership info can be defined for folders
+  * Ownership info can be inherited by jobs and folders from upper folder levels
+  * All Ownership-Based security features got integration with folders
 * [JENKINS-32353](https://issues.jenkins-ci.org/browse/JENKINS-32353) -
 Integration with Pipeline Plugin (see [this page](doc/PipelineIntegration.md) for more info).
- * Ownership can be now configured for Jenkins Pipeline
- * `ownership` global variable, which provides information about job and node ownership within Pipeline runs
+  * Ownership can be now configured for Jenkins Pipeline
+  * `ownership` global variable, which provides information about job and node ownership within Pipeline runs
 * [JENKINS-36946](https://issues.jenkins-ci.org/browse/JENKINS-36946) -
 Ownership summary boxes: Add hint for disabling empty ownership summaries.
 * [PR #46](https://github.com/jenkinsci/ownership-plugin/pull/46) -
@@ -109,8 +109,8 @@ Release date: Jan 18, 2015
 
 * [JENKINS-28713](https://issues.jenkins-ci.org/browse/JENKINS-26283) -
  Add "Contact item owners" and "Contact service owners" links to ownership summary boxes.
- * Links automatically generate a e-mail stub with configurable subject and body templates
- * Owners and co-owners are being automatically added to recipients
+  * Links automatically generate a e-mail stub with configurable subject and body templates
+  * Owners and co-owners are being automatically added to recipients
 * [JENKINS-23947](https://issues.jenkins-ci.org/browse/JENKINS-23947) -
 Jenkins admins can enable the global injection of ownership variables.
 * [JENKINS-26320](https://issues.jenkins-ci.org/browse/JENKINS-26320) -
@@ -195,8 +195,8 @@ Improvements:
 
 * Allow restricting execution of jobs on agents according to ownership configuration (Extension for Job Restrictions Plugin)
 * Support of item-specific access rights for jobs (Extension for Role Strategy Plugin)
- * `@ItemSpecific` macro - Check the SID against entries from the item-specific security
- * `@ItemSpecificWithUserId` macro - if SID is "authenticated", checks current user's ID
+  * `@ItemSpecific` macro - Check the SID against entries from the item-specific security
+  * `@ItemSpecificWithUserId` macro - if SID is "authenticated", checks current user's ID
 * Support of Token Macros (`${OWNERSHIP,var=varname}`)
 
 ### 0.2.1
