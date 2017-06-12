@@ -50,6 +50,8 @@ Integration with Folders Plugin.
 Integration with Pipeline Plugin (see [this page](doc/PipelineIntegration.md) for more info).
   * Ownership can be now configured for Jenkins Pipeline
   * `ownership` global variable, which provides information about job and node ownership within Pipeline runs
+* [JENKINS-28258](https://issues.jenkins-ci.org/browse/JENKINS-28258) -
+Add support of non-AbstractProject job types in the [Authorize Project](https://plugins.jenkins.io/authorize-project) extension.
 * [JENKINS-36946](https://issues.jenkins-ci.org/browse/JENKINS-36946) -
 Ownership summary boxes: Add hint for disabling empty ownership summaries.
 * [PR #46](https://github.com/jenkinsci/ownership-plugin/pull/46) -
