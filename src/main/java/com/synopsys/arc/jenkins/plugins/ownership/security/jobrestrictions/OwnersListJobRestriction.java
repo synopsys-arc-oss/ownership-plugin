@@ -26,6 +26,7 @@ package com.synopsys.arc.jenkins.plugins.ownership.security.jobrestrictions;
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
+import com.synopsys.arc.jenkins.plugins.ownership.util.IdStrategyComparator;
 import com.synopsys.arc.jenkins.plugins.ownership.util.ui.UserSelector;
 import com.synopsys.arc.jenkinsci.plugins.jobrestrictions.restrictions.JobRestriction;
 import com.synopsys.arc.jenkinsci.plugins.jobrestrictions.restrictions.JobRestrictionDescriptor;
@@ -63,7 +64,7 @@ public class OwnersListJobRestriction extends JobRestriction {
     protected synchronized final void updateUsersMap() {
         if (usersMap == null) {
             // Update users map
-            usersMap = new TreeSet<String>();
+            usersMap = new TreeSet<String>(new IdStrategyComparator());
             for (UserSelector selector : usersList) {
                 String userId = hudson.Util.fixEmptyAndTrim(selector.getSelectedUserId());
                 if (userId != null && !usersMap.contains(userId)) {
@@ -124,7 +125,8 @@ public class OwnersListJobRestriction extends JobRestriction {
             }
 
             // Handle secondary owners if required
-            Set<String> itemCoOwners = descr.getSecondaryOwnerIds();
+            Set<String> itemCoOwners = new TreeSet<>(new IdStrategyComparator());
+            itemCoOwners.addAll(descr.getSecondaryOwnerIds());
             if (acceptsCoOwners && !itemCoOwners.isEmpty()) {
                 for (String userID : usersMap) {
                     if (itemCoOwners.contains(userID)) {

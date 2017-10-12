@@ -23,6 +23,7 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership;
 
+import com.synopsys.arc.jenkins.plugins.ownership.util.IdStrategyComparator;
 import com.synopsys.arc.jenkins.plugins.ownership.util.OwnershipDescriptionHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.nodes.OwnerNodeProperty;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -31,9 +32,6 @@ import hudson.model.Descriptor;
 import hudson.model.User;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.CheckForNull;
@@ -234,7 +232,12 @@ public class OwnershipDescription implements Serializable {
         if (isPrimaryOwner(user)) {
             return true;
         }
-        return includeSecondaryOwners ? coownersIds.contains(user.getId()) : false;
+        if (includeSecondaryOwners) {
+            Set<String> coowners = new TreeSet<String>(new IdStrategyComparator());
+            coowners.addAll(coownersIds);
+            return coowners.contains(user.getId());
+        }
+        return false;
     }
     
     @Whitelisted

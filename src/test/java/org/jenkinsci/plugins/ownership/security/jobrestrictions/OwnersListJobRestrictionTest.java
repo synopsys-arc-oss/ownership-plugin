@@ -34,7 +34,10 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Label;
 import hudson.model.Queue;
 import hudson.model.labels.LabelAtom;
+import hudson.security.HudsonPrivateSecurityRealm;
 import hudson.slaves.DumbSlave;
+import jenkins.model.*;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -52,7 +55,8 @@ import org.jvnet.hudson.test.JenkinsRule;
  * @author Oleg Nenashev
  */
 public class OwnersListJobRestrictionTest {
-    
+    private static final IdStrategy CASE_SENSITIVE = new IdStrategy.CaseSensitive();
+
     @Rule
     public final JenkinsRule j = new JenkinsRule();
     
@@ -67,6 +71,8 @@ public class OwnersListJobRestrictionTest {
         jobRestrictionProperty = new JobRestrictionProperty(
                 new OwnersListJobRestriction(Arrays.asList(new UserSelector("owner")), false));;
         slave.getNodeProperties().add(jobRestrictionProperty);
+
+        applyIdStrategy(CASE_SENSITIVE);
     }
     
     @Test
@@ -144,5 +150,69 @@ public class OwnersListJobRestrictionTest {
         assertThat("Job restrictions should not allow the run, because the job has wrong owner",
                 jobRestrictionProperty.canTake(item), instanceOf(JobRestrictionBlockageCause.class));
     }
-    
+
+    @Test
+    @Issue("JENKINS-20832")
+    public void nodeShouldAcceptRunsFromWithInsensitiveCaseOnOwner() throws Exception {
+        applyIdStrategy(IdStrategy.CASE_INSENSITIVE);
+
+        Folder folder = j.jenkins.createProject(Folder.class, "folder");
+        FreeStyleProject project = folder.createProject(FreeStyleProject.class, "project2");
+        project.setAssignedLabel(testLabel);
+        FolderOwnershipHelper.setOwnership(folder,
+                new OwnershipDescription(true, "Owner", Collections.<String>emptyList()));
+
+        project.scheduleBuild2(0);
+        j.jenkins.getQueue().maintain();
+
+        List<Queue.BuildableItem> items = j.jenkins.getQueue().getBuildableItems();
+        assertThat("1 item should be in the queue", items.size(), equalTo(1));
+        Queue.BuildableItem item = items.get(0);
+
+        assertThat("Run has been prohibited, but Ownership plugin should allow it according to the inherited value",
+                jobRestrictionProperty.canTake(item), nullValue());
+    }
+
+    @Test
+    @Issue("JENKINS-20832")
+    public void nodeShouldAcceptRunsFromWithInsensitiveCaseOnCoOwner() throws Exception {
+        applyIdStrategy(IdStrategy.CASE_INSENSITIVE);
+
+        // Change to accept coowners
+        jobRestrictionProperty = new JobRestrictionProperty(
+                new OwnersListJobRestriction(Arrays.asList(new UserSelector("owner")), true));
+        slave.getNodeProperties().add(jobRestrictionProperty);
+
+        Folder folder = j.jenkins.createProject(Folder.class, "folder");
+        FreeStyleProject project = folder.createProject(FreeStyleProject.class, "project3");
+        project.setAssignedLabel(testLabel);
+        FolderOwnershipHelper.setOwnership(folder,
+                new OwnershipDescription(true, "owner1", Arrays.asList("owner2", "Owner")));
+
+        project.scheduleBuild2(0);
+        j.jenkins.getQueue().maintain();
+
+        List<Queue.BuildableItem> items = j.jenkins.getQueue().getBuildableItems();
+        assertThat("1 item should be in the queue", items.size(), equalTo(1));
+        Queue.BuildableItem item = items.get(0);
+
+        assertThat("Run has been prohibited, but Ownership plugin should allow it according to the inherited value",
+                jobRestrictionProperty.canTake(item), nullValue());
+    }
+
+    private void applyIdStrategy(final IdStrategy idStrategy) throws IOException {
+        HudsonPrivateSecurityRealm realm = new HudsonPrivateSecurityRealm(false, false, null) {
+            @Override
+            public IdStrategy getUserIdStrategy() {
+                return idStrategy;
+            }
+
+            @Override
+            public IdStrategy getGroupIdStrategy() {
+                return idStrategy;
+            }
+        };
+        realm.createAccount("owner", "owner");
+        j.jenkins.setSecurityRealm(realm);
+    }
 }
