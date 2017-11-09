@@ -51,7 +51,6 @@ import org.jenkinsci.plugins.securityinspector.UserContextCache;
 import org.jenkinsci.plugins.securityinspector.impl.users.UserReportBuilder;
 import org.jenkinsci.plugins.securityinspector.model.PermissionReport;
 import org.jenkinsci.plugins.securityinspector.model.SecurityInspectorReport;
-import org.jenkinsci.plugins.securityinspector.util.JenkinsHelper;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.HttpResponses;
@@ -171,7 +170,7 @@ public class PermissionsForOwnerReportBuilder extends UserReportBuilder {
             }
             
             SecurityContext initialContext = null;
-            Item i = JenkinsHelper.getInstanceOrFail().getItemByFullName(column.getFullName());
+            Item i = Jenkins.getActiveInstance().getItemByFullName(column.getFullName());
             if (i == null) {
                 return Boolean.FALSE;
             }
