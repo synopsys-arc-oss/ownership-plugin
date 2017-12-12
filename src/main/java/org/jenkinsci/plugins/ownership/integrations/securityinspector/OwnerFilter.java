@@ -44,7 +44,6 @@ import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
-import org.jenkinsci.plugins.securityinspector.util.JenkinsHelper;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.StaplerRequest;
@@ -110,7 +109,7 @@ class OwnerFilter {
     @Restricted(NoExternalUse.class)
     public List<TopLevelItem> doFilter(User owner) {
         
-        final Jenkins jenkins = JenkinsHelper.getInstanceOrFail();
+        final Jenkins jenkins = Jenkins.getActiveInstance();
         final List<Item> allItems;
         
         if (report4folder != null) {
