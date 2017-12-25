@@ -24,7 +24,6 @@
 package org.jenkinsci.plugins.ownership.integrations.rolestrategy.macros;
 
 import com.synopsys.arc.jenkins.plugins.ownership.security.rolestrategy.AbstractOwnershipRoleMacro;
-import static com.synopsys.arc.jenkins.plugins.ownership.security.rolestrategy.AbstractOwnershipRoleMacro.hasPermission;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.Macro;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.RoleType;
 import hudson.Extension;
@@ -53,7 +52,7 @@ public class CurrentUserIsPrimaryOwnerMacro extends AbstractOwnershipRoleMacro {
 
     @Override
     public boolean hasPermission(String sid, Permission p, RoleType type, AccessControlled item, Macro macro) {    
-        User user = User.current();              
+        User user = User.current();
         return hasPermission(user, type, item, macro, false);
     }
 }

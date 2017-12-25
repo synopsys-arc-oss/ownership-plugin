@@ -58,7 +58,7 @@ public class OwnershipAuthorizeProjectStrategy extends AuthorizeProjectStrategy 
         if (!d.hasPrimaryOwner()) { // fallback to anonymous
             return Jenkins.ANONYMOUS;
         }    
-        User owner = User.get(d.getPrimaryOwnerId(), false, Collections.emptyMap());
+        User owner = User.getById(d.getPrimaryOwnerId(), false);
         if (owner == null) { // fallback to anonymous
             return Jenkins.ANONYMOUS;
         }

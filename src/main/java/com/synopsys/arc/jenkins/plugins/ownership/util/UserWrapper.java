@@ -60,7 +60,7 @@ public class UserWrapper {
             this.macro = userMacro;
         } else {
             this.isUser = true;
-            this.user = User.get(userMacro, false, null);
+            this.user = User.getById(userMacro, false);
             //   throw new UnsupportedOperationException("User macro must start with prefix '"+USER_MACRO_PREFIX+"'");
         }
 
@@ -82,7 +82,7 @@ public class UserWrapper {
     /**
      * Gets id of the user (calls User.getId() or returns macro).
      *
-     * @return
+     * @return ID or macro
      */
     public String getId() {
         return isUser ? user.getId() : macro;

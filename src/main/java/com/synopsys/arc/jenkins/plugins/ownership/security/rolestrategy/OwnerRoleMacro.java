@@ -51,7 +51,7 @@ public class OwnerRoleMacro extends AbstractOwnershipRoleMacro {
 
     @Override
     public boolean hasPermission(String sid, Permission p, RoleType type, AccessControlled item, Macro macro) {    
-        User user = User.get(sid, false, null);              
+        User user = User.getById(sid, false);
         return hasPermission(user, type, item, macro, false);
     }   
 }

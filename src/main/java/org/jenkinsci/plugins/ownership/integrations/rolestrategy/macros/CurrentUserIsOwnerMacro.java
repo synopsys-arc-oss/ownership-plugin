@@ -24,7 +24,6 @@
 package org.jenkinsci.plugins.ownership.integrations.rolestrategy.macros;
 
 import com.synopsys.arc.jenkins.plugins.ownership.security.rolestrategy.AbstractOwnershipRoleMacro;
-import static com.synopsys.arc.jenkins.plugins.ownership.security.rolestrategy.AbstractOwnershipRoleMacro.hasPermission;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.Macro;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.RoleType;
 import hudson.Extension;

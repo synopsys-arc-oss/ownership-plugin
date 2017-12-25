@@ -65,7 +65,7 @@ public class HTMLFormatter {
     }
     
     public static @Nonnull String formatUserURI(@Nonnull String userId, boolean useLongFormat) {
-        User usr = User.get(userId, false, null);
+        User usr = User.getById(userId, false);
         if (usr != null) {
             String userStr = useLongFormat 
                 ? usr.getDisplayName()

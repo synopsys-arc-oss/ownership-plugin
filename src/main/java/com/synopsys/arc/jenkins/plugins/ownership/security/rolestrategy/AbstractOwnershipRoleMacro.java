@@ -44,6 +44,9 @@ import hudson.model.User;
 import hudson.security.AccessControlled;
 import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+
 /**
  * An abstract class for {@link RoleMacroExtension}s provided by the ownership plugin.
  * @author Oleg Nenashev
@@ -101,13 +104,10 @@ public abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
      * @param macro Macro expression
      * @param acceptSecondaryOwners {@code true} if secondary owners should be considered
      * @return {@code true} if the macro provides a permission.
+     *         Always {@code false} if the user is {@code null}.
      */
-    public static boolean hasPermission(User user, RoleType type, AccessControlled item, 
-            Macro macro, boolean acceptSecondaryOwners) {
-        //TODO: implement
-        if (user == null) {
-            return false;
-        }       
-        return getOwnership(type, item).isOwner(user, acceptSecondaryOwners);
+    public static boolean hasPermission(@CheckForNull User user, RoleType type, AccessControlled item,
+                                        Macro macro, boolean acceptSecondaryOwners) {
+        return user != null && getOwnership(type, item).isOwner(user, acceptSecondaryOwners);
     }
 }
