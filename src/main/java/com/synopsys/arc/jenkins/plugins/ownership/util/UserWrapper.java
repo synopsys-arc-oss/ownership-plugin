@@ -110,7 +110,7 @@ public class UserWrapper {
         }
 
         // Check      
-        return comparedId.equals(userId);
+        return User.idStrategy().equals(comparedId, userId);
     }
 
 }
