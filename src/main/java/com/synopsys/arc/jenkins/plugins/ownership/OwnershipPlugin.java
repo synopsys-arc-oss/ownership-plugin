@@ -237,7 +237,7 @@ public class OwnershipPlugin extends Plugin {
             return FormValidation.error("Field is empty. Field will be ignored");
         }
         
-        User usr = User.get(userId, false, null);
+        User usr = User.getById(userId, false);
         if (usr == null) {
             return FormValidation.warning("User " + userId + " is not registered in Jenkins");
         }

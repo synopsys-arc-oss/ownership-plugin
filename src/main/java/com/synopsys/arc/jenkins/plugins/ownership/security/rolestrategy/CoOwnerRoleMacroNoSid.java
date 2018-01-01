@@ -55,7 +55,7 @@ public class CoOwnerRoleMacroNoSid extends AbstractOwnershipRoleMacro{
 
     @Override
     public boolean hasPermission(String sid, Permission p, RoleType type, AccessControlled item, Macro macro) {    
-        User user = User.current();              
+        User user = User.current();
         return hasPermission(user, type, item, macro, true);
     }
 }

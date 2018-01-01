@@ -24,6 +24,7 @@
 package com.synopsys.arc.jenkins.plugins.ownership.util.ui;
 
 import hudson.Extension;
+import hudson.RestrictedSince;
 import hudson.Util;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
@@ -31,6 +32,9 @@ import hudson.model.User;
 import hudson.util.FormValidation;
 import java.io.Serializable;
 import javax.annotation.CheckForNull;
+
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -84,14 +88,15 @@ public class UserSelector implements Describable<UserSelector>, Serializable {
         public String getDisplayName() {
             return "N/A";
         }
-        
+
+        @Restricted(NoExternalUse.class)
         public FormValidation doCheckSelectedUserId(@QueryParameter String selectedUserId) {
             selectedUserId = Util.fixEmptyAndTrim(selectedUserId);
             if (selectedUserId == null) {
                 return FormValidation.error("Field is empty. Field will be ignored");
             }
 
-            User usr = User.get(selectedUserId, false, null);
+            User usr = User.getById(selectedUserId, false);
             if (usr == null) {
                 return FormValidation.warning("User " + selectedUserId + " is not registered in Jenkins");
             }

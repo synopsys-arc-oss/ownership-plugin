@@ -90,8 +90,7 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
     }
     
     public static boolean isUserExists(@Nonnull String userIdOrFullName) {
-        assert (userIdOrFullName != null);
-        return User.get(userIdOrFullName, false, null) != null;
+        return User.getById(userIdOrFullName, false) != null;
     }
      
     @Override

@@ -49,7 +49,7 @@ public class UserStringFormatter {
     }
     
     public static @Nonnull String format(@Nonnull String userId) {
-        return format(User.get(userId, false, null));
+        return format(User.getById(userId, false));
     }
     
     public static @Nonnull String formatShort(@CheckForNull String userId) {
@@ -63,7 +63,7 @@ public class UserStringFormatter {
      * @since 0.2
      */
     public static  @CheckForNull String formatEmail(@Nonnull String userId) {
-        return formatEmail(User.get(userId, false, null));
+        return formatEmail(User.getById(userId, false));
     }
     
     public static @CheckForNull String formatEmail(@CheckForNull User user) {
