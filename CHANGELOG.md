@@ -1,6 +1,17 @@
 Changelog
 -----
 
+### 0.11.0
+
+Release date: Jan 14, 2018
+
+* [JENKINS-20832](https://issues.jenkins-ci.org/browse/JENKINS-20832) -
+Use case sensitivity strategies from security realms when comparing user IDs.
+* [JENKINS-48707](https://issues.jenkins-ci.org/browse/JENKINS-48707) -
+Speedup user fetching operations in the plugin.
+* [PR #65](https://github.com/jenkinsci/ownership-plugin/pull/65) - 
+Add Russian localization to UI components.
+
 ### 0.10.0
 
 Release date: May 07, 2017
