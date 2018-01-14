@@ -1,4 +1,4 @@
-stage 'Print Job Ownership Info';
+stage 'Print Job Ownership Info'
 def primaryOwnerEmail = ownership.job.primaryOwnerEmail
 if (ownership.job.ownershipEnabled) {
   println "Primary owner ID: ${ownership.job.primaryOwnerId}"
@@ -6,7 +6,7 @@ if (ownership.job.ownershipEnabled) {
   println "Secondary owner IDs: ${ownership.job.secondaryOwnerIds}"
   println "Secondary owner e-mails: ${ownership.job.secondaryOwnerEmails}"
 } else {
-  println "Ownership is disabled";
+  println "Ownership is disabled"
 }
 
 stage 'Send e-mail to the job owner'

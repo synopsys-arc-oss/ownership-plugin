@@ -45,7 +45,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 public class OwnershipActionFactory extends TransientActionFactory<Job> {
     /**Empty actions collection for invalid project type*/
     private static final Collection<? extends Action> EMPTY_ACTIONS 
-            = new LinkedList<Action>();
+            = new LinkedList<>();
     
     @Override
     public Collection<? extends Action> createFor(Job target) {

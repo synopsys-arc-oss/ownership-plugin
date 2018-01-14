@@ -24,12 +24,8 @@
 package com.synopsys.arc.jenkins.plugins.ownership.security.rolestrategy;
 
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
-import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipItem;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
-import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
-import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty;
 import com.synopsys.arc.jenkins.plugins.ownership.nodes.NodeOwnerHelper;
-import com.synopsys.arc.jenkins.plugins.ownership.nodes.OwnerNodeProperty;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.Macro;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.RoleMacroExtension;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.RoleType;
@@ -38,14 +34,12 @@ import static com.synopsys.arc.jenkins.plugins.rolestrategy.RoleType.Slave;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.Computer;
 import hudson.model.Item;
-import hudson.model.Job;
 import hudson.model.Node;
 import hudson.model.User;
 import hudson.security.AccessControlled;
 import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
 
 import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 
 /**
  * An abstract class for {@link RoleMacroExtension}s provided by the ownership plugin.

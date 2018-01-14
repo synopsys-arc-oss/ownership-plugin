@@ -39,7 +39,7 @@ public class OwnershipInfo {
     private final OwnershipDescriptionSource<?> source;
     
     public static final OwnershipInfo DISABLED_INFO = 
-            new OwnershipInfo(OwnershipDescription.DISABLED_DESCR, new OwnershipDescriptionSource.DisabledSource<Object>());
+            new OwnershipInfo(OwnershipDescription.DISABLED_DESCR, new OwnershipDescriptionSource.DisabledSource<>());
 
     public OwnershipInfo(@Nonnull OwnershipDescription description, 
             @Nonnull OwnershipDescriptionSource<?> source) {

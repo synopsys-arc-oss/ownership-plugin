@@ -25,7 +25,6 @@
 package com.synopsys.arc.jenkins.plugins.ownership.util.ui;
 
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
-import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPluginConfiguration;
 import com.synopsys.arc.jenkins.plugins.ownership.util.HTMLFormatter;

@@ -93,7 +93,7 @@ public class OwnershipJobFilter extends ViewJobFilter {
 
     @Override
     public List<TopLevelItem> filter(List<TopLevelItem> added, List<TopLevelItem> all, View filteringView) {
-        final ArrayList<TopLevelItem> newList = new ArrayList<TopLevelItem>();
+        final ArrayList<TopLevelItem> newList = new ArrayList<>();
         final UserWrapper userWrapper = new UserWrapper(ownerId);
 
         for (TopLevelItem item : added) {
@@ -154,11 +154,11 @@ public class OwnershipJobFilter extends ViewJobFilter {
     public static Collection<UserWrapper> getAvailableUsers() {
         // Sort users
         UserComparator comparator = new UserComparator();
-        LinkedList<User> userList = new LinkedList<User>(User.getAll());
+        LinkedList<User> userList = new LinkedList<>(User.getAll());
         Collections.sort(userList, comparator);
 
         // Prepare new list
-        Collection<UserWrapper> res = new ArrayList<UserWrapper>(userList.size() + 1);
+        Collection<UserWrapper> res = new ArrayList<>(userList.size() + 1);
         res.add(new UserWrapper(MACRO_ME));
         for (User user : userList) {
             res.add(new UserWrapper(user));

@@ -24,7 +24,6 @@
 package com.synopsys.arc.jenkins.plugins.ownership.util.ui;
 
 import hudson.Extension;
-import hudson.RestrictedSince;
 import hudson.Util;
 import hudson.model.Describable;
 import hudson.model.Descriptor;

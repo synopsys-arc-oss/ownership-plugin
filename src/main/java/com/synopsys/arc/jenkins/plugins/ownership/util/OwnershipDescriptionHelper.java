@@ -101,7 +101,7 @@ public class OwnershipDescriptionHelper {
      */
     @Nonnull
     public static Set<String> getSecondaryOwnerIds(@Nonnull OwnershipDescription descr, boolean includeOwner) {
-        Set<String> res = new TreeSet<String>();
+        Set<String> res = new TreeSet<>();
         if (includeOwner) {
             res.add(getPrimaryOwnerId(descr));
         }
@@ -150,7 +150,7 @@ public class OwnershipDescriptionHelper {
      * @since 0.9
      */
     public static Set<String> getSecondaryOwnerEmails(@Nonnull OwnershipDescription descr, boolean includeOwner) {
-        Set<String> res = new TreeSet<String>();
+        Set<String> res = new TreeSet<>();
         
         if (includeOwner) {
             res.add(getOwnerEmail(descr));

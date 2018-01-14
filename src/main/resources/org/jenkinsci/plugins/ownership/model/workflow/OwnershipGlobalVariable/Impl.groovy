@@ -21,15 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jenkinsci.plugins.ownership.model;
+package org.jenkinsci.plugins.ownership.model
 
-import org.jenkinsci.plugins.workflow.cps.CpsScript;
-import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
-import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
+import org.jenkinsci.plugins.workflow.cps.CpsScript
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription
 
 class OwnershipGlobalVariableImpl implements Serializable {
   
-  private CpsScript script;
+  private CpsScript script
 
   public OwnershipGlobalVariableImpl(CpsScript script) {
     this.script = script
@@ -37,11 +36,11 @@ class OwnershipGlobalVariableImpl implements Serializable {
 
   public OwnershipDescription getJob() {
     return org.jenkinsci.plugins.ownership.model.workflow.OwnershipGlobalVariable
-              .getJobOwnershipDescription(script.currentBuild);
+              .getJobOwnershipDescription(script.currentBuild)
   }
 
   public OwnershipDescription getNode() {
     return org.jenkinsci.plugins.ownership.model.workflow.OwnershipGlobalVariable
-              .getNodeOwnershipDescription(script.env.NODE_NAME);
+              .getNodeOwnershipDescription(script.env.NODE_NAME)
   }
 }

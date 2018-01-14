@@ -29,8 +29,7 @@ import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPluginConfiguration;
 import hudson.Extension;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
+
 import org.jenkinsci.plugins.ownership.model.runs.RunOwnershipAction;
 import org.kohsuke.stapler.DataBoundConstructor;
 

@@ -92,8 +92,7 @@ public abstract class ItemOwnershipPolicy
      */    
     public static DescriptorExtensionList<ItemOwnershipPolicy,ItemOwnershipPolicyDescriptor> all() {
         //TODO: rework to Extension list Lookup
-        return Jenkins.getActiveInstance().<ItemOwnershipPolicy,ItemOwnershipPolicyDescriptor>
-                getDescriptorList(ItemOwnershipPolicy.class);
+        return Jenkins.getActiveInstance().getDescriptorList(ItemOwnershipPolicy.class);
     }
     
     /**

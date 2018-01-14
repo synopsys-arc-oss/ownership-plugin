@@ -64,7 +64,7 @@ public class OwnersListJobRestriction extends JobRestriction {
     protected synchronized final void updateUsersMap() {
         if (usersMap == null) {
             // Update users map
-            usersMap = new TreeSet<String>(new IdStrategyComparator());
+            usersMap = new TreeSet<>(new IdStrategyComparator());
             for (UserSelector selector : usersList) {
                 String userId = hudson.Util.fixEmptyAndTrim(selector.getSelectedUserId());
                 if (userId != null && !usersMap.contains(userId)) {

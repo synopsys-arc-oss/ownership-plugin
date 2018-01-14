@@ -91,7 +91,7 @@ public class OwnershipDescription implements Serializable {
     public OwnershipDescription(boolean ownershipEnabled, @Nullable String primaryOwnerId, @Nullable Collection<String> secondaryOwnerIds) {
         this.ownershipEnabled = ownershipEnabled;
         this.primaryOwnerId = primaryOwnerId;
-        this.coownersIds =  secondaryOwnerIds != null ? new TreeSet<String>(secondaryOwnerIds) : new TreeSet<String>();
+        this.coownersIds =  secondaryOwnerIds != null ? new TreeSet<>(secondaryOwnerIds) : new TreeSet<String>();
     }
     
     public void assign(@Nonnull OwnershipDescription descr) {
@@ -196,7 +196,7 @@ public class OwnershipDescription implements Serializable {
         String primaryOwnerId = formData.getString( "primaryOwner" );
 
         // Read coowners
-        Set<String> secondaryOwnerIds = new TreeSet<String>();
+        Set<String> secondaryOwnerIds = new TreeSet<>();
         if (formData.has("coOwners")) {
             JSONObject coOwners = formData.optJSONObject("coOwners");
             if (coOwners == null) {         
@@ -233,7 +233,7 @@ public class OwnershipDescription implements Serializable {
             return true;
         }
         if (includeSecondaryOwners) {
-            Set<String> coowners = new TreeSet<String>(new IdStrategyComparator());
+            Set<String> coowners = new TreeSet<>(new IdStrategyComparator());
             coowners.addAll(coownersIds);
             return coowners.contains(user.getId());
         }

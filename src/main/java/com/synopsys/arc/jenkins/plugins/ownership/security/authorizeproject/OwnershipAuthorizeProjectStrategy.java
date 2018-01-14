@@ -31,7 +31,6 @@ import hudson.Extension;
 import hudson.model.Job;
 import hudson.model.Queue;
 import hudson.model.User;
-import java.util.Collections;
 import jenkins.model.Jenkins;
 import org.acegisecurity.Authentication;
 import org.acegisecurity.userdetails.UsernameNotFoundException;

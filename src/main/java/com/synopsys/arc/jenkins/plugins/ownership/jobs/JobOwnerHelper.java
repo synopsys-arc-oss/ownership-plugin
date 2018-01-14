@@ -23,7 +23,6 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
-import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPluginConfiguration;
@@ -32,19 +31,15 @@ import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.AccessRightsFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.IUserFilter;
-import com.synopsys.arc.jenkins.plugins.ownership.wrappers.OwnershipBuildWrapper;
 import hudson.Extension;
 import hudson.matrix.MatrixConfiguration;
-import hudson.model.AbstractBuild;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
 import hudson.model.Job;
 import hudson.model.JobProperty;
-import hudson.model.Project;
 import hudson.model.User;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Map;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;

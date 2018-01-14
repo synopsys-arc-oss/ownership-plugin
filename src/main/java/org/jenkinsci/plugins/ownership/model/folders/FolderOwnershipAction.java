@@ -28,10 +28,8 @@ import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.ItemOwnershipAction;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
-import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.ui.OwnershipLayoutFormatter;
 import hudson.model.Descriptor;
-import hudson.model.Job;
 import hudson.security.Permission;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -52,7 +50,7 @@ public class FolderOwnershipAction extends ItemOwnershipAction<AbstractFolder<?>
 
     //TODO: May become a problem once we need to make it flexible (not implemented). Move to helper?
     private static final OwnershipLayoutFormatter<AbstractFolder<?>> DEFAULT_FOLDER_FORMATTER 
-            = new OwnershipLayoutFormatter.DefaultJobFormatter<AbstractFolder<?>>();
+            = new OwnershipLayoutFormatter.DefaultJobFormatter<>();
     
     public FolderOwnershipAction(@Nonnull AbstractFolder<?> folder) {
         super(folder);

@@ -33,7 +33,6 @@ import hudson.ExtensionList;
 import hudson.Plugin;
 import hudson.Util;
 import hudson.model.Descriptor;
-import hudson.model.Hudson;
 import hudson.model.User;
 import hudson.security.Permission;
 import hudson.security.PermissionGroup;
@@ -76,7 +75,7 @@ public class OwnershipPlugin extends Plugin {
      */
     @Deprecated
     private transient boolean assignOnCreate;
-    private final List<OwnershipAction> pluginActions = new ArrayList<OwnershipAction>();
+    private final List<OwnershipAction> pluginActions = new ArrayList<>();
     public String mailResolverClassName;
     private ItemSpecificSecurity defaultJobsSecurity;
     private OwnershipPluginConfiguration configuration;
@@ -276,7 +275,7 @@ public class OwnershipPlugin extends Plugin {
     @Nonnull
     public Collection<String> getPossibleMailResolvers() {
         ExtensionList<MailAddressResolver> extensions = MailAddressResolver.all();
-        List<String> items =new ArrayList<String>(extensions.size());
+        List<String> items = new ArrayList<>(extensions.size());
         items.add(FAST_RESOLVER_ID);
         for (MailAddressResolver resolver : extensions) {
             items.add(resolver.getClass().getCanonicalName());

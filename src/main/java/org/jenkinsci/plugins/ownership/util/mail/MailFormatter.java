@@ -79,7 +79,7 @@ public class MailFormatter {
         if (toString != null) {
             b.append(URLEncoder.encode(toString, encoding));
         }
-        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        List<NameValuePair> params = new LinkedList<>();
         joinMailAddresses(cc, "cc", params);
         joinMailAddresses(bcc, "bcc", params);
         if (subject != null) {

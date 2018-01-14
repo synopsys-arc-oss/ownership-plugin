@@ -41,9 +41,9 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 public abstract class OwnershipLayoutFormatterProvider {
     
     public static final OwnershipLayoutFormatterProvider DEFAULT_PROVIDER = new DefaultProvider();
-    private static final OwnershipLayoutFormatter<Job<?,?>> DEFAULT_JOB_FORMATTER = new OwnershipLayoutFormatter.DefaultJobFormatter<Job<?,?>>();
-    private static final OwnershipLayoutFormatter<Node> DEFAULT_NODE_FORMATTER = new OwnershipLayoutFormatter.DefaultJobFormatter<Node>();
-    private static final OwnershipLayoutFormatter<Run> DEFAULT_RUN_FORMATTER = new OwnershipLayoutFormatter.DefaultJobFormatter<Run>();
+    private static final OwnershipLayoutFormatter<Job<?,?>> DEFAULT_JOB_FORMATTER = new OwnershipLayoutFormatter.DefaultJobFormatter<>();
+    private static final OwnershipLayoutFormatter<Node> DEFAULT_NODE_FORMATTER = new OwnershipLayoutFormatter.DefaultJobFormatter<>();
+    private static final OwnershipLayoutFormatter<Run> DEFAULT_RUN_FORMATTER = new OwnershipLayoutFormatter.DefaultJobFormatter<>();
     
     public @Nonnull OwnershipLayoutFormatter<Job<?,?>> getLayoutFormatter(Job<?,?> job) {
         return DEFAULT_JOB_FORMATTER;

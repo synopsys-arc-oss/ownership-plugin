@@ -30,7 +30,6 @@ import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicyDescriptor;
 import hudson.Extension;
 import hudson.model.Item;
-import hudson.model.Job;
 import hudson.model.User;
 import org.kohsuke.stapler.DataBoundConstructor;
 

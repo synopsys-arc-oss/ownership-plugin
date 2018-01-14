@@ -34,8 +34,6 @@ import com.synopsys.arc.jenkins.plugins.ownership.nodes.NodeOwnerHelper;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Run;

@@ -23,8 +23,6 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.util;
 
-import hudson.util.FormValidation;
-
 /**
  * @deprecated Old non-used stuff, which will be deleted in further versions
  * @author Oleg Nenashev

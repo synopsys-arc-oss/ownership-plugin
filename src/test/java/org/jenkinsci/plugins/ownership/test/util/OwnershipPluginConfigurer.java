@@ -29,9 +29,6 @@ import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy.DropOwnershipPolicy;
 import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurity;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.ownership.config.DisplayOptions;

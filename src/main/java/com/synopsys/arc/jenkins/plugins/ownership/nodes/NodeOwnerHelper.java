@@ -32,7 +32,7 @@ import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.IUserFilter;
 import hudson.model.Computer;
 import hudson.model.Node;
 import hudson.model.User;
-import hudson.slaves.NodeProperty;
+
 import java.io.IOException;
 import java.util.Collection;
 import javax.annotation.CheckForNull;

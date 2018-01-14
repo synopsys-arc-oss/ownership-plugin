@@ -103,8 +103,8 @@ public class OwnershipMailHelper {
         }
 
         // Prepare the data        
-        final List<String> to = new LinkedList<String>();
-        final List<String> cc = new LinkedList<String>();
+        final List<String> to = new LinkedList<>();
+        final List<String> cc = new LinkedList<>();
         final Map<String, String> envVars = getSubstitutionVars(instance,item,helper);
         
         // to - job owner
@@ -164,7 +164,7 @@ public class OwnershipMailHelper {
             @Nonnull Jenkins jenkins,
             @Nonnull TObjectType item,
             @Nonnull IOwnershipHelper<TObjectType> helper) {
-        Map<String,String> res = new TreeMap<String, String>();
+        Map<String,String> res = new TreeMap<>();
         
         // User info
         final User user = User.current();
