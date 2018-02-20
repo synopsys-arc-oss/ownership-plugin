@@ -23,22 +23,37 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership;
 
+import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty;
 import com.synopsys.arc.jenkins.plugins.ownership.util.IdStrategyComparator;
 import com.synopsys.arc.jenkins.plugins.ownership.util.OwnershipDescriptionHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.nodes.OwnerNodeProperty;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Util;
+import hudson.model.Computer;
 import hudson.model.Descriptor;
+import hudson.model.Job;
+import hudson.model.Node;
 import hudson.model.User;
+import hudson.security.ACL;
+import hudson.security.AccessControlled;
+import hudson.security.Permission;
+import java.io.InvalidObjectException;
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
+import org.acegisecurity.AccessDeniedException;
+import org.acegisecurity.Authentication;
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * Contains description of item's ownership. 
@@ -359,6 +374,62 @@ public class OwnershipDescription implements Serializable {
         return true;
     }
     
+    protected Object readResolve() throws ObjectStreamException {
+        checkUnsecuredConfiguration();
+        return this;
+    }
+
+    /**
+     * If the ownership is being deserialized because of a REST call or CLI command, we need to
+     * make sure that either the ownership is unchanged, or that the user performing the command
+     * has permission to manage ownership for the object attached to this {@link OwnershipDescription}.
+     */
+    private void checkUnsecuredConfiguration() throws ObjectStreamException {
+        Authentication authentication = Jenkins.getAuthentication();
+        if (authentication == ACL.SYSTEM) {
+            return;
+        }
+        StaplerRequest request = Stapler.getCurrentRequest();
+        if (request != null) {
+            AccessControlled context = request.findAncestorObject(AccessControlled.class);
+            if (context instanceof Job) {
+                Job<?, ?> job = (Job)context;
+                JobOwnerJobProperty existing = job.getProperty(JobOwnerJobProperty.class);
+                if (existing == null || !Objects.equals(existing.getOwnership(), this)) {
+                    throwIfMissingPermission(job, OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
+                }
+                return;
+            } else if (context instanceof Computer) {
+                Node node = ((Computer)context).getNode();
+                if (node != null) {
+                    OwnerNodeProperty existing = node.getNodeProperties().get(OwnerNodeProperty.class);
+                    if (existing == null || !Objects.equals(existing.getOwnership(), this)) {
+                        throwIfMissingPermission(node, OwnershipPlugin.MANAGE_SLAVES_OWNERSHIP);
+                    }
+                    return;
+                }
+            } else if (context instanceof Node) {
+                Node node = ((Node)context);
+                OwnerNodeProperty existing = node.getNodeProperties().get(OwnerNodeProperty.class);
+                if (existing == null || !Objects.equals(existing.getOwnership(), this)) {
+                    throwIfMissingPermission(node, OwnershipPlugin.MANAGE_SLAVES_OWNERSHIP);
+                }
+                return;
+            }
+        }
+        // We don't know what object this OwnershipDescription belongs to, so we require Overall/Administer permissions.
+        // CLI commands always use this check.
+        throwIfMissingPermission(Jenkins.getActiveInstance(), Jenkins.ADMINISTER);
+    }
+
+    private void throwIfMissingPermission(AccessControlled context, Permission permission) throws ObjectStreamException {
+        try {
+            context.checkPermission(permission);
+        } catch (AccessDeniedException e) {
+            throw new InvalidObjectException(e.getMessage());
+        }
+    }
+
     /**
      * Check if ownership is enabled.
      * @param descr Ownership description (can be {@code null})

@@ -40,12 +40,16 @@ import org.kohsuke.stapler.StaplerRequest;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
+import hudson.model.Items;
 import hudson.model.Job;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import hudson.model.User;
+import hudson.util.XStream2;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import javax.annotation.CheckForNull;
 import javax.servlet.ServletException;
@@ -171,5 +175,15 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
     public void setItemSpecificSecurity(@CheckForNull ItemSpecificSecurity security) throws IOException {
         itemSpecificSecurity = security;
         owner.save();
+    }
+
+    static {
+        // TODO: Remove reflection once baseline is updated past 2.85.
+        try {
+            Method m = XStream2.class.getMethod("addCriticalField", Class.class, String.class);
+            m.invoke(Items.XSTREAM2, JobOwnerJobProperty.class, "ownership");
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new ExceptionInInitializerError(e);
+        }
     }
 }

@@ -35,6 +35,9 @@ import hudson.model.Node;
 import hudson.slaves.NodeProperty;
 import hudson.slaves.NodePropertyDescriptor;
 import hudson.slaves.SlaveComputer;
+import hudson.util.XStream2;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import javax.annotation.CheckForNull;
 import jenkins.model.Jenkins;
@@ -146,5 +149,15 @@ public class OwnerNodeProperty extends NodeProperty<Node>
         public boolean isApplicable( Class<? extends Node> Type ) {
                 return true;
         }         
+    }
+
+    static {
+        // TODO: Remove reflection once baseline is updated past 2.85.
+        try {
+            Method m = XStream2.class.getMethod("addCriticalField", Class.class, String.class);
+            m.invoke(Jenkins.XSTREAM2, OwnerNodeProperty.class, "ownership");
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new ExceptionInInitializerError(e);
+        }
     }
 }
