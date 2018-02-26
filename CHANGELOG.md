@@ -1,6 +1,19 @@
 Changelog
 -----
 
+### 0.12.0
+
+Release date: Feb 26, 2018
+
+* [SECURITY-498](https://jenkins.io/security/advisory/2018-02-26/#SECURITY-498) -
+Users with _Item/Configure_ and _Computer/Configure_ permissions were able to change ownership from CLI or REST API without the _Manage Ownership_ permissions.
+
+Compatibility notes:
+
+* External configuration management logic may fail if the client user has no _Overall/Administer_ or _Manage Ownership_ permission.
+* Folder ownership modifications from REST/CLI will fail for users who have no _Overall/Administer_ perission.
+Re-enabling functionality for users with _Manage Ownership_  permission is tracked as [JENKINS-49744](https://issues.jenkins-ci.org/browse/JENKINS-49744).
+
 ### 0.11.0
 
 Release date: Jan 14, 2018
