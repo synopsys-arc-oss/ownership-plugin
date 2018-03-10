@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>2.37</version>
+        <version>3.5</version>
     </parent>
     
     <groupId>com.synopsys.jenkinsci</groupId>
@@ -12,7 +12,7 @@
     <name>Job and Node ownership plugin</name>
     <packaging>hpi</packaging>
     <description>Provides explicit ownership of jobs and nodes</description>
-    <url>https://wiki.jenkins-ci.org/display/JENKINS/Ownership+Plugin</url>
+    <url>https://wiki.jenkins.io/display/JENKINS/Ownership+Plugin</url>
     
     <licenses>
         <license>
@@ -27,6 +27,7 @@
         <java.level>7</java.level>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <workflow.version>1.14</workflow.version>
+        <findbugs.effort>Max</findbugs.effort>
     </properties>
 
     <developers>
