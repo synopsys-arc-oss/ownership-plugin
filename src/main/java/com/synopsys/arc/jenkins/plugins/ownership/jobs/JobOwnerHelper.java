@@ -47,6 +47,8 @@ import hudson.security.Permission;
 import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
 import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
 import org.jenkinsci.plugins.ownership.model.jobs.JobOwnershipDescriptionSource;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Helper for Jobs Ownership.
@@ -198,6 +200,7 @@ public class JobOwnerHelper extends AbstractOwnershipHelper<Job<?,?>> {
     }
     
     @Extension
+    @Restricted(NoExternalUse.class)
     public static class LocatorImpl extends OwnershipHelperLocator<Job<?,?>> {
         
         @Override

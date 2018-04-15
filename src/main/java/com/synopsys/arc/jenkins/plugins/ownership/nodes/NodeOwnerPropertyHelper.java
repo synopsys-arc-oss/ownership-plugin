@@ -27,6 +27,8 @@ import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
+import hudson.Extension;
+import hudson.model.Job;
 import hudson.model.Node;
 import hudson.model.User;
 import hudson.security.Permission;
@@ -34,8 +36,12 @@ import hudson.slaves.NodeProperty;
 import java.util.Collection;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+
+import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
 import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
 import org.jenkinsci.plugins.ownership.model.nodes.NodeOwnershipDescriptionSource;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Provides helper for Node owner
@@ -121,5 +127,18 @@ public class NodeOwnerPropertyHelper extends AbstractOwnershipHelper<NodePropert
     public String getItemURL(NodeProperty item) {
         Node node = getNode(item);
         return node != null ? NodeOwnerHelper.Instance.getItemURL(node) : null;
-    }     
+    }
+
+    @Extension
+    @Restricted(NoExternalUse.class)
+    public static class LocatorImpl extends OwnershipHelperLocator<NodeProperty> {
+
+        @Override
+        public AbstractOwnershipHelper<NodeProperty> findHelper(Object item) {
+            if (item instanceof NodeProperty) {
+                return Instance;
+            }
+            return null;
+        }
+    }
 }

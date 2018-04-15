@@ -26,6 +26,7 @@ package com.synopsys.arc.jenkins.plugins.ownership.nodes;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
+import hudson.Extension;
 import hudson.model.Computer;
 import hudson.model.Node;
 import hudson.model.User;
@@ -36,7 +37,10 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import hudson.security.Permission;
+import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
 import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Provides ownership helper for {@link Computer}.
@@ -115,5 +119,18 @@ public class ComputerOwnerHelper extends AbstractOwnershipHelper<Computer> {
     public String getItemURL(Computer item) {
         //TODO: Absolute URL
         return item.getUrl();
+    }
+
+    @Extension
+    @Restricted(NoExternalUse.class)
+    public static class LocatorImpl extends OwnershipHelperLocator<Computer> {
+
+        @Override
+        public AbstractOwnershipHelper<Computer> findHelper(Object item) {
+            if (item instanceof Computer) {
+                return INSTANCE;
+            }
+            return null;
+        }
     }
 }

@@ -29,7 +29,9 @@ import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.AccessRightsFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.IUserFilter;
+import hudson.Extension;
 import hudson.model.Computer;
+import hudson.model.Job;
 import hudson.model.Node;
 import hudson.model.User;
 
@@ -39,8 +41,11 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import hudson.security.Permission;
+import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
 import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
 import org.jenkinsci.plugins.ownership.model.nodes.NodeOwnershipDescriptionSource;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Provides helper for Node owner.
@@ -137,5 +142,18 @@ public class NodeOwnerHelper extends AbstractOwnershipHelper<Node> {
     public String getItemURL(Node item) {
         Computer c = item.toComputer();
         return c != null ? ComputerOwnerHelper.INSTANCE.getItemURL(c) : null;
+    }
+
+    @Extension
+    @Restricted(NoExternalUse.class)
+    public static class LocatorImpl extends OwnershipHelperLocator<Node> {
+
+        @Override
+        public AbstractOwnershipHelper<Node> findHelper(Object item) {
+            if (item instanceof Node) {
+                return Instance;
+            }
+            return null;
+        }
     }
 }

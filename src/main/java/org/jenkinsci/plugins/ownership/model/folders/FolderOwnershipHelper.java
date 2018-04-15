@@ -43,6 +43,8 @@ import javax.annotation.Nonnull;
 import hudson.security.Permission;
 import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
 import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Integration with Folders plugin.
@@ -166,6 +168,7 @@ public class FolderOwnershipHelper extends AbstractOwnershipHelper<AbstractFolde
     }
     
     @Extension(optional = true)
+    @Restricted(NoExternalUse.class)
     public static class LocatorImpl extends OwnershipHelperLocator<AbstractFolder<?>> {
         
         @Override
