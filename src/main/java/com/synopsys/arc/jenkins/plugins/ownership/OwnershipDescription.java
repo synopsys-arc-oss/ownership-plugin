@@ -422,11 +422,22 @@ public class OwnershipDescription implements Serializable {
         throwIfMissingPermission(Jenkins.getActiveInstance(), Jenkins.ADMINISTER);
     }
 
-    private void throwIfMissingPermission(AccessControlled context, Permission permission) throws ObjectStreamException {
+    private void throwIfMissingPermission(@Nonnull AccessControlled context, Permission permission) throws ObjectStreamException {
         try {
             context.checkPermission(permission);
         } catch (AccessDeniedException e) {
-            throw new InvalidObjectException(e.getMessage());
+            final String name;
+            if (context instanceof ModelObject) {
+                name = ((ModelObject)context).getDisplayName();
+            } else {
+                name = context.toString();
+            }
+
+            InvalidObjectException ex = new InvalidObjectException(
+                    String.format("Cannot modify permissions of %s of type %s: %s", name,
+                            context.getClass(), e.getMessage()));
+            ex.addSuppressed(e);
+            throw ex;
         }
     }
 
