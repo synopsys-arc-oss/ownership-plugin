@@ -24,6 +24,7 @@
 package com.synopsys.arc.jenkins.plugins.ownership.nodes;
 
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import hudson.model.Computer;
 import hudson.model.Node;
@@ -33,6 +34,8 @@ import java.util.Collection;
 import java.util.Collections;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+
+import hudson.security.Permission;
 import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
 
 /**
@@ -81,6 +84,21 @@ public class ComputerOwnerHelper extends AbstractOwnershipHelper<Computer> {
         }
         
         NodeOwnerHelper.setOwnership(node, descr);
+    }
+
+    @Override
+    public Permission getRequiredPermission() {
+        return OwnershipPlugin.MANAGE_SLAVES_OWNERSHIP;
+    }
+
+    @Override
+    public boolean hasLocallyDefinedOwnership(@Nonnull Computer computer) {
+        Node node = computer.getNode();
+        if (node == null) {
+            // Node is not defined => permission is detached
+            return false;
+        }
+        return NodeOwnerHelper.Instance.hasLocallyDefinedOwnership(node);
     }
 
     @Override

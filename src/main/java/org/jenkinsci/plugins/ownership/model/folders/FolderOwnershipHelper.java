@@ -39,6 +39,8 @@ import java.io.IOException;
 import java.util.Collection;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+
+import hudson.security.Permission;
 import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
 import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
 
@@ -86,6 +88,17 @@ public class FolderOwnershipHelper extends AbstractOwnershipHelper<AbstractFolde
     public OwnershipDescription getOwnershipDescription(AbstractFolder<?> item) {
         // TODO: Maybe makes sense to unwrap the method to get a better performance (esp. for Security)
         return getOwnershipInfo(item).getDescription();
+    }
+
+    @Nonnull
+    @Override
+    public Permission getRequiredPermission() {
+        return OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP;
+    }
+
+    @Override
+    public boolean hasLocallyDefinedOwnership(@Nonnull AbstractFolder<?> folder) {
+        return getOwnerProperty(folder) != null;
     }
 
     @Override

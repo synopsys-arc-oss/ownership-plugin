@@ -29,6 +29,7 @@ import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
 import hudson.model.Node;
 import hudson.model.User;
+import hudson.security.Permission;
 import hudson.slaves.NodeProperty;
 import java.util.Collection;
 import javax.annotation.CheckForNull;
@@ -92,6 +93,17 @@ public class NodeOwnerPropertyHelper extends AbstractOwnershipHelper<NodePropert
             return prop.getNode();
         }
         return null;
+    }
+
+    @Override
+    public Permission getRequiredPermission() {
+        return OwnershipPlugin.MANAGE_SLAVES_OWNERSHIP;
+    }
+
+    @Override
+    public boolean hasLocallyDefinedOwnership(@Nonnull NodeProperty item) {
+        // Self-defined
+        return true;
     }
 
     @Override

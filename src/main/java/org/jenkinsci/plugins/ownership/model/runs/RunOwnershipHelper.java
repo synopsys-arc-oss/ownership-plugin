@@ -37,6 +37,8 @@ import hudson.model.Run;
 import java.util.Map;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+
+import hudson.security.Permission;
 import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
 
 /**
@@ -76,7 +78,13 @@ public class RunOwnershipHelper extends AbstractOwnershipHelper<Run> {
     public OwnershipInfo getOwnershipInfo(Run item) {
         return JobOwnerHelper.Instance.getOwnershipInfo(item.getParent());
     }
-    
+
+    @Override
+    public Permission getRequiredPermission() {
+        // Runs do not have separate permission management logic now, so we rely on Items
+        return OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP;
+    }
+
     /**
      * Environment setup according to wrapper configurations.
      * @param build Input build
