@@ -40,6 +40,7 @@ import jenkins.model.Jenkins;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.jvnet.hudson.test.MockAuthorizationStrategy;
@@ -70,6 +71,7 @@ public class JobOwnerJobPropertyTest {
     }
 
     @Test
+    @Issue("SECURITY-498")
     public void changeOwnerViaPost() throws Exception {
         FreeStyleProject p = r.createFreeStyleProject();
         p.getProperty(JobOwnerJobProperty.class).setOwnershipDescription(new OwnershipDescription(true, "admin", null));
@@ -100,6 +102,7 @@ public class JobOwnerJobPropertyTest {
     }
 
     @Test
+    @Issue("SECURITY-498")
     public void changeOwnerViaCLI() throws Exception {
         FreeStyleProject p = r.createFreeStyleProject();
         p.getProperty(JobOwnerJobProperty.class).setOwnershipDescription(new OwnershipDescription(true, "admin", null));
