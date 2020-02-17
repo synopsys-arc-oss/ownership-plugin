@@ -1,7 +1,7 @@
 <!--
 * The MIT License
 *
-* Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+* Copyright 2013-2015 Oleg Nenashev, Synopsys Inc.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -34,55 +34,42 @@
 -    blockName  - name of the block
 -
 - @remarks Use <function> to parse parameters
-- @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+- @author Oleg Nenashev
 - @since 0.0.3   
 -   
 -->
+<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     
     <!--Prepare data-->
-    <j:set var="_ownershipIsEnabled" value="${it != null and it.helper().getOwnershipDescription(it.getDescribedItem()).isOwnershipEnabled()}"/>
-    <j:if test="${_ownershipIsEnabled}">      
-        <j:set var="_item" value="${it.getDescribedItem()}"/>   
-        <j:set var="_userList" value="${it.helper().getPossibleOwners(it.getDescribedItem())}"/>   
-    </j:if>  
-    <j:if test="${!_ownershipIsEnabled}">
-        <j:invokeStatic var="_owner" method="getDefaultOwner"
-                        className="com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin"                    
-        />
-    </j:if>
+    <j:set var="_item" value="${it.getDescribedItem()}"/>   
+    <j:set var="_userList" value="${it.helper().getPossibleOwners(it.getDescribedItem())}"/>   
     
     <j:set var="_item" value="${it.getDescribedItem()}"/>          
     <f:entry title="${%Primary Owner}" help="/plugin/ownership/help/primaryOwner.html">
-        <!--Already instantinated ownership-->
-        <j:if test="${_ownershipIsEnabled}">
-            <j:set var="_userList" value="${it.helper().getPossibleOwners(it.getDescribedItem())}"/>   
-            <select name="${blockName}.primaryOwner" class="setting-input">
-                <j:forEach var="user" items="${_userList}">
-                    <f:option value="${user.getId()}" selected="${ it.helper().getOwnershipDescription(_item).isPrimaryOwner(user) == true }">
-                        ${it.helper().getDisplayName(user)}
-                    </f:option>
-                </j:forEach>
-            </select> 
-            <!--<f:description>${%Primary responsible user}</f:description> --> 
-        </j:if>
-        <!--Non-instatinated-->
-        <j:if test="${!_ownershipIsEnabled}">                 
-            <f:readOnlyTextbox field="${blockName}.primaryOwner" id="primaryOwner" value="${_owner}"/>
-           <!-- <f:description>${%Ownership will be assigned to the current user. You will be able to change owner after "Save"}</f:description>   -->              
-        </j:if>
+        <!--Already instantiated ownership-->
+        <j:set var="_userList" value="${it.helper().getPossibleOwners(it.getDescribedItem())}"/>   
+        <select name="${blockName}.primaryOwner" class="setting-input">
+            <j:forEach var="user" items="${_userList}">
+                <f:option value="${user.getId()}" selected="${ it.helper().getOwnershipDescription(_item).isPrimaryOwner(user) == true }">
+                    ${it.helper().getDisplayName(user)}
+                </f:option>
+            </j:forEach>
+        </select> 
+
     </f:entry>
-    <f:entry title="Co-owners" help="/plugin/ownership/help/coOwner.html"/>
+    <f:entry title="${%Secondary owners}" help="/plugin/ownership/help/coOwner.html"/>
     <f:entry>
-        <f:repeatable name="coOwners" add="${%Add co-owner}" var="_coownerId" items="${it.helper().getOwnershipDescription(_item).getCoownersIds()}">                                    
+        <f:repeatable name="coOwners" add="${%Add secondary owner}" var="_coownerId" items="${it.helper().getOwnershipDescription(_item).getCoownersIds()}">                                    
             <table width="100%">
-                <f:entry title="Co-owner">
+                <f:entry title="Secondary owner">
                     <f:textbox field="coOwner" value="${_coownerId}"
                                checkUrl="'${rootURL}/plugin/ownership/checkUser?userId='+this.value"
                     />
                     <f:description>
-                       User, who have specific access rights to the item.
+                        ID of the user, who have specific access rights to the item. 
+                        Unregistered users are accepted as well.
                     </f:description>  
                 </f:entry>
                 <f:entry title="">

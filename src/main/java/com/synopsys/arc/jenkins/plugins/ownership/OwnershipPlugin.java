@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,11 +28,11 @@ import com.synopsys.arc.jenkins.plugins.ownership.extensions.OwnershipLayoutForm
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy.AssignCreatorPolicy;
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.item_ownership_policy.DropOwnershipPolicy;
 import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurity;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.ExtensionList;
 import hudson.Plugin;
 import hudson.Util;
 import hudson.model.Descriptor;
-import hudson.model.Hudson;
 import hudson.model.User;
 import hudson.security.Permission;
 import hudson.security.PermissionGroup;
@@ -55,7 +55,7 @@ import org.kohsuke.stapler.StaplerRequest;
 /**
  * Contains global actions and configurations.
  * @since 0.0.1
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @author Oleg Nenashev
  */
 public class OwnershipPlugin extends Plugin {
     
@@ -73,8 +73,9 @@ public class OwnershipPlugin extends Plugin {
     /**
      * @deprecated Replaced by {@link ItemOwnershipPolicy}
      */
+    @Deprecated
     private transient boolean assignOnCreate;
-    private final List<OwnershipAction> pluginActions = new ArrayList<OwnershipAction>();
+    private final List<OwnershipAction> pluginActions = new ArrayList<>();
     public String mailResolverClassName;
     private ItemSpecificSecurity defaultJobsSecurity;
     private OwnershipPluginConfiguration configuration;
@@ -82,6 +83,8 @@ public class OwnershipPlugin extends Plugin {
     /**
      * @deprecated Use {@link #getInstance()} instead
      */
+    @Deprecated
+    @SuppressFBWarnings(value = "NM_METHOD_NAMING_CONVENTION", justification = "deprecated")
     public static OwnershipPlugin Instance() {
         return getInstance();
     }
@@ -100,7 +103,7 @@ public class OwnershipPlugin extends Plugin {
     public void start() throws Exception {
 	load();
         reinitActionsList();
-	Hudson.getInstance().getActions().addAll(pluginActions);
+	Jenkins.getActiveInstance().getActions().addAll(pluginActions);
     }
 
     @Override
@@ -124,9 +127,10 @@ public class OwnershipPlugin extends Plugin {
 
     /**
      * @deprecated This method is deprecated since 0.5
-     * @return true if the {@link #itemOwnershipPolicy} is an instance of
+     * @return {@code true} if the Item ownership policy is an instance of
      * {@link AssignCreatorPolicy}.
      */
+    @Deprecated
     public boolean isAssignOnCreate() {
         return (getConfiguration().getItemOwnershipPolicy() instanceof AssignCreatorPolicy);
     }
@@ -168,13 +172,13 @@ public class OwnershipPlugin extends Plugin {
         
         reinitActionsList();
 	save();
-        Hudson.getInstance().getActions().addAll(pluginActions);
+        Jenkins.getActiveInstance().getActions().addAll(pluginActions);
     }
 
     @Override 
     public void configure(StaplerRequest req, JSONObject formData)
 	    throws IOException, ServletException, Descriptor.FormException {
-	Hudson.getInstance().getActions().removeAll(pluginActions);
+	Jenkins.getActiveInstance().getActions().removeAll(pluginActions);
         requiresConfigureRights = formData.getBoolean("requiresConfigureRights");
         
         // Configurations
@@ -193,7 +197,7 @@ public class OwnershipPlugin extends Plugin {
         
         reinitActionsList();
 	save();
-        Hudson.getInstance().getActions().addAll(pluginActions);
+        Jenkins.getActiveInstance().getActions().addAll(pluginActions);
     }
    
     private void reinitActionsList() {
@@ -232,7 +236,7 @@ public class OwnershipPlugin extends Plugin {
             return FormValidation.error("Field is empty. Field will be ignored");
         }
         
-        User usr = User.get(userId, false, null);
+        User usr = User.getById(userId, false);
         if (usr == null) {
             return FormValidation.warning("User " + userId + " is not registered in Jenkins");
         }
@@ -254,12 +258,16 @@ public class OwnershipPlugin extends Plugin {
                 } else {
                     Class<MailAddressResolver> resolverClass = (Class<MailAddressResolver>)Class.forName(mailResolverClassName);
                     MailAddressResolver res = MailAddressResolver.all().get(resolverClass);
-                    return res.findMailAddressFor(user);
+                    if (res != null) {
+                        return res.findMailAddressFor(user);
+                    }
                 }
             } 
         } catch (ClassNotFoundException ex) {
             // Do nothing - fallback do default handler
         }
+        //TODO: ClassCastException (bug)
+        //TODO: methods above should log errors
         
         return MailAddressResolver.resolve(user);
     }
@@ -267,7 +275,7 @@ public class OwnershipPlugin extends Plugin {
     @Nonnull
     public Collection<String> getPossibleMailResolvers() {
         ExtensionList<MailAddressResolver> extensions = MailAddressResolver.all();
-        List<String> items =new ArrayList<String>(extensions.size());
+        List<String> items = new ArrayList<>(extensions.size());
         items.add(FAST_RESOLVER_ID);
         for (MailAddressResolver resolver : extensions) {
             items.add(resolver.getClass().getCanonicalName());

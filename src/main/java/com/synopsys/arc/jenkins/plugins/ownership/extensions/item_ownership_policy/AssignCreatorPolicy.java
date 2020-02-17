@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2014 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,13 +30,12 @@ import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicy
 import com.synopsys.arc.jenkins.plugins.ownership.extensions.ItemOwnershipPolicyDescriptor;
 import hudson.Extension;
 import hudson.model.Item;
-import hudson.model.Job;
 import hudson.model.User;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * A policy, which sets the item creator as an owner.
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @author Oleg Nenashev
  * @since 0.5
  */
 public class AssignCreatorPolicy extends ItemOwnershipPolicy {
@@ -48,7 +47,7 @@ public class AssignCreatorPolicy extends ItemOwnershipPolicy {
     @Override
     public OwnershipDescription onCreated(Item item) {
         User creator = User.current();
-        if (creator != null && creator != User.getUnknown() && item instanceof Job) {
+        if (creator != null && creator != User.getUnknown()) {
             return new OwnershipDescription(true, creator.getId(), null);
         }
         
@@ -60,7 +59,7 @@ public class AssignCreatorPolicy extends ItemOwnershipPolicy {
 
         @Override
         public String getDisplayName() {
-            return Messages.ItemOwnershipPolicy_AssignCreatorPolicy_dipslayName();
+            return Messages.ItemOwnershipPolicy_AssignCreatorPolicy_displayName();
         }       
     }
 }

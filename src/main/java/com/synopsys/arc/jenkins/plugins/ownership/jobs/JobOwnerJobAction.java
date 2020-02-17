@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,7 +50,7 @@ import org.kohsuke.stapler.StaplerResponse;
  * Ownership action for jobs.
  * The action displays "Manage Ownership" action on the left panel.
  * Actually, this action injects {@link JobOwnerJobProperty} into the project.
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @author Oleg Nenashev
  */
 public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
      
@@ -68,6 +68,7 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
      * Gets described job.
      * @deprecated Just for compatibility with 0.0.1
      */
+    @Deprecated
     public Job<?, ?> getJob() {
         return getDescribedItem();
     }
@@ -126,9 +127,9 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     }
     
     public HttpResponse doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
-        getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
+        getDescribedItem().checkPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
         
-        JSONObject jsonOwnership = (JSONObject) req.getSubmittedForm().getJSONObject("owners");
+        JSONObject jsonOwnership = req.getSubmittedForm().getJSONObject("owners");
         OwnershipDescription descr = OwnershipDescription.parseJSON(jsonOwnership);
         JobOwnerHelper.setOwnership(getDescribedItem(), descr);
         
@@ -136,11 +137,11 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     }
     
     public HttpResponse doProjectSpecificSecuritySubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, Descriptor.FormException {
-        getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
+        getDescribedItem().checkPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
         JSONObject form = req.getSubmittedForm();
         
         if (form.containsKey("itemSpecificSecurity")) {
-            JSONObject jsonSpecificSecurity = (JSONObject) req.getSubmittedForm().getJSONObject("itemSpecificSecurity");
+            JSONObject jsonSpecificSecurity = req.getSubmittedForm().getJSONObject("itemSpecificSecurity");
             ItemSpecificSecurity specific = ItemSpecificSecurity.DESCRIPTOR.newInstance(req, jsonSpecificSecurity);
             JobOwnerHelper.setProjectSpecificSecurity(getDescribedItem(), specific);
         } else { // drop security
@@ -151,7 +152,7 @@ public class JobOwnerJobAction extends ItemOwnershipAction<Job<?,?>> {
     }
     
     public HttpResponse doRestoreDefaultSpecificSecuritySubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException, Descriptor.FormException {
-        getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
+        getDescribedItem().checkPermission(OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP);
         // Get default security
         ItemSpecificSecurity defaultJobsSecurity = OwnershipPlugin.getInstance().getDefaultJobsSecurity();
         ItemSpecificSecurity val = defaultJobsSecurity != null ? defaultJobsSecurity.clone() : null;

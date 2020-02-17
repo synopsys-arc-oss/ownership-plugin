@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,20 +24,22 @@
 package com.synopsys.arc.jenkins.plugins.ownership.security.rolestrategy;
 
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
-import static com.synopsys.arc.jenkins.plugins.ownership.security.rolestrategy.AbstractOwnershipRoleMacro.hasPermission;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.Macro;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.RoleType;
 import hudson.Extension;
 import hudson.model.User;
 import hudson.security.AccessControlled;
 import hudson.security.Permission;
+import org.jenkinsci.plugins.ownership.integrations.rolestrategy.macros.CurrentUserIsPrimaryOwnerMacro;
 
 /**
  * Provides owner RoleMacro for the role-based strategy (w/o Sid check).
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.2
+ * @deprecated Use {@link CurrentUserIsPrimaryOwnerMacro}
  */
-@Extension(optional = true)
+@Deprecated
+@Extension(optional = true, ordinal = -1000)
 public class OwnerRoleMacroNoSid extends AbstractOwnershipRoleMacro {
     
     @Override

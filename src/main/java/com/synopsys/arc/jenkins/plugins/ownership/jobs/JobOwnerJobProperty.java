@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,30 +40,37 @@ import org.kohsuke.stapler.StaplerRequest;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
+import hudson.model.Items;
 import hudson.model.Job;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import hudson.model.User;
+import hudson.util.XStream2;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Ownership job property.
- * @todo Implement generic approaches from 0.0.3
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * TODO: Implement generic approaches from 0.0.3
+ * @author Oleg Nenashev
  * @since 0.0.1
  */
 public class JobOwnerJobProperty extends JobProperty<Job<?, ?>> 
     implements IOwnershipItem<Job<?, ?>>
 {
+    @CheckForNull
     OwnershipDescription ownership;
 
-    /**Additional matrix with project security*/
+    /**
+     * Additional matrix with project security
+     */
+    @CheckForNull
     ItemSpecificSecurity itemSpecificSecurity;
         
     @DataBoundConstructor
@@ -82,10 +89,10 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
      * The function returns a default configuration if security is not
      * configured. Use {@link #hasItemSpecificSecurity() hasItemSpecificSecurity} 
      * to check an origin of permissions.
-     * @return ItemSpecific security or null if it is not configured
+     * @return ItemSpecific security or {@code null} if it is not configured
      * @since 0.3
      */
-    @Nonnull
+    @CheckForNull
     public ItemSpecificSecurity getItemSpecificSecurity() {
         return itemSpecificSecurity != null 
                 ? itemSpecificSecurity 
@@ -102,7 +109,7 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
     }
     
     public String getDisplayName(User usr) {
-        return  JobOwnerHelper.Instance.getDisplayName(usr);
+        return JobOwnerHelper.Instance.getDisplayName(usr);
     }
       
     public Collection<User> getUsers()
@@ -147,12 +154,16 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
 
     @Override
     public String toString() {
-            return ownership.toString();
+        StringBuilder bldr = new StringBuilder();
+        bldr.append(ownership != null ? ownership.toString() : "ownership not set");
+        bldr.append(" ");
+        bldr.append(itemSpecificSecurity != null ? "with specific permissions" : "without specific permissions");
+        return bldr.toString();
     }
     
     public void doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
         JSONObject formData = req.getSubmittedForm();
-        JSONObject jsonOwnership = (JSONObject) formData.getJSONObject("owners");
+        JSONObject jsonOwnership = formData.getJSONObject("owners");
         setOwnershipDescription(OwnershipDescription.parseJSON(jsonOwnership));
     }
     
@@ -164,5 +175,15 @@ public class JobOwnerJobProperty extends JobProperty<Job<?, ?>>
     public void setItemSpecificSecurity(@CheckForNull ItemSpecificSecurity security) throws IOException {
         itemSpecificSecurity = security;
         owner.save();
+    }
+
+    static {
+        // TODO: Remove reflection once baseline is updated past 2.85.
+        try {
+            Method m = XStream2.class.getMethod("addCriticalField", Class.class, String.class);
+            m.invoke(Items.XSTREAM2, JobOwnerJobProperty.class, "ownership");
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new ExceptionInInitializerError(e);
+        }
     }
 }

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 package com.synopsys.arc.jenkins.plugins.ownership.wrappers;
 
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -39,7 +40,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 /**
  * Provides wrapper, which injects ownership variables into the build environment.
  * The wrapper support both slave and node ownership information.
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.2
  */
 public class OwnershipBuildWrapper extends BuildWrapper {
@@ -51,7 +52,7 @@ public class OwnershipBuildWrapper extends BuildWrapper {
     private transient final boolean injectJobOwnership = false;
 
     @DataBoundConstructor
-    public OwnershipBuildWrapper(EnvSetupOptions envSetupOptions) {
+    public OwnershipBuildWrapper(@Nonnull EnvSetupOptions envSetupOptions) {
         this.envSetupOptions = envSetupOptions;
     }
 
@@ -59,6 +60,7 @@ public class OwnershipBuildWrapper extends BuildWrapper {
         this(new EnvSetupOptions(injectJobOwnership, injectNodeOwnership));
     }
     
+    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", justification = "Migration of the old data")
     public Object readResolve() {
         if (envSetupOptions == null) {
             envSetupOptions = new EnvSetupOptions(injectJobOwnership, injectNodeOwnership);
@@ -69,7 +71,7 @@ public class OwnershipBuildWrapper extends BuildWrapper {
     @Override
     public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
         return new Environment() {
-            // Empty instantination. The entire code has been moved to OwnershipRunListener
+            // Empty instantiation. The entire code has been moved to OwnershipRunListener
         };
     }
 

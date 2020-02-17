@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 /**
  * Implements monitoring of ownership.
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.4
  */
 public class OwnershipNodeMonitor extends NodeMonitor {
@@ -50,6 +50,12 @@ public class OwnershipNodeMonitor extends NodeMonitor {
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
     public static class DescriptorImpl extends AbstractNodeMonitorDescriptor<Data> {
+        
+        //TODO: no need to use AsyncNodeMonitor from the performance PoV, but there is no supported sync option in the core
+        DescriptorImpl() {
+            // Check every 10 minutes
+            super(1000*60*10L);
+        }
         
         @Override
         protected Data monitor(Computer c) throws IOException, InterruptedException {

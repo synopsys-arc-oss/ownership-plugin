@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@ import javax.annotation.Nonnull;
  * Adapter for typical ownership operations with different item types.
  * Every IOwnership item should provide ownership helper.
  * @param <TObjectType> Type of object, for which ownership should be resolved
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @author Oleg Nenashev
  * @since 0.0.2
  * @see IOwnershipItem
  * @see JobOwnerHelper
@@ -95,7 +95,7 @@ public interface IOwnershipHelper<TObjectType>  {
     public boolean isOwnerExists(@Nonnull TObjectType item);
     
     /**
-     * Get Display string of the owner (and coowners).
+     * Get Display string of the owner.
      * @param item Item to be described
      * @return User description string
      */
@@ -106,7 +106,7 @@ public interface IOwnershipHelper<TObjectType>  {
      * Gets ownership description of the requested item.
      * @param item Item to be described
      * @return Ownership description. The method returns a 
-     * {@link OwnershipDescription.DISABLED}
+     * {@link OwnershipDescription#DISABLED_DESCR}
      * @since 0.0.3
      */
     @Nonnull

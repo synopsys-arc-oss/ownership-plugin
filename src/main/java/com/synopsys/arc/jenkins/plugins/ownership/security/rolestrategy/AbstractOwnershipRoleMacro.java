@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,33 +23,36 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.security.rolestrategy;
 
-import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipItem;
+import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
-import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
-import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty;
-import com.synopsys.arc.jenkins.plugins.ownership.nodes.OwnerNodeProperty;
+import com.synopsys.arc.jenkins.plugins.ownership.nodes.NodeOwnerHelper;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.Macro;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.RoleMacroExtension;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.RoleType;
 import static com.synopsys.arc.jenkins.plugins.rolestrategy.RoleType.Project;
 import static com.synopsys.arc.jenkins.plugins.rolestrategy.RoleType.Slave;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.Computer;
-import hudson.model.Job;
+import hudson.model.Item;
 import hudson.model.Node;
 import hudson.model.User;
 import hudson.security.AccessControlled;
+import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
+
+import javax.annotation.CheckForNull;
 
 /**
  * An abstract class for {@link RoleMacroExtension}s provided by the ownership plugin.
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.1
  */
-abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
+public abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
     
     public static final String NO_SID_SUFFIX="NoSid";
     protected static final String AUTHENTICATED_SID = "authenticated";
     
     @Override
+    @SuppressFBWarnings(value = "NM_METHOD_NAMING_CONVENTION", justification = "Part of other plugin API")
     public boolean IsApplicable(RoleType roleType) {
         switch (roleType) {
             case Project:
@@ -62,15 +65,12 @@ abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
     }
     
     public static OwnershipDescription getOwnership(RoleType type, AccessControlled item) {
-        IOwnershipItem ownership = null;
+        //TODO refactor the code to use OwnershipHelperLocator
         switch(type) {
             case Project:
-                if (item instanceof Job) { 
-                    Job prj = (Job)item;
-                    JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(prj);
-                    if (prop != null) {
-                        ownership = prop;
-                    }                 
+                if (item instanceof Item) { 
+                    IOwnershipHelper<AccessControlled> helper = OwnershipHelperLocator.locate(item);
+                    return helper != null ? helper.getOwnershipDescription(item) : OwnershipDescription.DISABLED_DESCR;
                 }
                 break;
             case Slave:
@@ -78,21 +78,30 @@ abstract class AbstractOwnershipRoleMacro extends RoleMacroExtension {
                     Computer comp = (Computer)item;
                     Node node = comp.getNode();
                     if (node != null) {
-                        ownership = node.getNodeProperties().get(OwnerNodeProperty.class);
+                        return NodeOwnerHelper.Instance.getOwnershipDescription(node);
                     }
                 }
                 break;
             default:
                 //do nothing => Ownership is disabled
         }
-        return ownership != null ? ownership.getOwnership() : OwnershipDescription.DISABLED_DESCR;
+        
+        // Fallback to the disabled Ownership description
+        return OwnershipDescription.DISABLED_DESCR;
     }
     
-    public static boolean hasPermission(User user, RoleType type, AccessControlled item, Macro macro, boolean acceptCoowners) {
-        //TODO: implement
-        if (user == null) {
-            return false;
-        }       
-        return getOwnership(type, item).isOwner(user, acceptCoowners);
+    /**
+     * Checks if a user has the permission defined for this macro.
+     * @param user User
+     * @param type Role type
+     * @param item Item, for which permissions are being checked
+     * @param macro Macro expression
+     * @param acceptSecondaryOwners {@code true} if secondary owners should be considered
+     * @return {@code true} if the macro provides a permission.
+     *         Always {@code false} if the user is {@code null}.
+     */
+    public static boolean hasPermission(@CheckForNull User user, RoleType type, AccessControlled item,
+                                        Macro macro, boolean acceptSecondaryOwners) {
+        return user != null && getOwnership(type, item).isOwner(user, acceptSecondaryOwners);
     }
 }

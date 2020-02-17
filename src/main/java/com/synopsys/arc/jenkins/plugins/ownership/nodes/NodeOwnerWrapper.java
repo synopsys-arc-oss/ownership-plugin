@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,15 @@
 package com.synopsys.arc.jenkins.plugins.ownership.nodes;
 
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import java.util.Collections;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Data-bound wrapper for slave ownership initialization.
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @see OwnerNodeProperty
  */
 public class NodeOwnerWrapper {
@@ -39,7 +41,9 @@ public class NodeOwnerWrapper {
 
     @DataBoundConstructor
     public NodeOwnerWrapper(@CheckForNull String primaryOwner) {
-        description = new OwnershipDescription(primaryOwner!=null, primaryOwner);
+        description = StringUtils.isBlank(primaryOwner) 
+                ? OwnershipDescription.DISABLED_DESCR
+                : new OwnershipDescription(true, primaryOwner, Collections.<String>emptyList());
     }
 
     @Nonnull

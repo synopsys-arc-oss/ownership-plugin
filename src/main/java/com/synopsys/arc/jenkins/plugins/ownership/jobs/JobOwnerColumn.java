@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,15 +24,21 @@
 package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import org.kohsuke.stapler.DataBoundConstructor;
 import hudson.Extension;
-import hudson.model.Job;
+import hudson.model.Item;
+import hudson.model.User;
 import hudson.views.ListViewColumnDescriptor;
 import hudson.views.ListViewColumn;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
 
 /**
  * Provides Ownership column for the list view.
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.1
  */
 public class JobOwnerColumn extends ListViewColumn {
@@ -42,12 +48,25 @@ public class JobOwnerColumn extends ListViewColumn {
         super();
     }
 
-    public String getJobOwner(@SuppressWarnings("rawtypes") Job job) {
-        return JobOwnerHelper.Instance.getOwner(job);
+    @Nonnull
+    public String getJobOwner(Item item) {
+        final OwnershipDescription description = getDescription(item);
+        return description != null ? description.getPrimaryOwnerId() : User.getUnknown().getId();
     }
     
-    public boolean isOwnerExists(@SuppressWarnings("rawtypes") Job job) {
-        return JobOwnerHelper.Instance.isOwnerExists(job);
+    public boolean isOwnerExists(Item item) {
+        final OwnershipDescription description = getDescription(item);
+        return description != null ? description.hasPrimaryOwner(): false;
+    }
+    
+    @CheckForNull
+    private OwnershipDescription getDescription(Item item) {
+        AbstractOwnershipHelper<Item> helper = OwnershipHelperLocator.locate(item);
+        if (helper == null) {
+            // We cannot retrieve helper for the object => keep moving
+            return null;
+        }
+        return helper.getOwnershipDescription(item);
     }
 
     @Extension

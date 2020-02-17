@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Oleg Nenashev <o.v.nenashev@gmail.com>.
+ * Copyright 2014 Oleg Nenashev
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,29 +25,62 @@
 package com.synopsys.arc.jenkins.plugins.ownership.util.ui;
 
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
-import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPluginConfiguration;
 import com.synopsys.arc.jenkins.plugins.ownership.util.HTMLFormatter;
 import org.jenkinsci.plugins.ownership.util.mail.OwnershipMailHelper;
 import javax.annotation.Nonnull;
 
 /**
  * Formats layouts for UI interfaces.
- * This extension is being used by {@link OwnershipLayoutFormatterProvider}.
  * @param <TObjectType> Type of object, for which ownership should be resolved
- * @see OwnershipLayoutFormatterProvider
  * @since 0.5
- * @author Oleg Nenashev <o.v.nenashev@gmail.com>
+ * @author Oleg Nenashev
  */
 public abstract class OwnershipLayoutFormatter<TObjectType> {
     
-    public abstract String formatUser(@Nonnull TObjectType item, String userId);
+    @Nonnull 
+    public abstract String formatUser(@Nonnull TObjectType item, @Nonnull String userId);
     
-    public String formatOwner(@Nonnull TObjectType item, String userId) {
+    /**
+     * Formats primary owner.
+     * @param item Item, for which the formatting is being performed
+     * @param userId User ID
+     * @return Raw HTML with user format
+     * @since 0.9
+     */
+    @Nonnull 
+    public String formatPrimaryOwner(@Nonnull TObjectType item, @Nonnull String userId) {
+        return formatOwner(item, userId);
+    }
+    
+    /**
+     * @deprecated Use {@link #formatPrimaryOwner(java.lang.Object, java.lang.String)}
+     */
+    @Deprecated
+    @Nonnull 
+    public String formatOwner(@Nonnull TObjectType item, @Nonnull String userId) {
         return formatUser(item, userId);
     }
     
-    public String formatCoOwner(@Nonnull TObjectType item, String userId) {
+    /**
+     * Formats secondary owner.
+     * @param item Item, for which the formatting is being performed
+     * @param userId User ID
+     * @return Raw HTML with user format
+     * @since 0.9
+     */
+    @Nonnull 
+    public String formatSecondaryOwner(@Nonnull TObjectType item, @Nonnull String userId) {
+        return formatCoOwner(item, userId);
+    }
+    
+    /**
+     * @deprecated Use {@link #formatSecondaryOwner(java.lang.Object, java.lang.String)}
+     */
+    @Deprecated
+    @Nonnull 
+    public String formatCoOwner(@Nonnull TObjectType item, @Nonnull String userId) {
         return formatUser(item, userId);
     }
     
@@ -77,10 +110,19 @@ public abstract class OwnershipLayoutFormatter<TObjectType> {
 
         @Override
         public String formatUser(TObjectType item, String userId) {
-            final String userURI = HTMLFormatter.formatUserURI(userId, true);
-            final String userEmail = HTMLFormatter.formatEmailURI(userId);
-            final String userInfoHTML = userURI + (userEmail != null ? " " + userEmail : "");
-            return userInfoHTML;
+            StringBuilder rawHtmlBuilder = new StringBuilder();
+            rawHtmlBuilder.append(HTMLFormatter.formatUserURI(userId, true));
+            
+            // Append e-mail to the output if it is not prohibited.
+            if (!OwnershipPluginConfiguration.get().getMailOptions().isHideOwnerAndCoOwnerEmails()) {
+                final String userEmail = HTMLFormatter.formatEmailURI(userId);
+                if (userEmail != null) {
+                    rawHtmlBuilder.append(' ');
+                    rawHtmlBuilder.append(userEmail);
+                }
+            }
+            
+            return rawHtmlBuilder.toString();
         }
 
         @Override

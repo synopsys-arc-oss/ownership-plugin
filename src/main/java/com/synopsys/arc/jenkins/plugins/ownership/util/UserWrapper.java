@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.util;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.User;
 import javax.annotation.Nonnull;
 import org.kohsuke.accmod.Restricted;
@@ -30,7 +31,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Implements a wrapper, which allows to implement the "non-existent" user macro.
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @author Oleg Nenashev
  * @since 0.1
  */
 @Restricted(NoExternalUse.class)
@@ -59,20 +60,29 @@ public class UserWrapper {
             this.macro = userMacro;
         } else {
             this.isUser = true;
-            this.user = User.get(userMacro, false, null);
+            this.user = User.getById(userMacro, false);
             //   throw new UnsupportedOperationException("User macro must start with prefix '"+USER_MACRO_PREFIX+"'");
         }
 
     }
 
+    /**
+     * @deprecated Use {@link #isUser() }
+     */
+    @Deprecated
+    @SuppressFBWarnings(value = "NM_METHOD_NAMING_CONVENTION")
     public boolean IsUser() {
+        return isUser;
+    }
+    
+    public boolean isUser() {
         return isUser;
     }
 
     /**
      * Gets id of the user (calls User.getId() or returns macro).
      *
-     * @return
+     * @return ID or macro
      */
     public String getId() {
         return isUser ? user.getId() : macro;
@@ -84,7 +94,7 @@ public class UserWrapper {
     }
 
     public boolean meetsMacro(String userId) {
-        // Handle macroses and get effective user's id
+        // Handle macros and get effective user's id
         String comparedId;
         if (isUser) {
             if (user == null) {
@@ -100,7 +110,7 @@ public class UserWrapper {
         }
 
         // Check      
-        return comparedId.equals(userId);
+        return User.idStrategy().equals(comparedId, userId);
     }
 
 }

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,10 +25,10 @@ package com.synopsys.arc.jenkins.plugins.ownership.jobs;
 
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.UserComparator;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserWrapper;
 import hudson.Extension;
-import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
 import hudson.model.TopLevelItem;
 import hudson.model.User;
@@ -39,13 +39,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import javax.annotation.Nonnull;
 import net.sf.json.JSONObject;
+import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
- * Filters owner's and co-owners.
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * Filters jobs by primary and secondary owners.
+ * @author Oleg Nenashev
  * @since 0.1
  */
 public class OwnershipJobFilter extends ViewJobFilter {
@@ -62,7 +64,20 @@ public class OwnershipJobFilter extends ViewJobFilter {
         return ownerId;
     }
 
+    /**
+     * @deprecated use {@link #isAcceptSecondaryOwners()}
+     */
+    @Deprecated
     public boolean isAcceptsCoowners() {
+        return acceptsCoowners;
+    }
+    
+    /**
+     * Enables checking of secondary owners
+     * @return 
+     * @since TODO
+     */
+    public boolean isAcceptSecondaryOwners() {
         return acceptsCoowners;
     }
 
@@ -78,32 +93,35 @@ public class OwnershipJobFilter extends ViewJobFilter {
 
     @Override
     public List<TopLevelItem> filter(List<TopLevelItem> added, List<TopLevelItem> all, View filteringView) {
-        final ArrayList<TopLevelItem> newList = new ArrayList<TopLevelItem>();
+        final ArrayList<TopLevelItem> newList = new ArrayList<>();
         final UserWrapper userWrapper = new UserWrapper(ownerId);
 
         for (TopLevelItem item : added) {
-            if (item instanceof AbstractProject) { // Ignore non-project items
-                AbstractProject project = (AbstractProject) item;
-                OwnershipDescription ownership = JobOwnerHelper.Instance.getOwnershipDescription(project);
-                if (!ownership.isOwnershipEnabled()) {
-                    continue;
-                }
+            AbstractOwnershipHelper<TopLevelItem> helper = OwnershipHelperLocator.locate(item);
+            if (helper == null) {
+                // We cannot retrieve helper for the object => keep moving
+                continue;
+            }
+            
+            OwnershipDescription ownership = helper.getOwnershipDescription(item);
+            if (!ownership.isOwnershipEnabled()) {
+                continue;
+            }
 
-                boolean matches = false; // Check owner
-                if (userWrapper.meetsMacro(ownership.getPrimaryOwnerId())) {
-                    matches = true;
-                }
-                if (acceptsCoowners && !matches) { // Check co-owners
-                    for (String coOwnerId : ownership.getCoownersIds()) {
-                        if (userWrapper.meetsMacro(coOwnerId)) {
-                            matches = true;
-                            break;
-                        }
+            boolean matches = false; // Check owner
+            if (userWrapper.meetsMacro(ownership.getPrimaryOwnerId())) {
+                matches = true;
+            }
+            if (acceptsCoowners && !matches) { // Check secondary owners
+                for (String coOwnerId : ownership.getSecondaryOwnerIds()) {
+                    if (userWrapper.meetsMacro(coOwnerId)) {
+                        matches = true;
+                        break;
                     }
                 }
-                if (matches) {
-                    newList.add(item);
-                }
+            }
+            if (matches) {
+                newList.add(item);
             }
         }
 
@@ -132,14 +150,15 @@ public class OwnershipJobFilter extends ViewJobFilter {
      *
      * @return Collection of all registered users
      */
+    @Nonnull
     public static Collection<UserWrapper> getAvailableUsers() {
         // Sort users
         UserComparator comparator = new UserComparator();
-        LinkedList<User> userList = new LinkedList<User>(User.getAll());
+        LinkedList<User> userList = new LinkedList<>(User.getAll());
         Collections.sort(userList, comparator);
 
         // Prepare new list
-        Collection<UserWrapper> res = new ArrayList<UserWrapper>(userList.size() + 1);
+        Collection<UserWrapper> res = new ArrayList<>(userList.size() + 1);
         res.add(new UserWrapper(MACRO_ME));
         for (User user : userList) {
             res.add(new UserWrapper(user));

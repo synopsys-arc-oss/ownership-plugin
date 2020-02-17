@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2014 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,13 +31,15 @@ import hudson.model.Describable;
 import hudson.model.Descriptor;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import org.jenkinsci.plugins.ownership.config.DisplayOptions;
+import org.jenkinsci.plugins.ownership.config.InheritanceOptions;
 import org.jenkinsci.plugins.ownership.model.runs.OwnershipRunListener;
 import org.jenkinsci.plugins.ownership.util.environment.EnvSetupOptions;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Configuration of {@link OwnershipPlugin}.
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @author Oleg Nenashev
  * @since 0.5
  */
 public class OwnershipPluginConfiguration 
@@ -45,6 +47,9 @@ public class OwnershipPluginConfiguration
 
     private final ItemOwnershipPolicy itemOwnershipPolicy;
     private final @CheckForNull MailOptions mailOptions;
+    private final @CheckForNull DisplayOptions displayOptions;
+    private final @CheckForNull InheritanceOptions inheritanceOptions;
+    
     /**
      * Enforces the injection of ownership variables in {@link OwnershipRunListener}.
      * Null means the injection is disabled.
@@ -52,27 +57,57 @@ public class OwnershipPluginConfiguration
      */
     private final @CheckForNull EnvSetupOptions globalEnvSetupOptions;
 
+    @Deprecated
+    public OwnershipPluginConfiguration(@Nonnull ItemOwnershipPolicy itemOwnershipPolicy, 
+            @Nonnull MailOptions mailOptions, EnvSetupOptions globalEnvSetupOptions, 
+            @Nonnull DisplayOptions displayOptions) {
+        this(itemOwnershipPolicy, mailOptions, globalEnvSetupOptions, displayOptions, InheritanceOptions.DEFAULT);
+    }
+    
     @DataBoundConstructor
     public OwnershipPluginConfiguration(@Nonnull ItemOwnershipPolicy itemOwnershipPolicy, 
-            @Nonnull MailOptions mailOptions, EnvSetupOptions globalEnvSetupOptions) {
+            @Nonnull MailOptions mailOptions, EnvSetupOptions globalEnvSetupOptions, 
+            @Nonnull DisplayOptions displayOptions, @Nonnull InheritanceOptions inheritanceOptions) {
         this.itemOwnershipPolicy = itemOwnershipPolicy;
         this.mailOptions = mailOptions;
         this.globalEnvSetupOptions = globalEnvSetupOptions;
+        this.displayOptions = displayOptions;
+        this.inheritanceOptions = inheritanceOptions;
     }
     
     @Deprecated
     public OwnershipPluginConfiguration(@Nonnull ItemOwnershipPolicy itemOwnershipPolicy) {
         this (itemOwnershipPolicy, MailOptions.DEFAULT, null);
     }
+    
+    @Deprecated
+    public OwnershipPluginConfiguration(@Nonnull ItemOwnershipPolicy itemOwnershipPolicy, 
+            @Nonnull MailOptions mailOptions, EnvSetupOptions globalEnvSetupOptions) {
+        this(itemOwnershipPolicy, mailOptions, globalEnvSetupOptions, DisplayOptions.DEFAULT);
+    }
 
     public @Nonnull ItemOwnershipPolicy getItemOwnershipPolicy() {
-        return itemOwnershipPolicy;
+        return itemOwnershipPolicy != null ? itemOwnershipPolicy : ItemOwnershipPolicy.getDefault();
     }
 
     public @Nonnull MailOptions getMailOptions() {
         return mailOptions != null ? mailOptions : MailOptions.DEFAULT;
     }
 
+    /**
+     * Gets {@link OwnershipPlugin}'s display options.
+     * @return Display options. If the configuration has not been specified after the plugin update,
+     *      {@link DisplayOptions#DEFAULT} will be returned.
+     * @since 0.8
+     */
+    public @Nonnull DisplayOptions getDisplayOptions() {
+        return displayOptions != null ? displayOptions : DisplayOptions.DEFAULT;
+    }
+
+    public InheritanceOptions getInheritanceOptions() {
+        return inheritanceOptions != null ? inheritanceOptions : InheritanceOptions.DEFAULT;
+    }
+    
     /**
      * @return Global environment inject options. Null - global setup is disabled
      * @since 0.6
@@ -97,4 +132,14 @@ public class OwnershipPluginConfiguration
         }
     }
     
+    
+    /**
+     * Gets the {@link OwnershipPlugin} configuration.
+     * @return The plugin configuration if available.
+     * @throws IllegalStateException Jenkins instance is not ready
+     * @since 0.8
+     */
+    public static OwnershipPluginConfiguration get() {
+        return OwnershipPlugin.getInstance().getConfiguration();
+    }
 }

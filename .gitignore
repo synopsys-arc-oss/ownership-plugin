@@ -8,3 +8,7 @@ work/
 .settings/
 # Coverity
 /cov-int
+
+#IDEA
+ownership.iml
+.idea/

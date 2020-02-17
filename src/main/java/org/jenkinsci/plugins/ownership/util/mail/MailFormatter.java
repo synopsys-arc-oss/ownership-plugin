@@ -37,7 +37,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 /**
  * Provides the support of operations with e-mails.
- * @author Oleg Nenashev <o.v.nenashev@gmail.com>
+ * @author Oleg Nenashev
  * @since 0.6
  */
 public class MailFormatter {
@@ -79,7 +79,7 @@ public class MailFormatter {
         if (toString != null) {
             b.append(URLEncoder.encode(toString, encoding));
         }
-        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        List<NameValuePair> params = new LinkedList<>();
         joinMailAddresses(cc, "cc", params);
         joinMailAddresses(bcc, "bcc", params);
         if (subject != null) {

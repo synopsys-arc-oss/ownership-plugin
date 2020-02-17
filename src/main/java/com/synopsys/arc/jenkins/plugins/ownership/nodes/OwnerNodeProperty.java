@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,16 +25,19 @@ package com.synopsys.arc.jenkins.plugins.ownership.nodes;
 
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.IOwnershipItem;
-import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.util.ui.OwnershipLayoutFormatter;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.model.Node;
 import hudson.slaves.NodeProperty;
 import hudson.slaves.NodePropertyDescriptor;
 import hudson.slaves.SlaveComputer;
+import hudson.util.XStream2;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import javax.annotation.CheckForNull;
 import jenkins.model.Jenkins;
@@ -45,8 +48,7 @@ import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * Implements owner property for Jenkins Nodes.
- * @author Oleg Nenashev <nenashev@synopsys.com>
- * @deprecated Will be removed in future versions
+ * @author Oleg Nenashev
  * @since 0.0.3
  */
 public class OwnerNodeProperty extends NodeProperty<Node> 
@@ -80,7 +82,7 @@ public class OwnerNodeProperty extends NodeProperty<Node>
     @CheckForNull
     public Node getNode() {
         if (node == null) {
-            setNode(Jenkins.getInstance().getNode(nodeName));
+            setNode(Jenkins.getActiveInstance().getNode(nodeName));
         }
         return node;
     }
@@ -118,7 +120,7 @@ public class OwnerNodeProperty extends NodeProperty<Node>
          * @return Instance of the node, which is being configured (or null)
          * 
          * @since 0.0.5
-         * @author Oleg Nenashev <nenashev@synopsys.com>
+         * @author Oleg Nenashev
          */
         private static Node getNodePropertyOwner(StaplerRequest req)
         {                
@@ -138,13 +140,24 @@ public class OwnerNodeProperty extends NodeProperty<Node>
         }
         
         @Override
+        @SuppressFBWarnings(value = "NP_NONNULL_RETURN_VIOLATION", justification = "TODO: should be fixed, see jenkinsci PR #1880")
         public String getDisplayName() {
                 return null;
         }
-
+        
         @Override
         public boolean isApplicable( Class<? extends Node> Type ) {
                 return true;
         }         
+    }
+
+    static {
+        // TODO: Remove reflection once baseline is updated past 2.85.
+        try {
+            Method m = XStream2.class.getMethod("addCriticalField", Class.class, String.class);
+            m.invoke(Jenkins.XSTREAM2, OwnerNodeProperty.class, "ownership");
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new ExceptionInInitializerError(e);
+        }
     }
 }

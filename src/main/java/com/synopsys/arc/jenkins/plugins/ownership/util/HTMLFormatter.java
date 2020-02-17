@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,16 +23,20 @@
  */
 package com.synopsys.arc.jenkins.plugins.ownership.util;
 
+import hudson.Functions;
 import hudson.model.User;
+
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+
 import jenkins.model.Jenkins;
+
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Provides additional formatters for jelly layout.
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.2
  */
 @Restricted(NoExternalUse.class)
@@ -44,9 +48,9 @@ public class HTMLFormatter {
      * @return User e-mail in the following format: &lt;user@doma.in&gt;
      */
     public static @CheckForNull String formatEmailURI(@Nonnull String userId) {
-        String email = UserStringFormatter.formatEmail(userId);
+        String email = Functions.escape(UserStringFormatter.formatEmail(userId));
         if (email != null) {
-            return "<a href=\"mailto://"+email+"\">&lt;"+email+"&gt;</a>";
+            return "<a href=\"mailto:"+email+"\">&lt;"+email+"&gt;</a>";
         } else {
             return null;
         }          
@@ -61,12 +65,12 @@ public class HTMLFormatter {
     }
     
     public static @Nonnull String formatUserURI(@Nonnull String userId, boolean useLongFormat) {
-        User usr = User.get(userId, false, null);
+        User usr = User.getById(userId, false);
         if (usr != null) {
             String userStr = useLongFormat 
                 ? usr.getDisplayName()
                 : UserStringFormatter.formatShort(usr.getId());
-            return "<a href=\""+Jenkins.getInstance().getRootUrl()+"user/"+userId+"\">"+userStr+"</a>";
+            return "<a href=\""+Jenkins.getActiveInstance().getRootUrl()+"user/"+Functions.escape(userId)+"\">"+Functions.escape(userStr)+"</a>";
         } else { // just return name w/o hyperlink
             return userId + " (unregistered)";
         }
