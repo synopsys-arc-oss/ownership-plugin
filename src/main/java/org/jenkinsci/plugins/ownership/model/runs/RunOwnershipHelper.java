@@ -25,11 +25,12 @@
 package org.jenkinsci.plugins.ownership.model.runs;
 
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
+import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
-import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty;
 import com.synopsys.arc.jenkins.plugins.ownership.nodes.OwnerNodeProperty;
 import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserStringFormatter;
+import hudson.Extension;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Node;
@@ -38,17 +39,23 @@ import java.util.Map;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
+import hudson.security.Permission;
+import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
+import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+
 /**
  * Helper for {@link Run} ownership management.
- * @author Oleg Nenashev <o.v.nenashev@gmail.com>
+ * @author Oleg Nenashev
  * @since 0.6
  */
 public class RunOwnershipHelper extends AbstractOwnershipHelper<Run> {
 
-    private static final RunOwnershipHelper instance = new RunOwnershipHelper();
+    private static final RunOwnershipHelper INSTANCE = new RunOwnershipHelper();
 
     public static RunOwnershipHelper getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     @Override
@@ -70,7 +77,18 @@ public class RunOwnershipHelper extends AbstractOwnershipHelper<Run> {
     public OwnershipDescription getOwnershipDescription(Run item) {
         return JobOwnerHelper.Instance.getOwnershipDescription(item.getParent());
     }    
-     
+
+    @Override
+    public OwnershipInfo getOwnershipInfo(Run item) {
+        return JobOwnerHelper.Instance.getOwnershipInfo(item.getParent());
+    }
+
+    @Override
+    public Permission getRequiredPermission() {
+        // Runs do not have separate permission management logic now, so we rely on Items
+        return OwnershipPlugin.MANAGE_ITEMS_OWNERSHIP;
+    }
+
     /**
      * Environment setup according to wrapper configurations.
      * @param build Input build
@@ -83,9 +101,8 @@ public class RunOwnershipHelper extends AbstractOwnershipHelper<Run> {
     public static void setUp (@Nonnull AbstractBuild build, @Nonnull Map<String, String> target, 
             @CheckForNull BuildListener listener, 
             boolean injectJobOwnership, boolean injectNodeOwnership) {
-        if (injectJobOwnership) {
-            JobOwnerJobProperty prop = JobOwnerHelper.getOwnerProperty(build.getParent());  
-            OwnershipDescription descr = prop != null ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
+        if (injectJobOwnership) { 
+            OwnershipDescription descr = JobOwnerHelper.Instance.getOwnershipDescription(build.getParent());
             getVariables(descr, target, "JOB");
         }
              
@@ -112,7 +129,7 @@ public class RunOwnershipHelper extends AbstractOwnershipHelper<Run> {
         String ownerEmail = UserStringFormatter.formatEmail(descr.getPrimaryOwnerId());  
         target.put(prefix+"_OWNER_EMAIL", ownerEmail != null ? ownerEmail : "");
         
-        StringBuilder coowners=new StringBuilder(prefix+"_OWNER");   
+        StringBuilder coowners=new StringBuilder(target.get(prefix+"_OWNER"));   
         StringBuilder coownerEmails= new StringBuilder(target.get(prefix+"_OWNER_EMAIL"));
         for (String userId : descr.getCoownersIds()) {
             if (coowners.length() != 0) {
@@ -131,5 +148,24 @@ public class RunOwnershipHelper extends AbstractOwnershipHelper<Run> {
         }
         target.put(prefix+"_COOWNERS", coowners.toString());
         target.put(prefix+"_COOWNERS_EMAILS", coownerEmails.toString());     
+    }
+
+    @Override
+    public boolean isDisplayOwnershipSummaryBox(Run item) {
+        return super.isDisplayOwnershipSummaryBox(item) &&
+               !OwnershipPlugin.getInstance().getConfiguration().getDisplayOptions().isHideRunOwnership();
+    }
+
+    @Extension
+    @Restricted(NoExternalUse.class)
+    public static class LocatorImpl extends OwnershipHelperLocator<Run> {
+
+        @Override
+        public AbstractOwnershipHelper<Run> findHelper(Object item) {
+            if (item instanceof Run) {
+                return INSTANCE;
+            }
+            return null;
+        }
     }
 }

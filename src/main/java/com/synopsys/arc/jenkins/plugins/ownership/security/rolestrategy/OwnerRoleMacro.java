@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,10 +33,10 @@ import hudson.security.Permission;
 
 /**
  * Provides owner RoleMacro for the role-based strategy.
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.2
  */
-@Extension(optional = true)
+@Extension(optional = true, ordinal = -1000)
 public class OwnerRoleMacro extends AbstractOwnershipRoleMacro {
 
     @Override
@@ -51,7 +51,7 @@ public class OwnerRoleMacro extends AbstractOwnershipRoleMacro {
 
     @Override
     public boolean hasPermission(String sid, Permission p, RoleType type, AccessControlled item, Macro macro) {    
-        User user = User.get(sid, false, null);              
+        User user = User.getById(sid, false);
         return hasPermission(user, type, item, macro, false);
     }   
 }

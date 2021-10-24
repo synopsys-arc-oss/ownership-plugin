@@ -1,7 +1,7 @@
 <!--
 * The MIT License
 *
-* Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+* Copyright 2013 Oleg Nenashev, Synopsys Inc.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,73 +26,93 @@
 -    Parameters:
 -        helper - Helper, which provides info about item
 -        item - Item, which is being described by floating box. Action helper should provide appropriate action helper
--        itemType - name of the item type for visualization (ex, Job or Slave)
+-        itemType - name of the item type for visualization (e.g., Job or Node)
 -        styleClass - class of the div box   
 -
--    @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+-    @author Oleg Nenashev
 -    @since 0.0.3   
 -->
+<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <!--Stuff-->
     <link rel="stylesheet" href="${rootURL}/plugin/ownership/css/ownership.css" type="text/css" />
     <j:set var="layoutFormatter" value="${it.layoutFormatter}"/>
-    
-    <!-- Layout -->
-    <div class="ownership-summary-box">   
-        <div class="ownership-header">${itemType} ${%Ownership}</div>            
-        <table>
-            <tr>
-                <td>
-                    <div class="ownership-section">${%Owner}</div>
-                </td>
-                <td>
-                    <div class="ownership-user-info">
-                        ${layoutFormatter.formatOwner(item, helper.getOwner(item))}
-                    </div>
-                </td>
-            </tr>
-        
-            <!-- Co-owners -->    
-            <j:set var="coownersList" value="${helper.getOwnershipDescription(item).getCoownersIds()}"/>
-            <j:if test="${not coownersList.isEmpty()}">
+    <j:set var="ownershipDescription" value="${helper.getOwnershipDescription(item)}"/>
+   
+    <!-- Layout for ownership with available data -->
+    <j:if test="${helper.isDisplayOwnershipSummaryBox(item) and ownershipDescription.ownershipEnabled}">
+      <div class="ownership-summary-box">   
+        <input class="ownership-toggle-box" id="ownership-toogle-1" type="checkbox" />
+        <label for="ownership-toogle-1">${itemType} ${%Owners}</label>           
+        <div>
+            <table>
                 <tr>
-                    <td>        
-                        <div class="ownership-section">${%Co-owners}</div>
-                    </td>       
                     <td>
-                        <j:forEach var="coownerId" items="${coownersList}">
-                            <div class="ownership-user-info">                   
-                                ${layoutFormatter.formatOwner(item, coownerId)}
-                            </div>
-                        </j:forEach>  
+                        <div class="ownership-section">${%Primary}</div>
+                    </td>
+                    <td>
+                        <div class="ownership-user-info">
+                            <j:out value="${layoutFormatter.formatOwner(item, helper.getOwner(item))}"/>
+                        </div>
                     </td>
                 </tr>
-            </j:if>
-        </table>
-             
-        <div class="ownership-contact-links"> 
-            <table>
-                <tr>  
-                    <!-- Contact Owners link -->
-                    <j:set var="ownersMailToLink" value="${layoutFormatter.formatContactOwnersLink(item,helper)}"/>
-                    <j:if test="${ownersMailToLink != null}">   
-                        <td>    
-                            <img src="${imagesURL}/24x24/user.png"/>
-                            <a href="${ownersMailToLink}">${%ownersMailToLink.text(itemType)}</a>
-                        </td>
-                    </j:if>
-
-                    <!-- Contact Admins link -->
-                    <j:set var="adminsMailToLink" value="${layoutFormatter.formatContactAdminsLink(item,helper)}"/>
-                    <j:if test="${adminsMailToLink != null}">
+            
+                <!-- Secondary owners (fka Co-owners) -->    
+                <j:set var="coownersList" value="${helper.getOwnershipDescription(item).getCoownersIds()}"/>
+                <j:if test="${not coownersList.isEmpty()}">
+                    <tr>
+                        <td>        
+                            <div class="ownership-section">${%Secondary}</div>
+                        </td>       
                         <td>
-                            <img src="${imagesURL}/24x24/setting.png"/>
-                            <a href="${adminsMailToLink}">${%adminsMailToLink.text}</a>
+                            <j:forEach var="coownerId" items="${coownersList}">
+                                <div class="ownership-user-info">                   
+                                    <j:out value="${layoutFormatter.formatOwner(item, coownerId)}"/>
+                                </div>
+                            </j:forEach>  
                         </td>
-                    </j:if>
-                </tr>
+                    </tr>
+                </j:if>
             </table>
+                 
+            <div class="ownership-contact-links"> 
+                <table>
+                    <tr>  
+                        <!-- Contact Owners link -->
+                        <j:set var="ownersMailToLink" value="${layoutFormatter.formatContactOwnersLink(item,helper)}"/>
+                        <j:if test="${ownersMailToLink != null}">   
+                            <td>    
+                                <img src="${imagesURL}/24x24/user.png"/>
+                                <a href="${ownersMailToLink}">${%ownersMailToLink.text(itemType)}</a>
+                            </td>
+                        </j:if>
+
+                        <!-- Contact Admins link -->
+                        <j:set var="adminsMailToLink" value="${layoutFormatter.formatContactAdminsLink(item,helper)}"/>
+                        <j:if test="${adminsMailToLink != null}">
+                            <td>
+                                <img src="${imagesURL}/24x24/setting.png"/>
+                                <a href="${adminsMailToLink}">${%adminsMailToLink.text}</a>
+                            </td>
+                        </j:if>
+                    </tr>
+                </table>
+            </div>
         </div>
-    </div>
+      </div>
+    </j:if>
+    
+    <!-- Layout for ownership with missing data -->
+    <j:if test="${helper.isDisplayOwnershipSummaryBox(item) and !ownershipDescription.ownershipEnabled}">
+      <div class="ownership-summary-box">   
+        <div class="ownership-header">${itemType} ${%Ownership}</div>
+        <p>
+          ${%noOwnership.info.text(itemType)}
+        </p>
+        <p>
+          <b>${%noOwnership.info.hint}</b> ${%noOwnership.disableDisplayHint.text} <code>${%noOwnership.disableDisplayHint.configPath}</code>
+        </p>
+      </div>
+    </j:if>
 </j:jelly>

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@ import org.kohsuke.stapler.StaplerResponse;
 
 /**
  * Node ownership action.
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.2
  */
 public class NodeOwnershipAction extends ItemOwnershipAction<Computer> {
@@ -75,7 +75,7 @@ public class NodeOwnershipAction extends ItemOwnershipAction<Computer> {
 
     @Override
     public IOwnershipHelper<Computer> helper() {
-        return ComputerOwnerHelper.Instance;
+        return ComputerOwnerHelper.INSTANCE;
     }
 
     @Override
@@ -90,7 +90,7 @@ public class NodeOwnershipAction extends ItemOwnershipAction<Computer> {
      * @return 
      */
     public static String getAbsoluteUrl(@Nonnull Computer computer) {
-        String r = Jenkins.getInstance().getRootUrl();
+        String r = Jenkins.getActiveInstance().getRootUrl();
         if(r==null) {
             throw new IllegalStateException("Root URL isn't configured yet. Cannot compute absolute URL.");
         }
@@ -98,9 +98,9 @@ public class NodeOwnershipAction extends ItemOwnershipAction<Computer> {
     }
     
     public HttpResponse doOwnersSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, UnsupportedEncodingException, ServletException, Descriptor.FormException {
-        getDescribedItem().hasPermission(OwnershipPlugin.MANAGE_SLAVES_OWNERSHIP);
+        getDescribedItem().checkPermission(OwnershipPlugin.MANAGE_SLAVES_OWNERSHIP);
         
-        JSONObject jsonOwnership = (JSONObject) req.getSubmittedForm().getJSONObject("owners");
+        JSONObject jsonOwnership = req.getSubmittedForm().getJSONObject("owners");
         OwnershipDescription descr = OwnershipDescription.parseJSON(jsonOwnership);
         ComputerOwnerHelper.setOwnership(getDescribedItem(), descr);
         

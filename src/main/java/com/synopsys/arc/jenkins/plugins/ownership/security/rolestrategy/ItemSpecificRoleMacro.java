@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,7 @@ import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty;
 import com.synopsys.arc.jenkins.plugins.ownership.security.itemspecific.ItemSpecificSecurity;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.Macro;
 import com.synopsys.arc.jenkins.plugins.rolestrategy.RoleType;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.model.Job;
 import hudson.security.AccessControlled;
@@ -36,10 +37,10 @@ import hudson.security.Permission;
 
 /**
  * Macro invokes evaluation of item-specific access rights.
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.4
  */
-@Extension(optional = true)
+@Extension(optional = true, ordinal = -5)
 public class ItemSpecificRoleMacro extends AbstractOwnershipRoleMacro {
     
     @Override
@@ -53,6 +54,7 @@ public class ItemSpecificRoleMacro extends AbstractOwnershipRoleMacro {
     }
 
     @Override
+    @SuppressFBWarnings(value = "NM_METHOD_NAMING_CONVENTION", justification = "Part of other plugin API")
     public boolean IsApplicable(RoleType roleType) {
         return roleType == RoleType.Project;
     }

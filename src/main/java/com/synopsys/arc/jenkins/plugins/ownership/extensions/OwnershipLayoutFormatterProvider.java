@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Oleg Nenashev <o.v.nenashev@gmail.com>.
+ * Copyright 2014 Oleg Nenashev
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,25 +35,25 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 /**
  * The extension creates {@link OwnershipLayoutFormatter}s for various object types.
  * @since 0.5
- * @author Oleg Nenashev <o.v.nenashev@gmail.com>
+ * @author Oleg Nenashev
  */
 @Restricted(NoExternalUse.class)
 public abstract class OwnershipLayoutFormatterProvider {
     
     public static final OwnershipLayoutFormatterProvider DEFAULT_PROVIDER = new DefaultProvider();
-    private static final OwnershipLayoutFormatter<Job<?,?>> DEFAULT_JOB_FORMATTER = new OwnershipLayoutFormatter.DefaultJobFormatter<Job<?,?>>();
-    private static final OwnershipLayoutFormatter<Node> DEFAULT_NODE_FORMATTER = new OwnershipLayoutFormatter.DefaultJobFormatter<Node>();
-    private static final OwnershipLayoutFormatter<Run> DEFAULT_RUN_FORMATTER = new OwnershipLayoutFormatter.DefaultJobFormatter<Run>();
+    private static final OwnershipLayoutFormatter<Job<?,?>> DEFAULT_JOB_FORMATTER = new OwnershipLayoutFormatter.DefaultJobFormatter<>();
+    private static final OwnershipLayoutFormatter<Node> DEFAULT_NODE_FORMATTER = new OwnershipLayoutFormatter.DefaultJobFormatter<>();
+    private static final OwnershipLayoutFormatter<Run> DEFAULT_RUN_FORMATTER = new OwnershipLayoutFormatter.DefaultJobFormatter<>();
     
-    public @Nonnull OwnershipLayoutFormatter<Job<?,?>> getLayoutFormatter(@Nonnull Job<?,?> job) {
+    public @Nonnull OwnershipLayoutFormatter<Job<?,?>> getLayoutFormatter(Job<?,?> job) {
         return DEFAULT_JOB_FORMATTER;
     }
     
-    public @Nonnull OwnershipLayoutFormatter<Node> getLayoutFormatter(@Nonnull Node node) {
+    public @Nonnull OwnershipLayoutFormatter<Node> getLayoutFormatter(Node node) {
         return DEFAULT_NODE_FORMATTER;
     }
     
-    public @Nonnull OwnershipLayoutFormatter<Run> getLayoutFormatter(@Nonnull Run run) {
+    public @Nonnull OwnershipLayoutFormatter<Run> getLayoutFormatter(Run run) {
         return DEFAULT_RUN_FORMATTER;
     }
     

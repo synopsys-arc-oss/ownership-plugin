@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Helper for User string formatting.
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @author Oleg Nenashev
  */
 @Restricted(NoExternalUse.class)
 public class UserStringFormatter {
@@ -49,7 +49,7 @@ public class UserStringFormatter {
     }
     
     public static @Nonnull String format(@Nonnull String userId) {
-        return format(User.get(userId, false, null));
+        return format(User.getById(userId, false));
     }
     
     public static @Nonnull String formatShort(@CheckForNull String userId) {
@@ -63,7 +63,7 @@ public class UserStringFormatter {
      * @since 0.2
      */
     public static  @CheckForNull String formatEmail(@Nonnull String userId) {
-        return formatEmail(User.get(userId, false, null));
+        return formatEmail(User.getById(userId, false));
     }
     
     public static @CheckForNull String formatEmail(@CheckForNull User user) {

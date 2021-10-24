@@ -1,7 +1,7 @@
 <!--
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  -->
+<?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <l:layout permission="${it.ownerPermission}" xmlns:local="local" norefresh="true">
@@ -47,7 +48,7 @@
 
             <table style="padding-left: 2em;" id="management-links">
               <local:feature icon="user.gif" href="manage-owners" title="${it.manageOwnershipTitle}">
-                ${%Manage Owners, add co-owners, etc.}
+                ${%Manage primary and secondary owners}
               </local:feature>
               <local:feature icon="fingerprint.gif" href="configure-project-specifics" title="${it.configureSpecificAccessTitle}">
                 ${%Configure job-specific access rights}.

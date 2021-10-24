@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2014 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,10 +28,9 @@ import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
 import hudson.Extension;
-import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.model.Queue;
 import hudson.model.User;
-import java.util.Collections;
 import jenkins.model.Jenkins;
 import org.acegisecurity.Authentication;
 import org.acegisecurity.userdetails.UsernameNotFoundException;
@@ -44,7 +43,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * This strategy authenticates as a job's owner if it is specified.
  * Otherwise, the anonymous user will be used.
  * @since 0.5
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @author Oleg Nenashev
  */
 public class OwnershipAuthorizeProjectStrategy extends AuthorizeProjectStrategy {
 
@@ -53,18 +52,17 @@ public class OwnershipAuthorizeProjectStrategy extends AuthorizeProjectStrategy 
     }
 
     @Override
-    public Authentication authenticate(AbstractProject<?, ?> ap, Queue.Item item) {    
-        OwnershipDescription d = JobOwnerHelper.Instance.getOwnershipDescription(ap);
+    public Authentication authenticate(Job<?, ?> job, Queue.Item item) {    
+        OwnershipDescription d = JobOwnerHelper.Instance.getOwnershipDescription(job);
         if (!d.hasPrimaryOwner()) { // fallback to anonymous
             return Jenkins.ANONYMOUS;
         }    
-        User owner = User.get(d.getPrimaryOwnerId(), false, Collections.emptyMap());
+        User owner = User.getById(d.getPrimaryOwnerId(), false);
         if (owner == null) { // fallback to anonymous
             return Jenkins.ANONYMOUS;
         }
         try {
-            Authentication auth = owner.impersonate();
-            return (auth != null) ? auth : Jenkins.ANONYMOUS;
+            return owner.impersonate();
         } catch (UsernameNotFoundException ex) { // fallback to anonymous
             return Jenkins.ANONYMOUS;
         }

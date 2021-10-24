@@ -41,7 +41,7 @@ import jenkins.model.Jenkins;
 
 /**
  *
- * @author Oleg Nenashev <o.v.nenashev@gmail.com>
+ * @author Oleg Nenashev
  */
 public class OwnershipMailHelper {
    
@@ -81,15 +81,30 @@ public class OwnershipMailHelper {
             return null;
         }
         final MailOptions mailOptions = plugin.getConfiguration().getMailOptions();
+        final OwnershipDescription ownershipDescription = helper.getOwnershipDescription(item);
         
-        OwnershipDescription ownershipDescription = helper.getOwnershipDescription(item);
+        // Handle enablers
         if (!ownershipDescription.isOwnershipEnabled()) {
             return null;
         }
+        switch (mode) {
+            case ContactOwners:
+                if (mailOptions.isContactOwnersLinkDisabled()) {
+                    return null;
+                }
+                break;
+            case ContactAdmins:
+                if (mailOptions.isContactAdminsLinkDisabled()) {
+                    return null;
+                }
+                break;
+            default:
+                // Do nothing
+        }
 
         // Prepare the data        
-        final List<String> to = new LinkedList<String>();
-        final List<String> cc = new LinkedList<String>();
+        final List<String> to = new LinkedList<>();
+        final List<String> cc = new LinkedList<>();
         final Map<String, String> envVars = getSubstitutionVars(instance,item,helper);
         
         // to - job owner
@@ -106,8 +121,8 @@ public class OwnershipMailHelper {
             }
         }
 
-        // cc - job co-owners
-        final Set<String> coOwners = ownershipDescription.getCoownersIds();
+        // cc - job secondary owners
+        final Set<String> coOwners = ownershipDescription.getSecondaryOwnerIds();
         if (!coOwners.isEmpty()) {
             for (String coOwnerId : coOwners) {
                 String email = UserStringFormatter.formatEmail(coOwnerId);
@@ -149,7 +164,7 @@ public class OwnershipMailHelper {
             @Nonnull Jenkins jenkins,
             @Nonnull TObjectType item,
             @Nonnull IOwnershipHelper<TObjectType> helper) {
-        Map<String,String> res = new TreeMap<String, String>();
+        Map<String,String> res = new TreeMap<>();
         
         // User info
         final User user = User.current();

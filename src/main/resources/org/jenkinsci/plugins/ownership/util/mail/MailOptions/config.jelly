@@ -30,17 +30,30 @@
         <f:textbox/> 
     </f:entry>  
     <f:advanced title="${%Advanced e-mail options}">
+        <f:entry  field="hideOwnerAndCoOwnerEmails">
+            <f:checkbox title="${%hideOwnerAndCoOwnerEmails.title}"/>
+        </f:entry>
+      
+        <!-- Contact item owners -->
         <f:entry title="${%contactOwnersSubjectTemplate.title}" field="contactOwnersSubjectTemplate">
             <f:textbox default="${%contactOwnersSubjectTemplate.default}"/> 
         </f:entry>
         <f:entry title="${%contactOwnersBodyTemplate.title}" field="contactOwnersBodyTemplate">
             <f:textarea default="${%contactOwnersBodyTemplate.default}"/> 
         </f:entry>
+        <f:entry  field="contactOwnersLinkDisabled">
+            <f:checkbox title="${%contactOwnersLinkDisabled.title}"/>
+        </f:entry>
+        
+        <!-- Contact service owners (admins) -->
         <f:entry title="${%contactAdminsSubjectTemplate.title}" field="contactAdminsSubjectTemplate">
             <f:textbox default="${%contactAdminsSubjectTemplate.default}"/> 
         </f:entry>
         <f:entry title="${%contactAdminsBodyTemplate.title}" field="contactAdminsBodyTemplate">
             <f:textarea default="${%contactAdminsBodyTemplate.default}"/>
+        </f:entry>
+        <f:entry  field="contactAdminsLinkDisabled">
+            <f:checkbox title="${%contactAdminsLinkDisabled.title}"/>
         </f:entry>
    
         <f:entry title="${%Recipients separator}" field="emailListSeparator">

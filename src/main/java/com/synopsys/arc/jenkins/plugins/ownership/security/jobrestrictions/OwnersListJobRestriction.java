@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,9 +26,11 @@ package com.synopsys.arc.jenkins.plugins.ownership.security.jobrestrictions;
 import com.synopsys.arc.jenkins.plugins.ownership.Messages;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerHelper;
+import com.synopsys.arc.jenkins.plugins.ownership.util.IdStrategyComparator;
 import com.synopsys.arc.jenkins.plugins.ownership.util.ui.UserSelector;
 import com.synopsys.arc.jenkinsci.plugins.jobrestrictions.restrictions.JobRestriction;
 import com.synopsys.arc.jenkinsci.plugins.jobrestrictions.restrictions.JobRestrictionDescriptor;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.model.Job;
 import hudson.model.Queue;
@@ -40,9 +42,11 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Allows to restrict job executions by ownership.
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.2
  */
+@SuppressFBWarnings(value = "SE_NO_SERIALVERSIONID", 
+        justification = "JobRestriction should not be serializable, not required for Xstream")
 public class OwnersListJobRestriction extends JobRestriction {
     
     private static final JobOwnerHelper helper = new JobOwnerHelper();
@@ -60,7 +64,7 @@ public class OwnersListJobRestriction extends JobRestriction {
     protected synchronized final void updateUsersMap() {
         if (usersMap == null) {
             // Update users map
-            usersMap = new TreeSet<String>();
+            usersMap = new TreeSet<>(new IdStrategyComparator());
             for (UserSelector selector : usersList) {
                 String userId = hudson.Util.fixEmptyAndTrim(selector.getSelectedUserId());
                 if (userId != null && !usersMap.contains(userId)) {
@@ -74,7 +78,20 @@ public class OwnersListJobRestriction extends JobRestriction {
         return usersList;
     }
 
+    /**
+     * @deprecated use {@link #isAcceptSecondaryOwners() } 
+     */
+    @Deprecated
     public boolean isAcceptsCoOwners() {
+        return acceptsCoOwners;
+    }
+    
+    /**
+     * Checks if the filter accepts secondary owners.
+     * @return {@code true} if secondary owners should be accepted
+     * @since 0.9
+     */
+    public boolean isAcceptSecondaryOwners() {
         return acceptsCoOwners;
     }
     
@@ -101,22 +118,25 @@ public class OwnersListJobRestriction extends JobRestriction {
             return false;
         }
         
-        updateUsersMap();
-        if (usersMap.contains(descr.getPrimaryOwnerId())) {
-            return true;
-        }
-        
-        // Handle co-owners if required
-        Set<String> itemCoOwners = descr.getCoownersIds();
-        if (acceptsCoOwners && !itemCoOwners.isEmpty()) {
-            for (String userID : usersMap) {
-                if (itemCoOwners.contains(userID)) {
-                    return true;
+        synchronized(this) {
+            updateUsersMap();
+            if (usersMap.contains(descr.getPrimaryOwnerId())) {
+                return true;
+            }
+
+            // Handle secondary owners if required
+            Set<String> itemCoOwners = new TreeSet<>(new IdStrategyComparator());
+            itemCoOwners.addAll(descr.getSecondaryOwnerIds());
+            if (acceptsCoOwners && !itemCoOwners.isEmpty()) {
+                for (String userID : usersMap) {
+                    if (itemCoOwners.contains(userID)) {
+                        return true;
+                    }
                 }
             }
         }
         
-        // Default fallback - user is not owner or co-owner
+        // Default fallback - user is not a primary or secondary owner
         return false;
     }
 

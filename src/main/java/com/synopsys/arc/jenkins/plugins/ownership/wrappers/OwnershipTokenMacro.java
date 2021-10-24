@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Synopsys Inc., Oleg Nenashev <nenashev@synopsys.com>
+ * Copyright 2013 Synopsys Inc., Oleg Nenashev
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,7 @@ import com.synopsys.arc.jenkins.plugins.ownership.nodes.NodeOwnerHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.OwnershipDescriptionHelper;
 import hudson.Extension;
 import hudson.model.AbstractBuild;
+import hudson.model.Node;
 import hudson.model.TaskListener;
 import java.io.IOException;
 import org.jenkinsci.plugins.tokenmacro.DataBoundTokenMacro;
@@ -39,7 +40,7 @@ import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
  * This macro allows to extract information about ownership.
  * An information type can be specified by additional var parameter
  * (see {@link OwnershipFunction} to get a list of supported operations).
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.4
  */
 @Extension(optional = true)
@@ -72,10 +73,19 @@ public class OwnershipTokenMacro extends DataBoundTokenMacro {
         }
             
         OwnershipDescription job = JobOwnerHelper.Instance.getOwnershipDescription(ab.getProject());
-        OwnershipDescription node = NodeOwnerHelper.Instance.getOwnershipDescription(ab.getBuiltOn());
-        return func.evaluate(job, node);
+        
+        // Get data for node
+        final Node node = ab.getBuiltOn();
+        OwnershipDescription nodeDescription = node != null 
+                ? NodeOwnerHelper.Instance.getOwnershipDescription(node) 
+                : OwnershipDescription.DISABLED_DESCR;
+        
+        // Evaluate the macro
+        return func.evaluate(job, nodeDescription);
     }
-           
+          
+    // TODO: This implementation needs some polishing in order to address naming changes
+    // in primary and secondary owners
     private static enum OwnershipFunction {
         JOB_OWNER(true),
         JOB_OWNER_EMAIL(true),
@@ -86,7 +96,7 @@ public class OwnershipTokenMacro extends DataBoundTokenMacro {
         NODE_COOWNERS(false),
         NODE_COOWNERS_EMAILS(false);
         
-        private boolean isJob;
+        private final boolean isJob;
         
         private OwnershipFunction(boolean isJob) {
             this.isJob = isJob;
@@ -110,21 +120,21 @@ public class OwnershipTokenMacro extends DataBoundTokenMacro {
             
             switch(this) {
                 case JOB_OWNER:
-                    return OwnershipDescriptionHelper.getOwnerID(job);
+                    return OwnershipDescriptionHelper.getPrimaryOwnerId(job);
                 case JOB_OWNER_EMAIL:
-                    return OwnershipDescriptionHelper.getOwnerEmail(job);
+                    return OwnershipDescriptionHelper.getPrimaryOwnerEmail(job);
                 case JOB_COOWNERS:
-                    return OwnershipDescriptionHelper.getCoOwnerIDs(job);
+                    return OwnershipDescriptionHelper.getAllOwnerIdsString(job);
                 case JOB_COOWNERS_EMAILS:
-                    return OwnershipDescriptionHelper.getCoOwnerEmails(job);   
+                    return OwnershipDescriptionHelper.getAllOwnerEmailsString(job);   
                 case NODE_OWNER:
-                    return OwnershipDescriptionHelper.getOwnerID(node);
+                    return OwnershipDescriptionHelper.getPrimaryOwnerId(node);
                 case NODE_OWNER_EMAIL:
-                    return OwnershipDescriptionHelper.getOwnerEmail(node);
+                    return OwnershipDescriptionHelper.getPrimaryOwnerEmail(node);
                 case NODE_COOWNERS:
-                    return OwnershipDescriptionHelper.getCoOwnerIDs(node);
+                    return OwnershipDescriptionHelper.getAllOwnerIdsString(node);
                 case NODE_COOWNERS_EMAILS:
-                    return OwnershipDescriptionHelper.getCoOwnerEmails(node); 
+                    return OwnershipDescriptionHelper.getAllOwnerEmailsString(node); 
                 default:
                     throw new IOException(this+" ownership function is not implemented");
             }

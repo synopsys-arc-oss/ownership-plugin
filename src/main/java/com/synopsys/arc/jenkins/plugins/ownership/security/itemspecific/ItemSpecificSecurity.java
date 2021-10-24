@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,7 @@ import org.kohsuke.stapler.StaplerRequest;
 /**
  * Implements item-specific property map.
  * This class relies on {@link AuthorizationMatrixProperty} from Jenkins core.
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  * @since 0.3
  */
 public class ItemSpecificSecurity implements Describable<ItemSpecificSecurity>, Cloneable {
@@ -92,7 +92,7 @@ public class ItemSpecificSecurity implements Describable<ItemSpecificSecurity>, 
         public ItemSpecificSecurity newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             AuthorizationMatrixProperty prop = null;
             if (formData.containsKey("permissionsMatrix")) {
-                Descriptor d= Jenkins.getInstance().getDescriptor(AuthorizationMatrixProperty.class);
+                Descriptor<?> d= Jenkins.getActiveInstance().getDescriptor(AuthorizationMatrixProperty.class);
                 prop = (AuthorizationMatrixProperty)d.newInstance(req, formData.getJSONObject("permissionsMatrix"));
             }
             return new ItemSpecificSecurity(prop);

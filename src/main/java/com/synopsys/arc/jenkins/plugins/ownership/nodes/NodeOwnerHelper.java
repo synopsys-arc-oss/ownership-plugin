@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,20 +29,29 @@ import com.synopsys.arc.jenkins.plugins.ownership.util.AbstractOwnershipHelper;
 import com.synopsys.arc.jenkins.plugins.ownership.util.UserCollectionFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.AccessRightsFilter;
 import com.synopsys.arc.jenkins.plugins.ownership.util.userFilters.IUserFilter;
+import hudson.Extension;
 import hudson.model.Computer;
+import hudson.model.Job;
 import hudson.model.Node;
 import hudson.model.User;
-import hudson.slaves.NodeProperty;
+
 import java.io.IOException;
 import java.util.Collection;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
+import hudson.security.Permission;
+import org.jenkinsci.plugins.ownership.model.OwnershipHelperLocator;
+import org.jenkinsci.plugins.ownership.model.OwnershipInfo;
+import org.jenkinsci.plugins.ownership.model.nodes.NodeOwnershipDescriptionSource;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+
 /**
  * Provides helper for Node owner.
- * @todo Add Bug reference
+ * TODO: Add Bug reference
  * @since 0.0.3
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @author Oleg Nenashev
  * @see OwnerNodeProperty
  */
 public class NodeOwnerHelper extends AbstractOwnershipHelper<Node> {
@@ -57,12 +66,12 @@ public class NodeOwnerHelper extends AbstractOwnershipHelper<Node> {
      */
     @CheckForNull
     public static OwnerNodeProperty getOwnerProperty(@Nonnull Node node) {
-        NodeProperty prop = node.getNodeProperties().get(OwnerNodeProperty.class);
-        return prop != null ? (OwnerNodeProperty)prop : null;
+        return node.getNodeProperties().get(OwnerNodeProperty.class);
     }
         
     @Override
-    public OwnershipDescription getOwnershipDescription(Node item) {
+    public OwnershipDescription getOwnershipDescription(@CheckForNull Node item) {
+        // TODO: This method impl is a performance hack. May be replaced by getOwnershipInfo() in 1.0
         if (item == null) { // Handle renames, etc.
             return OwnershipDescription.DISABLED_DESCR;
         }
@@ -70,7 +79,28 @@ public class NodeOwnerHelper extends AbstractOwnershipHelper<Node> {
         OwnerNodeProperty prop = getOwnerProperty(item);
         return prop != null ? prop.getOwnership() : OwnershipDescription.DISABLED_DESCR;
     }
-    
+
+    @Override
+    public OwnershipInfo getOwnershipInfo(Node item) {
+        if (item == null) { // Handle renames, etc.
+            return OwnershipInfo.DISABLED_INFO;
+        }
+        
+        OwnerNodeProperty prop = getOwnerProperty(item);
+        return prop != null ? new OwnershipInfo(OwnershipDescription.DISABLED_DESCR, 
+                new NodeOwnershipDescriptionSource(item)) : OwnershipInfo.DISABLED_INFO;
+    }
+
+    @Override
+    public Permission getRequiredPermission() {
+        return OwnershipPlugin.MANAGE_SLAVES_OWNERSHIP;
+    }
+
+    @Override
+    public boolean hasLocallyDefinedOwnership(@Nonnull Node node) {
+        return getOwnerProperty(node) != null;
+    }
+
     @Override
     public Collection<User> getPossibleOwners(Node item) {
         if (OwnershipPlugin.getInstance().isRequiresConfigureRights()) {
@@ -111,6 +141,19 @@ public class NodeOwnerHelper extends AbstractOwnershipHelper<Node> {
     @Override
     public String getItemURL(Node item) {
         Computer c = item.toComputer();
-        return c != null ? ComputerOwnerHelper.Instance.getItemURL(c) : null;
+        return c != null ? ComputerOwnerHelper.INSTANCE.getItemURL(c) : null;
+    }
+
+    @Extension
+    @Restricted(NoExternalUse.class)
+    public static class LocatorImpl extends OwnershipHelperLocator<Node> {
+
+        @Override
+        public AbstractOwnershipHelper<Node> findHelper(Object item) {
+            if (item instanceof Node) {
+                return Instance;
+            }
+            return null;
+        }
     }
 }

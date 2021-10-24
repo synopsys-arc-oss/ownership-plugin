@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,13 +31,16 @@ import hudson.model.User;
 import hudson.util.FormValidation;
 import java.io.Serializable;
 import javax.annotation.CheckForNull;
+
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 /**
  * Describable Item, which allows to configure user.
  * Features: validation
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * @author Oleg Nenashev
  */
 //TODO: Autocompletion
 public class UserSelector implements Describable<UserSelector>, Serializable {
@@ -84,14 +87,15 @@ public class UserSelector implements Describable<UserSelector>, Serializable {
         public String getDisplayName() {
             return "N/A";
         }
-        
+
+        @Restricted(NoExternalUse.class)
         public FormValidation doCheckSelectedUserId(@QueryParameter String selectedUserId) {
             selectedUserId = Util.fixEmptyAndTrim(selectedUserId);
             if (selectedUserId == null) {
                 return FormValidation.error("Field is empty. Field will be ignored");
             }
 
-            User usr = User.get(selectedUserId, false, null);
+            User usr = User.getById(selectedUserId, false);
             if (usr == null) {
                 return FormValidation.warning("User " + selectedUserId + " is not registered in Jenkins");
             }

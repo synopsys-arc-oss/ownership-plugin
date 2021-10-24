@@ -24,6 +24,7 @@
 
 package com.synopsys.arc.jenkins.plugins.ownership.wrappers;
 
+import com.cloudbees.hudson.plugins.folder.Folder;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipDescription;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPlugin;
 import com.synopsys.arc.jenkins.plugins.ownership.OwnershipPluginConfiguration;
@@ -33,29 +34,33 @@ import com.synopsys.arc.jenkins.plugins.ownership.nodes.NodeOwnerHelper;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
+import hudson.model.Run;
 import hudson.model.Slave;
 import hudson.model.TaskListener;
 import hudson.model.User;
 import hudson.scm.NullSCM;
+import hudson.scm.SCMRevisionState;
 import hudson.tasks.Shell;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.concurrent.Future;
-import static junit.framework.Assert.*;
+import org.jenkinsci.plugins.ownership.model.folders.FolderOwnershipHelper;
+import org.jenkinsci.plugins.ownership.test.util.OwnershipPluginConfigurer;
 import org.jenkinsci.plugins.ownership.util.environment.EnvSetupOptions;
 import org.jenkinsci.plugins.ownership.util.mail.MailOptions;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Rule;
 import org.junit.Test;
-import org.jvnet.hudson.test.Bug;
+import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
 
 /**
  * Tests for {@link OwnershipBuildWrapper}.
- * @author Oleg Nenashev <o.v.nenashev@gmail.com>
+ * @author Oleg Nenashev
  */
 public class OwnershipBuildWrapperTest {
     
@@ -83,11 +88,11 @@ public class OwnershipBuildWrapperTest {
         
         // Create node with ownership
         node = r.createOnlineSlave();
-        NodeOwnerHelper.setOwnership(node, new OwnershipDescription(true, NODE_OWNER_ID));
+        NodeOwnerHelper.setOwnership(node, new OwnershipDescription(true, NODE_OWNER_ID, Collections.<String>emptyList()));
         
         // Create project
         project = r.createFreeStyleProject();
-        JobOwnerHelper.setOwnership(project, new OwnershipDescription(true, PROJECT_OWNER_ID));
+        JobOwnerHelper.setOwnership(project, new OwnershipDescription(true, PROJECT_OWNER_ID, Collections.<String>emptyList()));
         project.getBuildersList().add(new Shell("env"));
     }
     
@@ -98,7 +103,7 @@ public class OwnershipBuildWrapperTest {
         testVarsPresense(false);
     }
     
-    @Bug(23926)
+    @Issue("JENKINS-23926")
     public @Test void testVarsPresenseOnSCMFailure() throws Exception {
         initJenkinsInstance();
         final OwnershipBuildWrapper wrapper = new OwnershipBuildWrapper(true, true);
@@ -107,7 +112,7 @@ public class OwnershipBuildWrapperTest {
         testVarsPresense(true);
     }
     
-    @Bug(23947)
+    @Issue("JENKINS-23947")
     public @Test void testVarsPresenseOnGlobalOptions() throws Exception {
         initJenkinsInstance();
         final OwnershipPluginConfiguration pluginConf = new OwnershipPluginConfiguration(
@@ -117,7 +122,40 @@ public class OwnershipBuildWrapperTest {
         testVarsPresense(true);
     }
     
-    private void testVarsPresense(boolean failSCM) throws Exception {              
+    @Issue("JENKINS-27715")
+    public @Test void testCoOwnersVarsInjection() throws Exception {
+        initJenkinsInstance();
+        final OwnershipPluginConfiguration pluginConf = new OwnershipPluginConfiguration(
+                new AssignCreatorPolicy(),MailOptions.DEFAULT, 
+                new EnvSetupOptions(true, true));
+        r.jenkins.getPlugin(OwnershipPlugin.class).configure(true, null, null, pluginConf);
+        
+        FreeStyleBuild build = testVarsPresense(false);
+        r.assertLogContains("NODE_COOWNERS="+NODE_OWNER_ID, build);
+        r.assertLogContains("JOB_COOWNERS="+PROJECT_OWNER_ID, build);
+    }
+    
+    @Test
+    @Issue("JENKINS-28881")
+    public void shouldInjectInheritedOwnershipInfo() throws Exception {
+        initJenkinsInstance();
+        OwnershipPluginConfigurer.forJenkinsRule(r)
+                .withGlobalEnvSetupOptions(new EnvSetupOptions(true, true))
+                .configure();
+        
+        // Init folder with a nested job
+        Folder folder = r.jenkins.createProject(Folder.class, "folder");
+        FolderOwnershipHelper.setOwnership(folder, new OwnershipDescription(true, PROJECT_OWNER_ID, Collections.<String>emptyList()));
+        FreeStyleProject prj = folder.createProject(FreeStyleProject.class, "projectInsideFolder");
+        prj.getBuildersList().add(new Shell("env"));
+        
+        // Run test. We expect Ownership info to be inherited for the project
+        FreeStyleBuild build = testVarsPresense(false);
+        r.assertLogContains("NODE_COOWNERS="+NODE_OWNER_ID, build);
+        r.assertLogContains("JOB_COOWNERS="+PROJECT_OWNER_ID, build);
+    }
+    
+    private FreeStyleBuild testVarsPresense(boolean failSCM) throws Exception {              
         project.setAssignedNode(node);
         if (failSCM) {
             project.setScm(new AlwaysFailNullSCM());
@@ -135,14 +173,15 @@ public class OwnershipBuildWrapperTest {
             r.assertLogContains("JOB_OWNER="+PROJECT_OWNER_ID, build);
         }
         assertTrue(env.containsKey("NODE_OWNER"));
-        assertTrue(env.containsKey("JOB_OWNER"));       
+        assertTrue(env.containsKey("JOB_OWNER"));  
+        return build;
     }
     
     private static class AlwaysFailNullSCM extends NullSCM {
         
         @Override
-        public boolean checkout(AbstractBuild<?, ?> build, Launcher launcher, FilePath remoteDir, BuildListener listener, File changeLogFile) throws IOException, InterruptedException {
+        public void checkout(Run<?, ?> build, Launcher launcher, FilePath workspace, TaskListener listener, File changelogFile, SCMRevisionState baseline) throws IOException, InterruptedException {
             throw new IOException("Checkout failed (as designed)");
-        }
+        }     
     }
 }

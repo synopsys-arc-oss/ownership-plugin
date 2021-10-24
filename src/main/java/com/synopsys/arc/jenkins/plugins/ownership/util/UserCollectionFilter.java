@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Filters {@link Collection}s of {@link User}s.
- * @author Oleg Nenashev <nenashev@synopsys.com>
+ * @author Oleg Nenashev
  * @since 0.1
  */
 @Restricted(NoExternalUse.class)
@@ -46,13 +46,13 @@ public class UserCollectionFilter {
     public static Collection<User> filterUsers(@Nonnull Collection<User> input, boolean enableSort, @Nonnull IUserFilter... filters) {
         // Sort users
         UserComparator comparator = new UserComparator();
-        LinkedList<User> userList = new LinkedList<User>(User.getAll());
+        LinkedList<User> userList = new LinkedList<>(User.getAll());
         if (enableSort) {
             Collections.sort(userList, comparator);
         }
         
         // Prepare new list
-        Collection<User> res = new ArrayList<User>();
+        Collection<User> res = new ArrayList<>();
         for (User user : userList) {
             if (user == null) {
                 continue;

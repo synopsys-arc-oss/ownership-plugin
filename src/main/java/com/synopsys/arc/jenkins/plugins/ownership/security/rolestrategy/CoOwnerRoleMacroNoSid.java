@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Copyright 2013 Oleg Nenashev, Synopsys Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,13 +31,16 @@ import hudson.Extension;
 import hudson.model.User;
 import hudson.security.AccessControlled;
 import hudson.security.Permission;
+import org.jenkinsci.plugins.ownership.integrations.rolestrategy.macros.CurrentUserIsOwnerMacro;
 
 /**
- * Checks if the current user belongs to owners or co-owners of the item (w/o sid control).
- * @author Oleg Nenashev <nenashev@synopsys.com>, Synopsys Inc.
+ * Checks if the current user is a primary or secondary owner of the item (w/o sid control).
+ * @author Oleg Nenashev
  * @since 0.2
+ * @deprecated Use {@link CurrentUserIsOwnerMacro}
  */
-@Extension(optional = true)
+@Deprecated
+@Extension(optional = true, ordinal = -1000)
 public class CoOwnerRoleMacroNoSid extends AbstractOwnershipRoleMacro{
     
     @Override
@@ -52,7 +55,7 @@ public class CoOwnerRoleMacroNoSid extends AbstractOwnershipRoleMacro{
 
     @Override
     public boolean hasPermission(String sid, Permission p, RoleType type, AccessControlled item, Macro macro) {    
-        User user = User.current();              
+        User user = User.current();
         return hasPermission(user, type, item, macro, true);
     }
 }
